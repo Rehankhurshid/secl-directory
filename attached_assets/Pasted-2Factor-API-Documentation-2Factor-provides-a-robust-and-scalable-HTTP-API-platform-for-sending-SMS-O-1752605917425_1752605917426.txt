@@ -1,0 +1,364 @@
+2Factor API Documentation
+2Factor provides a robust and scalable HTTP API platform for sending SMS OTPs, transactional messages, and promotional bulk SMS efficiently.
+
+Authentication
+2Factor employs API key-based authentication to ensure secure access. Each client is assigned a unique APIKey that identifies their account.
+
+Additional Security Features:
+
+IP-Based Restrictions: To enhance security, clients can restrict API access to a specific set of IP addresses.
+API Throughput and Scalability
+The 2Factor Cloud API is designed for enterprise-grade performance and reliability, trusted by leading organizations.
+
+Default Performance
+Throughput: Supports up to 200 requests per second under default configurations.
+
+Response Times: Average response times range from 100 ms to 500 ms.
+
+High Availability (HA) Cluster for Enhanced Scalability
+For clients with high scalability needs, we offer a High Availability (HA) Cluster infrastructure:
+
+Throughput: Supports up to 2000 transactions per second (TPS).
+
+Response Times: Average response times range from 50ms to 150 ms.
+
+Scalability Requests
+To scale up or discuss your specific requirements, contact support@2factor.in.
+
+Data Privacy & Security Measures
+At 2Factor, safeguarding customer data is a top priority. The following measures ensure that all data is securely processed, stored, and accessed in compliance with industry standards:
+
+Security Measures
+API Hosting and Encryption
+Cloudflare Serverless Environment: All 2Factor API endpoints are hosted on Cloudflare's serverless environment for scalability.
+
+End-to-End Encryption: Cloudflare employs SSL/TLS encryption to ensure secure transmission of data between the client, Cloudflare, and 2Factor's backend systems.
+
+Threat Intelligence and Protection
+Web Application Firewall (WAF): Cloudflare’s WAF protects publicly accessible API endpoints from vulnerabilities and unauthorized access attempts.
+
+Rule Set: Protects against thousands of commonly known web exploits and intrusion attempts.
+
+IP-Based Restrictions: Backend systems enforce strict IP-based access controls to block unintended audiences.
+
+Brute Force and Local Firewall Protection
+Each Linux virtual machine (VM) hosting code and data stores is secured with:
+
+A local firewall.
+
+Brute-force monitoring software to detect and prevent unauthorized login attempts.
+
+Logging and Monitoring
+Random checks are conducted to monitor access attempts to data stores or VMs from unauthorized IPs, ensuring continuous oversight of system security.
+Additional Security Features for Clients
+IP-Based Access Control
+Client-Specific IP Restrictions: Clients can enforce IP-based restrictions on their API accounts to prevent unauthorized use.
+Data Retention and Disposal Policies
+Data Retention
+Banking Clients: Data is retained for 7 years, as required by industry regulations.
+
+Other Clients: Data is typically retained for 1 year, after which it is archived in flat files.
+
+Data Archival and Disposal
+After the retention period, data is dumped into SQL flat files and stored in S3/S3-compatible cold storage.
+
+While no formal archival/disposal agreements exist, the above process ensures long-term data security and compliance.
+
+Access to SMS Logs
+Multi-Factor Authentication
+To access SMS logs, users must complete 2-factor authentication:
+
+Step 1: Log in with a username and password.
+
+Step 2: Verify the login attempt using an SMS OTP sent to the registered phone number.
+
+Access Control
+Account Owners: Full access to SMS logs.
+
+2Factor Technical Support Team: Limited access on a need-to-know basis to resolve support tickets.
+
+Third Parties: No access is provided to external entities or unauthorized users.
+
+Contact
+For more information about 2Factor’s security measures, data retention policies, or access controls, reach out to our support team at support@2factor.in.
+
+POST
+Send SMS
+https://2factor.in/API/R1/
+Purpose
+This endpoint is used to send Promotional SMS, such as:
+
+Offers and discounts
+
+Seasonal greetings
+
+Coupon codes
+
+Re-targeting messages
+
+Message Categories
+Supports Service Explicit and Promotional Messages as registered on the DLT platform.
+
+Body
+urlencoded
+module
+PROMO_SMS
+
+Module name - PROMO_SMS for Promotional SMS
+
+apikey
+7e825d24-XXXX-XXXX-XXXX-0200cd93604211
+
+API key issued against your account
+
+to
+91XXXXXXXXXX,91YYYYYYYYYY
+
+Phone numbers separated by comma
+
+from
+HEADER
+
+DLT approved sender id
+
+msg
+DLT Approved Message Text Goes Here
+
+DLT approved SMS text
+
+scheduletime
+2022-01-01 13:27:00
+
+(*optional) Time at which SMS needs to be triggered
+
+Note: Schedule time must be at least 5 minutes greater than the current time
+
+Example Request
+Success
+curl
+curl --location 'https://2factor.in/API/R1/' \
+--data-urlencode 'module=PROMO_SMS' \
+--data-urlencode 'apikey=7e825d24-XXXX-XXXX-XXXX-0200cd936042' \
+--data-urlencode 'to=91XXXXXXXXXX,91YYYYYYYYYY' \
+--data-urlencode 'from=HEADER' \
+--data-urlencode 'msg=DLT Approved Message Text Goes Here'
+200 OK
+Example Response
+Body
+Headers (21)
+plain
+{
+  "Status": "Success",
+  "Details": "09cfe5b29d000018a3acb36000000001"
+}
+Encrypted SMS Endpoints ( *Premium )
+The Encrypted SMS API provides secure methods to send SMS messages and retrieve their delivery statuses. The API ensures data confidentiality using *AES-256 bit encryption in GCM & CBC mode.__*
+
+Authentication
+All API requests require the Secret-Key in the headers for authentication. The key must be encrypted using AES-256 GCM / CBC mode.
+
+Endpoints
+1. Send SMS
+Endpoint Information
+URL: https://2factor.in/API/R1?module=ENC&encmode=GCM
+
+Method: POST
+
+Headers:
+
+Secret-Key: The AES-256 bit encrypted key.
+Request Payload
+The request requires an encrypted JSON payload structured as follows:
+
+c
+{
+    "module": "TRANS_SMS",
+    "apikey": "954817d9-XXXX-XXXX-XXXX-XXXX-cd936042",
+    "to": "91XXXXXXXXXX",
+    "from": "SENDER",
+    "msg": "Your DLT Approved SMS Text"
+}
+Steps to Encrypt and Send
+Prepare JSON Payload: Use the format above with valid API key and message details.
+
+Encrypt the Payload: Encrypt using AES-256 CBC / GCM mode with the provided sandbox secret key.
+
+Send Encrypted Payload: Include the encrypted value in the body of the POST request.
+
+encmode supported CBC & GCM values to indicate the mode of encryption. default encryption mode is CBC
+
+Sample Request (cURL)
+Plain Text
+curl -X POST "https://2factor.in/API/R1/?module=ENC" \
+-H "Secret-Key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" \
+-d "<EncryptedPayload>"
+2. Retrieve SMS Delivery Status
+Endpoint Information
+URL: https://2factor.in/API/R1?module=ENC
+
+Method: POST
+
+Headers:
+
+Secret-Key: The AES-256 bit encrypted key.
+Request Payload
+The request requires an encrypted JSON payload structured as follows:
+
+Plain Text
+{
+    "module": "TRANS_SMS_DLR",
+    "apikey": "54817d9-XXXX-XXXX-XXXX-XXXX-cd936042",
+    "sessionid": "XXXXXXXXXXXXX-8477e7fc9c7749c6",
+    "smsdate": "2024-01-18"
+}
+Steps to Encrypt and Send
+Prepare JSON Payload: Use the format above with valid API key, session ID, and date.
+
+Encrypt the Payload: Encrypt using AES-256 GCM mode with the provided sandbox secret key.
+
+Send Encrypted Payload: Include the encrypted value in the body of the POST request.
+
+Sample Request (cURL)
+Plain Text
+curl -X POST "https://2factor.in/API/R1/?module=ENC" \
+-H "Secret-Key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" \
+-d "<EncryptedPayload>"
+Responses
+General Response Structure
+All API responses are in JSON format. Below are common scenarios and their respective responses:
+
+Note: Error responses are printed in json plaintext , Success respomses would be in an encrypted format as given in the below examples
+
+Scenario	HTTP Code	Response Example
+Successful request	200	{"Status": "Success", "Details": ""}
+Invalid or missing Secret-Key	400	{"Status": "Error", "Details": "Secret-Key is missing in the request header"}
+Invalid payload encryption	400	{"Status": "Error", "Details": "Decryption failed..."}
+GET method used instead of POST	400	{"Status": "Error", "Details": "HTTP GET is not supported on this endpoint"}
+Example Decrypted Responses
+For Sending SMS
+Plain Text
+{
+    "Status": "Success",
+    "Details": "wYW/rnHQquWW2U7d0fk9PQniy5oGI+fbkFazRtrY4FEfCzt241yqf2jPeXu3FmOiHijgn8acnilxh48T9bNPKQ=="
+}
+The decrypted Details field provides a unique SMS request ID.
+
+For Retrieving Delivery Status
+Plain Text
+{
+    "Status": "Success",
+    "Details": "1 record found for the specified filters",
+    "DeliveryStatus": "DELIVERED",
+    "SentAt": "2024-01-18 19:25:41",
+    "DeliveredAt": "2024-01-18 19:42:33"
+}
+Or, if no records are found:
+
+Plain Text
+{
+    "Status": "Success",
+    "Details": "No records found for the specified filters"
+}
+Error Handling
+The API provides clear error messages for troubleshooting. Common errors include:
+
+Error Condition	HTTP Code	Description
+Missing Secret-Key header	400	The Secret-Key header is required for authentication.
+Invalid Secret-Key value	400	Ensure the correct encryption key is provided.
+Payload not properly formatted or encoded	400	The payload must be encrypted and Base64-encoded before submission.
+Incorrect HTTP method used	400	The endpoint supports only POST requests.
+Security Best Practices
+Encryption: Ensure all payloads are encrypted with AES-256 GCM mode.
+
+Transport Layer Security: Always use HTTPS for secure transmission.
+
+Key Management: Safeguard your Secret-Key and API-Key and avoid exposing them in public repositories or documentation.
+
+Response Validation: Decrypt and validate responses to ensure the integrity of the data.
+
+Read More
+Dynamic Shortlinking in Transactional SMS API (for CTA Whitelisting)
+In alignment with the latest TRAI guidelines, all URLs included in SMS text must be pre-whitelisted on the DLT platform. To meet this compliance requirement, 2Factor introduces the Dynamic Shortlinking Feature as part of the Transactional SMS API.
+
+Feature Highlights
+Dynamic URL Shortening
+
+Automatic URL Shortening: URLs in SMS messages are dynamically shortened at runtime.
+
+DLT Compliance: Shortened URLs adhere to DLT-approved formatting standards.
+
+Example: https://e.1rp.in/DLT_HEADER/h6fgsf
+
+For example, if your SMS header is TFACTR, URLs in your SMS will be replaced with shortened versions like:
+
+https://e.1rp.in/TFACTR/h6fgs
+Free Alternative to Third-Party Services: This feature serves as a free replacement for services like Bit.ly.
+
+How to Enable URL Shortening
+Add the parameter shortenurl=1 in your R1 - Transactional API request to activate the feature.
+
+Whitelist the following URL format on the DLT portal under CTA-Whitelisting:
+
+https://e.1rp.in/DLT_HEADER/\\*
+This ensures all dynamically created short URLs comply with DLT regulations.
+
+Webhook Support for Click Tracking
+Real-Time Tracking: Monitor user interaction with shortened URLs in real-time.
+
+Enable Click Tracking:
+
+Use the parameter shortenurlwebhook to specify the webhook URL for click notifications.
+
+Pass a custom callback value using the parameter shortenurlcallback to include it in webhook payloads.
+
+Runtime PEID and CTID Support in Transactional SMS API
+To eliminate delays caused by DLT template replication (previously up to 4 hours), clients can now pass DLT Principal Entity ID (PEID) and DLT Content Template ID (CTID) in real-time during the API request.
+
+Sample API Request
+View More
+Plain Text
+plaintextCopy codehttps://2factor.in/API/R1/?module=TRANS_SMS&apikey=API_KEY&to=CONTACT_NUMBER&from=DLT_HEADER&msg=DLT_APPROVED_CONTENT&peid=PE_ID&ctid=CT_ID
+Parameter Notes
+PE_ID: Replace with the Principal Entity ID of the DLT-approved message.
+
+CT_ID: Replace with the Content Template ID of the DLT-approved message.
+
+URL Shortening and Click Tracking (for Campaign Performance Tracking)
+The Transactional SMS API now includes URL shortening with real-time click tracking, enabling businesses to measure campaign performance effectively.
+
+Key Benefits
+Dynamically shorten URLs included in SMS messages.
+
+Monitor user interactions, such as phone numbers that access the links.
+
+Receive real-time click data via webhook.
+
+Sample API Request
+View More
+Plain Text
+plaintextCopy codehttps://2factor.in/API/R1/?module=TRANS_SMS&apikey=API_KEY&to=CONTACT_NUMBER&from=DLT_HEADER&msg=DLT_APPROVED_CONTENT&campaignname=CAMPAIGN_NAME&campaignwebhook=URL_ENCODED_CALLBACK_URL
+Parameter Notes
+campaignwebhook (Optional): A URL-encoded callback URL to receive real-time click notifications.
+
+If omitted, URL shortening is enabled, but click tracking will not be activated.
+Webhook Callback Details
+When a user clicks on a shortened link, 2Factor sends an HTTP POST request to the specified campaignwebhook URL. The payload contains the following information:
+
+Field	Description
+accessed	Timestamp when the link was accessed (format: YYYY-MM-DD HH:MM:SS).
+phoneNo	The phone number of the user who clicked the link.
+campaignName	The campaign name associated with the message.
+ip	IP address of the user who clicked the link.
+Example Webhook Payload
+Plain Text
+plaintextCopy codeaccessed=2024-11-29 14:30:00&phoneNo=9876543210&campaignName=PromoCampaign&ip=192.168.1.1
+Developer Guidelines
+Parameter Encoding: Ensure all parameters are properly URL-encoded before making API requests.
+
+API Security:
+
+Use IP-based restrictions to secure API access.
+
+Regularly rotate API keys to prevent unauthorized access.
+
+For support, contact 2Factor Support.

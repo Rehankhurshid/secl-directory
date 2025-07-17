@@ -1,0 +1,50 @@
+Service Worker installing - no caching strategy
+sw.js:14 Only caching essential assets
+sw.js:23 Service Worker activating - clearing old caches
+sw.js:35 Service Worker activated - claiming clients
+client:536 WebSocket connection to 'wss://6f66349d-7071-4468-8adc-912d316ca54f-00-14ktevkyyqba1.picard.replit.dev/?token=EzASgucH62FJ' failed: 
+setupWebSocket @ client:536Understand this error
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=EzASgucH62FJ' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)Understand this error
+chunk-RPCDYKBN.js?v=5f90475f:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+inspector.b9415ea5.js:1 Error: Minified React error #130; visit https://reactjs.org/docs/error-decoder.html?invariant=130&args[]=object&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at lX (inspector.b9415ea5.js:1:127164)
+    at l (inspector.b9415ea5.js:1:68514)
+    at ol (inspector.b9415ea5.js:1:82233)
+    at i (inspector.b9415ea5.js:1:132348)
+    at lM (inspector.b9415ea5.js:1:110198)
+    at inspector.b9415ea5.js:1:110064
+    at lO (inspector.b9415ea5.js:1:110072)
+    at lC (inspector.b9415ea5.js:1:106823)
+    at lw (inspector.b9415ea5.js:1:105378)
+    at C (inspector.b9415ea5.js:1:141367)
+s7 @ inspector.b9415ea5.js:1Understand this error
+inspector.b9415ea5.js:1 Uncaught Error: Minified React error #130; visit https://reactjs.org/docs/error-decoder.html?invariant=130&args[]=object&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at lX (inspector.b9415ea5.js:1:127164)
+    at l (inspector.b9415ea5.js:1:68514)
+    at ol (inspector.b9415ea5.js:1:82233)
+    at i (inspector.b9415ea5.js:1:132348)
+    at lM (inspector.b9415ea5.js:1:110198)
+    at inspector.b9415ea5.js:1:110064
+    at lO (inspector.b9415ea5.js:1:110072)
+    at lC (inspector.b9415ea5.js:1:106823)
+    at lw (inspector.b9415ea5.js:1:105378)
+    at C (inspector.b9415ea5.js:1:141367)Understand this error
+login:1 <meta name="apple-mobile-web-app-capable" content="yes"> is deprecated. Please include <meta name="mobile-web-app-capable" content="yes">Understand this warning
+VM514 login:7 SW registered:  ServiceWorkerRegistration
+Access to fetch at 'https://fonts.gstatic.com/s/inter/v19/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw.woff2' from origin 'https://6f66349d-7071-4468-8adc-912d316ca54f-00-14ktevkyyqba1.picard.replit.dev' has been blocked by CORS policy: Request header field expires is not allowed by Access-Control-Allow-Headers in preflight response.Understand this error
+UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw.woff2:1  Failed to load resource: the server responded with a status of 408 (Request Timeout)Understand this error
+api/admin/stats:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+api/roles:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+api/permissions:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+api/admin/employees?page=1&limit=50:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+api/admin/employees?limit=1000:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+api/admin/sessions?limit=100:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+api/admin/employees?limit=1000:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+api/roles:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+api/permissions:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+api/admin/employees?page=1&limit=50:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+api/admin/stats:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+api/admin/employees?page=1&limit=50:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error

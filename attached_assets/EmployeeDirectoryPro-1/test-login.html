@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Login</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .container { max-width: 400px; margin: 0 auto; }
+    input, button { width: 100%; padding: 10px; margin: 10px 0; }
+    button { background: #3B82F6; color: white; border: none; cursor: pointer; }
+    .info { background: #f0f8ff; padding: 15px; border-radius: 5px; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Employee Directory Login Test</h2>
+    
+    <div class="info">
+      <h3>Test Instructions:</h3>
+      <p>1. Enter Employee ID: <strong>21497110</strong></p>
+      <p>2. Click "Generate OTP"</p>
+      <p>3. Check the console logs for the OTP code</p>
+      <p>4. Enter the OTP and click "Login"</p>
+    </div>
+
+    <div id="step1">
+      <h3>Step 1: Enter Employee ID</h3>
+      <input type="text" id="employeeId" placeholder="Employee ID" value="21497110">
+      <button onclick="generateOTP()">Generate OTP</button>
+    </div>
+
+    <div id="step2" style="display: none;">
+      <h3>Step 2: Enter OTP Code</h3>
+      <input type="text" id="otpCode" placeholder="Enter OTP Code">
+      <button onclick="verifyOTP()">Login</button>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    async function generateOTP() {
+      const employeeId = document.getElementById('employeeId').value;
+      const result = document.getElementById('result');
+      
+      try {
+        const response = await fetch('/api/auth/generate-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ employeeId })
+        });
+        
+        const data = await response.json();
+        if (response.ok) {
+          result.innerHTML = '<p style="color: green;">OTP sent! Check console logs for the OTP code.</p>';
+          document.getElementById('step1').style.display = 'none';
+          document.getElementById('step2').style.display = 'block';
+        } else {
+          result.innerHTML = `<p style="color: red;">Error: ${data.message}</p>`;
+        }
+      } catch (error) {
+        result.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+      }
+    }
+
+    async function verifyOTP() {
+      const employeeId = document.getElementById('employeeId').value;
+      const otpCode = document.getElementById('otpCode').value;
+      const result = document.getElementById('result');
+      
+      try {
+        const response = await fetch('/api/auth/verify-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ employeeId, otpCode })
+        });
+        
+        const data = await response.json();
+        if (response.ok) {
+          result.innerHTML = `<p style="color: green;">Login successful! Welcome ${data.employee.name}</p>`;
+          localStorage.setItem('auth-token', data.sessionToken);
+          setTimeout(() => window.location.href = '/', 2000);
+        } else {
+          result.innerHTML = `<p style="color: red;">Error: ${data.message}</p>`;
+        }
+      } catch (error) {
+        result.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+      }
+    }
+  </script>
+</body>
+</html>

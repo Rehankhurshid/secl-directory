@@ -1,0 +1,67 @@
+client:536 WebSocket connection to 'wss://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/?token=kt9MxLKUfa04' failed: 
+setupWebSocket	@	client:536
+
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=kt9MxLKUfa04' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+chunk-WERSD76P.js?v=5038f6d9:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+main.tsx:10 ServiceWorker registration successful: 
+ServiceWorkerRegistration
+sw.js:14 Opened cache
+websocket.ts:34 WebSocket connected
+chunk-WERSD76P.js?v=5038f6d9:521 Warning: React has detected a change in the order of Hooks called by EmployeeGrid. This will lead to bugs and errors if not fixed. For more information, read the Rules of Hooks: https://reactjs.org/link/rules-of-hooks
+
+   Previous render            Next render
+   ------------------------------------------------------
+1. useState                   useState
+2. useState                   useState
+3. useContext                 useContext
+4. useContext                 useContext
+5. useContext                 useContext
+6. useEffect                  useEffect
+7. useState                   useState
+8. useCallback                useCallback
+9. useSyncExternalStore       useSyncExternalStore
+10. useEffect                 useEffect
+11. undefined                 useEffect
+   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    at EmployeeGrid (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/src/components/directory/employee-grid.tsx:23:32)
+    at div
+    at div
+    at div
+    at DashboardPage (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/src/pages/dashboard.tsx:30:37)
+    at AuthWrapper (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/src/App.tsx?v=U7qjR64i3FGtf9ieowkxc:28:24)
+    at component
+    at Route (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=5038f6d9:323:16)
+    at Switch (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=5038f6d9:379:17)
+    at Router
+    at Provider (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.d…unner/workspace/node_modules/.vite/deps/chunk-VJRUVGTI.js?v=5038f6d9:38:15)
+    at TooltipProvider (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.d…rkspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=5038f6d9:60:5)
+    at QueryClientProvider (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.d…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=5038f6d9:2805:3)
+    at App
+2
+chunk-WERSD76P.js?v=5038f6d9:11678 Uncaught Error: Rendered more hooks than during the previous render.
+    at EmployeeGrid (employee-grid.tsx:39:3)
+chunk-WERSD76P.js?v=5038f6d9:14032 The above error occurred in the <EmployeeGrid> component:
+
+    at EmployeeGrid (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/src/components/directory/employee-grid.tsx:23:32)
+    at div
+    at div
+    at div
+    at DashboardPage (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/src/pages/dashboard.tsx:30:37)
+    at AuthWrapper (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/src/App.tsx?v=U7qjR64i3FGtf9ieowkxc:28:24)
+    at component
+    at Route (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=5038f6d9:323:16)
+    at Switch (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=5038f6d9:379:17)
+    at Router
+    at Provider (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.d…unner/workspace/node_modules/.vite/deps/chunk-VJRUVGTI.js?v=5038f6d9:38:15)
+    at TooltipProvider (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.d…rkspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=5038f6d9:60:5)
+    at QueryClientProvider (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.d…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=5038f6d9:2805:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+chunk-WERSD76P.js?v=5038f6d9:9129 Uncaught Error: Rendered more hooks than during the previous render.
+    at EmployeeGrid (employee-grid.tsx:39:3)

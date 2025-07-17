@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Test</title>
+</head>
+<body>
+    <div id="root">
+        <h1>Debug Test - Direct HTML</h1>
+        <p>This tests if the server is serving static files correctly.</p>
+    </div>
+    <script>
+        console.log('Debug test loaded');
+        // Test fetch to API
+        fetch('/api/auth/me')
+            .then(response => response.json())
+            .then(data => console.log('API Response:', data))
+            .catch(error => console.error('API Error:', error));
+    </script>
+</body>
+</html>

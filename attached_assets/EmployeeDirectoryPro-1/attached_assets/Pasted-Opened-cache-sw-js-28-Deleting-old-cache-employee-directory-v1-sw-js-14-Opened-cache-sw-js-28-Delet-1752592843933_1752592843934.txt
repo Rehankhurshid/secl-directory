@@ -1,0 +1,189 @@
+Opened cache
+sw.js:28 Deleting old cache: employee-directory-v1
+sw.js:14 Opened cache
+sw.js:28 Deleting old cache: employee-directory-v1
+client:536 WebSocket connection to 'wss://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/?token=aasKob-UkGTE' failed: 
+setupWebSocket @ client:536
+(anonymous) @ client:531Understand this error
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=aasKob-UkGTE' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+setupWebSocket @ client:536
+fallback @ client:509
+(anonymous) @ client:555Understand this error
+chunk-WERSD76P.js?v=bceda27e:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+inspector.b9415ea5.js:1 Error: Minified React error #130; visit https://reactjs.org/docs/error-decoder.html?invariant=130&args[]=object&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at lX (inspector.b9415ea5.js:1:127164)
+    at l (inspector.b9415ea5.js:1:68514)
+    at ol (inspector.b9415ea5.js:1:82233)
+    at i (inspector.b9415ea5.js:1:132348)
+    at lM (inspector.b9415ea5.js:1:110198)
+    at inspector.b9415ea5.js:1:110064
+    at lO (inspector.b9415ea5.js:1:110072)
+    at lC (inspector.b9415ea5.js:1:106823)
+    at lw (inspector.b9415ea5.js:1:105378)
+    at C (inspector.b9415ea5.js:1:141367)
+s7 @ inspector.b9415ea5.js:1
+r.callback @ inspector.b9415ea5.js:1
+nW @ inspector.b9415ea5.js:1
+oX @ inspector.b9415ea5.js:1
+e @ inspector.b9415ea5.js:1
+(anonymous) @ inspector.b9415ea5.js:1
+lR @ inspector.b9415ea5.js:1
+lw @ inspector.b9415ea5.js:1
+C @ inspector.b9415ea5.js:1
+T @ inspector.b9415ea5.js:1Understand this error
+inspector.b9415ea5.js:1 Uncaught Error: Minified React error #130; visit https://reactjs.org/docs/error-decoder.html?invariant=130&args[]=object&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at lX (inspector.b9415ea5.js:1:127164)
+    at l (inspector.b9415ea5.js:1:68514)
+    at ol (inspector.b9415ea5.js:1:82233)
+    at i (inspector.b9415ea5.js:1:132348)
+    at lM (inspector.b9415ea5.js:1:110198)
+    at inspector.b9415ea5.js:1:110064
+    at lO (inspector.b9415ea5.js:1:110072)
+    at lC (inspector.b9415ea5.js:1:106823)
+    at lw (inspector.b9415ea5.js:1:105378)
+    at C (inspector.b9415ea5.js:1:141367)
+lX @ inspector.b9415ea5.js:1
+l @ inspector.b9415ea5.js:1
+ol @ inspector.b9415ea5.js:1
+i @ inspector.b9415ea5.js:1
+lM @ inspector.b9415ea5.js:1
+(anonymous) @ inspector.b9415ea5.js:1
+lO @ inspector.b9415ea5.js:1
+lC @ inspector.b9415ea5.js:1
+lw @ inspector.b9415ea5.js:1
+C @ inspector.b9415ea5.js:1
+T @ inspector.b9415ea5.js:1Understand this error
+main.tsx:10 ServiceWorker registration successful: ServiceWorkerRegistration {installing: null, waiting: null, active: ServiceWorker, navigationPreload: NavigationPreloadManager, scope: 'https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/', …}
+websocket.ts:34 WebSocket connected
+03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/:1 <meta name="apple-mobile-web-app-capable" content="yes"> is deprecated. Please include <meta name="mobile-web-app-capable" content="yes">Understand this warning
+@radix-ui_react-dialog.js?v=ca92409a:344 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ @radix-ui_react-dialog.js?v=ca92409a:344
+commitHookEffectListMount @ chunk-WERSD76P.js?v=bceda27e:16915
+commitPassiveMountOnFiber @ chunk-WERSD76P.js?v=bceda27e:18156
+commitPassiveMountEffects_complete @ chunk-WERSD76P.js?v=bceda27e:18129
+commitPassiveMountEffects_begin @ chunk-WERSD76P.js?v=bceda27e:18119
+commitPassiveMountEffects @ chunk-WERSD76P.js?v=bceda27e:18109
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=bceda27e:19490
+flushPassiveEffects @ chunk-WERSD76P.js?v=bceda27e:19447
+commitRootImpl @ chunk-WERSD76P.js?v=bceda27e:19416
+commitRoot @ chunk-WERSD76P.js?v=bceda27e:19277
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=bceda27e:18895
+flushSyncCallbacks @ chunk-WERSD76P.js?v=bceda27e:9119
+(anonymous) @ chunk-WERSD76P.js?v=bceda27e:18627Understand this warning
+6@radix-ui_react-select.js?v=187157d2:875 Uncaught Error: A <Select.Item /> must have a value prop that is not an empty string. This is because the Select value can be set to an empty string to clear the selection and show the placeholder.
+    at @radix-ui_react-select.js?v=187157d2:875:13
+    at renderWithHooks (chunk-WERSD76P.js?v=bceda27e:11548:26)
+    at updateForwardRef (chunk-WERSD76P.js?v=bceda27e:14325:28)
+    at beginWork (chunk-WERSD76P.js?v=bceda27e:15946:22)
+    at HTMLUnknownElement.callCallback2 (chunk-WERSD76P.js?v=bceda27e:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-WERSD76P.js?v=bceda27e:3699:24)
+    at invokeGuardedCallback (chunk-WERSD76P.js?v=bceda27e:3733:39)
+    at beginWork$1 (chunk-WERSD76P.js?v=bceda27e:19765:15)
+    at performUnitOfWork (chunk-WERSD76P.js?v=bceda27e:19198:20)
+    at workLoopSync (chunk-WERSD76P.js?v=bceda27e:19137:13)
+(anonymous) @ @radix-ui_react-select.js?v=187157d2:875
+renderWithHooks @ chunk-WERSD76P.js?v=bceda27e:11548
+updateForwardRef @ chunk-WERSD76P.js?v=bceda27e:14325
+beginWork @ chunk-WERSD76P.js?v=bceda27e:15946
+callCallback2 @ chunk-WERSD76P.js?v=bceda27e:3674
+invokeGuardedCallbackDev @ chunk-WERSD76P.js?v=bceda27e:3699
+invokeGuardedCallback @ chunk-WERSD76P.js?v=bceda27e:3733
+beginWork$1 @ chunk-WERSD76P.js?v=bceda27e:19765
+performUnitOfWork @ chunk-WERSD76P.js?v=bceda27e:19198
+workLoopSync @ chunk-WERSD76P.js?v=bceda27e:19137
+renderRootSync @ chunk-WERSD76P.js?v=bceda27e:19116
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=bceda27e:18874
+flushSyncCallbacks @ chunk-WERSD76P.js?v=bceda27e:9119
+(anonymous) @ chunk-WERSD76P.js?v=bceda27e:18627Understand this error
+6@radix-ui_react-select.js?v=187157d2:875 Uncaught Error: A <Select.Item /> must have a value prop that is not an empty string. This is because the Select value can be set to an empty string to clear the selection and show the placeholder.
+    at @radix-ui_react-select.js?v=187157d2:875:13
+    at renderWithHooks (chunk-WERSD76P.js?v=bceda27e:11548:26)
+    at updateForwardRef (chunk-WERSD76P.js?v=bceda27e:14325:28)
+    at beginWork (chunk-WERSD76P.js?v=bceda27e:15946:22)
+    at HTMLUnknownElement.callCallback2 (chunk-WERSD76P.js?v=bceda27e:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-WERSD76P.js?v=bceda27e:3699:24)
+    at invokeGuardedCallback (chunk-WERSD76P.js?v=bceda27e:3733:39)
+    at beginWork$1 (chunk-WERSD76P.js?v=bceda27e:19765:15)
+    at performUnitOfWork (chunk-WERSD76P.js?v=bceda27e:19198:20)
+    at workLoopSync (chunk-WERSD76P.js?v=bceda27e:19137:13)
+(anonymous) @ @radix-ui_react-select.js?v=187157d2:875
+renderWithHooks @ chunk-WERSD76P.js?v=bceda27e:11548
+updateForwardRef @ chunk-WERSD76P.js?v=bceda27e:14325
+beginWork @ chunk-WERSD76P.js?v=bceda27e:15946
+callCallback2 @ chunk-WERSD76P.js?v=bceda27e:3674
+invokeGuardedCallbackDev @ chunk-WERSD76P.js?v=bceda27e:3699
+invokeGuardedCallback @ chunk-WERSD76P.js?v=bceda27e:3733
+beginWork$1 @ chunk-WERSD76P.js?v=bceda27e:19765
+performUnitOfWork @ chunk-WERSD76P.js?v=bceda27e:19198
+workLoopSync @ chunk-WERSD76P.js?v=bceda27e:19137
+renderRootSync @ chunk-WERSD76P.js?v=bceda27e:19116
+recoverFromConcurrentError @ chunk-WERSD76P.js?v=bceda27e:18736
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=bceda27e:18879
+flushSyncCallbacks @ chunk-WERSD76P.js?v=bceda27e:9119
+(anonymous) @ chunk-WERSD76P.js?v=bceda27e:18627Understand this error
+6chunk-WERSD76P.js?v=bceda27e:14032 The above error occurred in the <SelectItem> component:
+
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-select.js?v=187157d2:848:7
+    at _c11 (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/src/components/ui/select.tsx:208:13)
+    at div
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GCLFTVUM.js?v=bceda27e:42:13
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Z7JUZCUR.js?v=bceda27e:43:13
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Z7JUZCUR.js?v=bceda27e:20:13
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-4ANNF77D.js?v=bceda27e:41:15
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-select.js?v=187157d2:759:13
+    at div
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Z7JUZCUR.js?v=bceda27e:43:13
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Z7JUZCUR.js?v=bceda27e:20:13
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-4ANNF77D.js?v=bceda27e:41:15
+    at Provider (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-IYRVR4LC.js?v=bceda27e:38:15)
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-select.js?v=187157d2:302:58
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Z7JUZCUR.js?v=bceda27e:43:13
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Z7JUZCUR.js?v=bceda27e:20:13
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GCLFTVUM.js?v=bceda27e:42:13
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-BBJNB3QO.js?v=bceda27e:262:22
+    at SelectPortal
+    at _c7 (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/src/components/ui/select.tsx:123:12)
+    at Provider (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-IYRVR4LC.js?v=bceda27e:38:15)
+    at Provider (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-IYRVR4LC.js?v=bceda27e:38:15)
+    at CollectionProvider (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-4ANNF77D.js?v=bceda27e:31:13)
+    at Provider (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-IYRVR4LC.js?v=bceda27e:38:15)
+    at Provider (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-IYRVR4LC.js?v=bceda27e:38:15)
+    at Popper (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-CZGV4ZVO.js?v=bceda27e:1921:11)
+    at Select (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-select.js?v=187157d2:90:5)
+    at div
+    at div
+    at div
+    at div
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GCLFTVUM.js?v=bceda27e:42:13
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-scroll-area.js?v=632bde70:117:13
+    at div
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GCLFTVUM.js?v=bceda27e:42:13
+    at Provider (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-IYRVR4LC.js?v=bceda27e:38:15)
+    at https://0
+logCapturedError @ chunk-WERSD76P.js?v=bceda27e:14032
+update.callback @ chunk-WERSD76P.js?v=bceda27e:14052
+callCallback @ chunk-WERSD76P.js?v=bceda27e:11248
+commitUpdateQueue @ chunk-WERSD76P.js?v=bceda27e:11265
+commitLayoutEffectOnFiber @ chunk-WERSD76P.js?v=bceda27e:17093
+commitLayoutMountEffects_complete @ chunk-WERSD76P.js?v=bceda27e:17980
+commitLayoutEffects_begin @ chunk-WERSD76P.js?v=bceda27e:17969
+commitLayoutEffects @ chunk-WERSD76P.js?v=bceda27e:17920
+commitRootImpl @ chunk-WERSD76P.js?v=bceda27e:19353
+commitRoot @ chunk-WERSD76P.js?v=bceda27e:19277
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=bceda27e:18895
+flushSyncCallbacks @ chunk-WERSD76P.js?v=bceda27e:9119
+(anonymous) @ chunk-WERSD76P.js?v=bceda27e:18627Understand this error
+chunk-WERSD76P.js?v=bceda27e:9129 Uncaught Error: A <Select.Item /> must have a value prop that is not an empty string. This is because the Select value can be set to an empty string to clear the selection and show the placeholder.
+    at @radix-ui_react-select.js?v=187157d2:875:13
+    at renderWithHooks (chunk-WERSD76P.js?v=bceda27e:11548:26)
+    at updateForwardRef (chunk-WERSD76P.js?v=bceda27e:14325:28)
+    at beginWork (chunk-WERSD76P.js?v=bceda27e:15946:22)
+    at beginWork$1 (chunk-WERSD76P.js?v=bceda27e:19753:22)
+    at performUnitOfWork (chunk-WERSD76P.js?v=bceda27e:19198:20)
+    at workLoopSync (chunk-WERSD76P.js?v=bceda27e:19137:13)
+    at renderRootSync (chunk-WERSD76P.js?v=bceda27e:19116:15)
+    at recoverFromConcurrentError (chunk-WERSD76P.js?v=bceda27e:18736:28)
+    at performSyncWorkOnRoot (chunk-WERSD76P.js?v=bceda27e:18879:28)

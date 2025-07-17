@@ -1,0 +1,506 @@
+Skip to content
+DEV Community
+Find related posts...
+Powered by  Algolia
+Log in
+Create account
+
+8
+Jump to Comments
+
+50
+Save
+
+Boost
+
+This Dot profile imagePato
+Pato for This Dot
+Posted on 3 Feb 2020 • Originally published at labs.thisdot.co on 3 Feb 2020
+
+
+48
+
+11
+PWA Push Notifications with Firebase (Cloud Messaging)-Part 1
+#
+javascript
+#
+pwa
+#
+firebase
+pwa (5 Part Series)
+1
+Intro to PWAs and Service Workers
+2
+How To Add Notifications To Your PWA
+3
+PWA Push Notifications with Firebase (Cloud Messaging)-Part 1
+4
+How To Do Social Media Sharing In Your PWA
+5
+How To Create A PWA With JavaScript
+Push Notification In Your PWA
+Have you ever wondered how to add the famous/annoying push notifications to your app? Well, in this tutorial, I'm going to show you how to do it using Firebase Cloud Messaging.
+
+Note: This tutorial requires some basic knowledge on PWAs and Service Workers.
+
+You can take a look at my Intro to PWA and Service Workers here
+
+and about PWA and notifications here.
+
+Before we begin, I need to clarify that the Notification API and the Push API are not the same. People get them confused all of the time.
+
+Push API: The Push API gives web applications the ability to receive messages pushed to them from a server whether or not the web app is in the foreground or currently loaded on a user agent. This lets developers deliver asynchronous notifications and updates to users that opt in resulting in better engagement with timely new content.
+
+Let's do it!!
+The final code is in the FINAL branch inside of the repo.
+
+Clone this repo: https://github.com/devpato/pwa-FCM-notifications-tutorial
+As you can see, I already have the basic structure of the app created for you because we are only going to worry about how to send the messages via push notifications using the Firebsae Cloud Messaging service.
+
+Navigate to the index.html file. Notice I imported Firebase for you:
+
+
+<script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-messaging.js"></script>
+
+
+
+```javascript
+
+1. Navigate to Firebase.com and create an account if you don't have one.
+2. Once you are in the Firebase console, navigate to **project settings** (in case you don't have a project yet - just create it there)
+
+![pwa](http://images.ctfassets.net/zojzzdop0fzx/vuXTv2wM4wO9YpbjoClOV/579fec6d590985fe0ae2757558b36069/Screenshot_2020-01-28_at_12.58.36_AM.png)
+
+1. Inside of project setting, under the **General tab** scroll all the way down to find your **Firebase SDK snippet** (if it's not there yet - this means that you've created a new project and need to add an app there. Either way, this can be done at the same place where you will have your SDK snippet - under the **General tab** ). Copy/paste it in a safe place. The snippet should look like this:
+
+![pwa1](http://images.ctfassets.net/zojzzdop0fzx/VsvuQPZw8Pjk7UWd6PVra/c58e6b56636355ecca92e91d2e8af468/Screenshot_2020-01-28_at_1.08.28_AM.png)
+
+1. Go to your **index.js** file and copy/paste the following after the global variables that I have declared for you. Replace it with your project's customized code - the snippet from step 4.
+
+```javascript
+
+
+const config = {
+  apiKey: "XXXXXXXXXXXXXXX",
+  authDomain: "XXXXXXXXXXXXXXX",
+  databaseURL: "XXXXXXXXXXXXXXX",
+  projectId: "XXXXXXXXXXXXXXX",
+  storageBucket: "XXXXXXXXXXXXXXX",
+  messagingSenderId: "XXXXXXXXXXXXXXX",
+  appId: "XXXXXXXXXXXXXXX",
+  measurementId: "XXXXXXXXXXXXXXX"
+};
+
+
+
+```javascript
+
+1. Right after - initialize the firebase instance.
+
+```javascript
+
+
+firebase.initializeApp(config);
+
+
+
+Then, we are going to create a constant called messaging and will set it to firebase messaging service.
+
+
+const messaging = firebase.messaging();
+
+
+
+Time to request permission from firebase cloud messaging. Once we get the thumbs up, they will give us a token as a promise.
+
+
+messaging
+  .requestPermission()
+  .then(() => {
+    message.innerHTML = "Notifications allowed";
+    return messaging.getToken();
+  })
+  .then(token => {
+    tokenString.innerHTML = "Token Is : " + token;
+  })
+  .catch(err => {
+    errorMessage.innerHTML = errorMessage.innerHTML + "; " + err;
+    console.log("No permission to send push", err);
+  });
+
+
+
+Then, we are going to use the messaging.onMessage() method. This is used for receiving data and notification payloads by all users that are currently viewing the page (the page is in the foreground).
+To do so, we add the following code:
+
+
+
+messaging.onMessage(payload => {
+  console.log("Message received. ", payload);
+  const { title, ...options } = payload.notification;
+});
+
+
+
+Notice a firebase-messaging-sw.js file. This file name is going to be searched by the Firebase SDK. The file needs to be in the ROOT of your project. The Firebase SDK will do some magic in the background to register the file as a service worker.
+Inside of your firebase-messaging-sw.js, initialize the Firebase app by passing in the messagingSenderId. The sender ID can be found inside of your project settings as the following image shows.
+Screenshot 2020-01-28 at 1.35.19 AM
+
+
+
+firebase.initializeApp({
+  messagingSenderId: "XXXXXXX"
+});
+
+
+
+Retrieve an instance of Firebase Messaging so that it can handle background messages.
+
+
+const messaging = firebase.messaging();
+
+
+
+```javascript
+
+1. Background message handler (this one will be invoked when the page is in the background)
+
+```javascript
+
+
+messaging.setBackgroundMessageHandler(payload => {
+  const notification = JSON.parse(payload.data.notification);
+  const notificationTitle = notification.title;
+  const notificationOptions = {
+    body: notification.body
+  };
+  //Show the notification :)
+  return self.registration.showNotification(
+    notificationTitle,
+    notificationOptions
+  );
+});
+
+
+
+Test The Notification
+Run the app using any http server
+Inside of your Cloud Messaging settings (a tab in the Firebase Console > Project Settings) copy the server key.
+Screenshot 2020-01-28 at 1.35.19 AM
+
+If you have a Postman http client, do the following:
+Screenshot 2020-01-28 at 1.40.09 AM
+
+POST URL:* https://fcm.googleapis.com/fcm/send *
+
+HEADERS:
+Content-Type - application/json
+
+Authorization - key=server_key
+
+BODY:
+
+
+
+{
+    "notification": {
+        "title": "Testing Notification!",
+        "body": "Firebase is awesome",
+        "click_action": "http://127.0.0.1:5501/index.html",
+        "icon": "http://the-link-to-image/icon.png"
+    },
+    "to": "YOUR TOKEN GOES HERE"
+}
+
+
+
+Then, click the Send button. At this point, if our app is in the foreground (it is currently opened tab in your browser) then you'll see the message we've sent in the console - handled by messaging.onMessage.
+
+But if it is in the background, it will be handled by messaging.setBackgroundMessageHandler in the service worker and you'll see something like this:
+
+Screenshot 2020-01-28 at 1.45.48 AM
+
+Test your app on a real device by deploying to Firebase or any other hosting provider. If you want to host your app on the Firebase - take a look at my other tutorial.
+
+In the next tutorials, I will show you how to successfully subscribe to notifications and push them using the Firebase console.
+
+This Dot Inc. is a consulting company which contains two branches: the media stream, and labs stream. This Dot Media is the portion responsible for keeping developers up to date with advancements in the web platform. This Dot Labs provides teams with web platform expertise, using methods such as mentoring and training.
+
+pwa (5 Part Series)
+1
+Intro to PWAs and Service Workers
+2
+How To Add Notifications To Your PWA
+3
+PWA Push Notifications with Firebase (Cloud Messaging)-Part 1
+4
+How To Do Social Media Sharing In Your PWA
+5
+How To Create A PWA With JavaScript
+profile
+LaunchDarkly
+Promoted
+
+Feature flag article image
+
+Create a feature flag in your IDE in 5 minutes with LaunchDarkly’s MCP server ⏰
+How to create, evaluate, and modify flags from within your IDE or AI client using natural language with LaunchDarkly's new MCP server. Follow along with this tutorial for step by step instructions.
+
+Read full post
+
+Top comments (8)
+Subscribe
+pic
+Add to the discussion
+ 
+ 
+_nsvetlanav_ profile image
+Наговицына Светлана
+•
+5 May 20 • Edited on 5 May
+
+Help me please. I did everything according to the instructions. A window appears with the text allow or block notifications. I click on allow or block, an error appears in the console
+dev-to-uploads.s3.amazonaws.com/i/...
+
+
+2
+ likes
+Like
+
+Reply
+ 
+ 
+akattack profile image
+AkAttack
+•
+28 May 21
+
+you need to check your html file and make sure that the -->
+
+
+
+
+is present, then check your index.js file and make sure you see -->
+
+const errorMessage = document.getElementById("error");
+
+Like
+
+Reply
+ 
+ 
+orimdominic profile image
+Orim Dominic Adah
+•
+17 Feb 20 • Edited on 17 Feb
+
+Thanks man! I got stressed at one other tutorial I was using. This was well explained. I was able to achieve my goal reading and following through with this.
+Thanks again.
+
+One thing though, you can style the code in your markdown by typing the language e.g javascript, typescript, after the first triple quotes. For example
+'''javascript. It helps with readability
+
+
+2
+ likes
+Like
+
+Reply
+ 
+ 
+joakflores profile image
+Joak
+•
+2 Mar 21
+
+Hi, thanks for share.
+I have some issues, could you help me please?
+
+I have tried with CDN
+
+In the line
+firebase.initializeApp(config);
+
+I have gotten the error "firebase is not defined
+
+So, I copied the 2 files (firebase-apps.js & firebase-messaging.js into my carpet js and I have gotten the same error.
+
+what's wrong?
+
+
+1
+ like
+Like
+
+Reply
+ 
+ 
+devpato profile image
+Pato 
+•
+2 Mar 21
+
+Can you send me a link to your repo?
+
+
+1
+ like
+Like
+
+Reply
+ 
+ 
+joakflores profile image
+Joak
+•
+3 Mar 21
+
+Maybe I found the error, please give me if I'm right ....
+
+1) This code has to be on service worker, right?
+var firebaseConfig = {
+apiKey: "xxxxx",
+authDomain: "xxxxx",
+databaseURL: "xxxxx",
+projectId: "xxxxx",
+storageBucket: "xxxxx",
+messagingSenderId: "xxxxx",
+appId: "xxxxx",
+measurementId: ""
+};
+firebase.initializeApp(firebaseConfig);
+
+2) Firebase seek a specific service worker name in the app? , I have one with the name sw.js, that name works?
+
+Regards
+
+
+1
+ like
+Like
+
+Reply
+ 
+ 
+after_ui profile image
+After UI
+•
+23 May 20
+
+Hi, I have two environment staging and production, how do I make this service worker use the correct firebase config based on environment? i try with import xxx from '../myFirebaseConfig' and process.env but it doesnt work in a public folder.
+
+importScripts('gstatic.com/firebasejs/7.14.5/fire...)
+importScripts('gstatic.com/firebasejs/7.14.5/fire...)
+
+firebase.initializeApp({
+apiKey: ‘xxx’,
+authDomain: ‘xxx’,
+databaseURL: ‘xxxx’,
+projectId: ‘xxx’,
+storageBucket: ‘xxxx’,
+messagingSenderId: ‘xxxx’,
+appId: ‘xxxxx’,
+measurementId: ‘xxxx’
+})
+
+const messaging = firebase.messaging()
+..
+…
+…. other code
+
+
+1
+ like
+Like
+
+Reply
+Some comments may only be visible to logged-in visitors. Sign in to view all comments.
+
+Code of Conduct • Report abuse
+profile
+AWS
+Promoted
+
+AWS Q Developer image
+
+What is MCP? No, Really!
+See MCP in action and explore how MCP decouples agents from servers, allowing for seamless integration with cloud-based resources and remote functionality.
+
+Watch the demo
+
+Read next
+jovin_george_733dcfc16291 profile image
+Is GPT-5 Arriving This Summer? What the AI World Is Whispering
+jovin george - Jul 8
+
+jpoehnelt profile image
+Update to Apps Script advanced services, Sheets API, and more!
+Justin Poehnelt - Jul 8
+
+himanayk profile image
+React Router
+Himanay Khajuria - Jul 8
+
+travis-mccracken-dev profile image
+Web Developer Travis McCracken on Automated Testing for Backend Devs
+Travis McCracken Web Developer - Jul 8
+
+
+This Dot
+Follow
+More from This Dot
+Exploring Angular Forms: A New Alternative with Signals
+#angular #javascript
+The HTML Dialog Element: Enhancing Accessibility and Ease of Use
+#html #javascript
+Using PartyTown to improve the performance of VueJS Applications
+#performance #javascript #vue #partytow
+profile
+MongoDB
+Promoted
+
+MongoDB Atlas runs apps anywhere. Try it now.
+
+MongoDB Atlas runs apps anywhere. Try it now.
+MongoDB Atlas lets you build and run modern apps anywhere—across AWS, Azure, and Google Cloud. With availability in 115+ regions, deploy near users, meet compliance, and scale confidently worldwide.
+
+Start Free
+
+💎 DEV Diamond Sponsors
+
+Thank you to our Diamond Sponsors for supporting the DEV Community
+
+Google AI - Official AI Model and Platform Partner
+Google AI is the official AI Model and Platform Partner of DEV
+
+Neon - Official Database Partner
+Neon is the official database partner of DEV
+
+Algolia - Official Search Partner
+Algolia is the official search partner of DEV
+
+DEV Community — A space to discuss and keep up software development and manage your software career
+
+Home
+DEV++
+Podcasts
+Videos
+Tags
+DEV Education Tracks
+DEV Challenges
+DEV Help
+Advertise on DEV
+DEV Showcase
+About
+Contact
+Free Postgres Database
+Software comparisons
+Forem Shop
+Code of Conduct
+Privacy Policy
+Terms of use
+Built on Forem — the open source software that powers DEV and other inclusive communities.
+
+Made with love and Ruby on Rails. DEV Community © 2016 - 2025.

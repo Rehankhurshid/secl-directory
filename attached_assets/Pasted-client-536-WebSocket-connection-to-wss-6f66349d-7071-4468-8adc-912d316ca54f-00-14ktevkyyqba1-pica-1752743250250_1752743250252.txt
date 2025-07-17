@@ -1,0 +1,130 @@
+client:536 WebSocket connection to 'wss://6f66349d-7071-4468-8adc-912d316ca54f-00-14ktevkyyqba1.picard.replit.dev/?token=ABSW6K-HOieW' failed: 
+setupWebSocket @ client:536
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=ABSW6K-HOieW' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+chunk-RPCDYKBN.js?v=b371dc7e:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+inspector.b9415ea5.js:1 Error: Minified React error #130; visit https://reactjs.org/docs/error-decoder.html?invariant=130&args[]=object&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at lX (inspector.b9415ea5.js:1:127164)
+    at l (inspector.b9415ea5.js:1:68514)
+    at ol (inspector.b9415ea5.js:1:82233)
+    at i (inspector.b9415ea5.js:1:132348)
+    at lM (inspector.b9415ea5.js:1:110198)
+    at inspector.b9415ea5.js:1:110064
+    at lO (inspector.b9415ea5.js:1:110072)
+    at lC (inspector.b9415ea5.js:1:106823)
+    at lw (inspector.b9415ea5.js:1:105378)
+    at C (inspector.b9415ea5.js:1:141367)
+s7 @ inspector.b9415ea5.js:1
+inspector.b9415ea5.js:1 Uncaught Error: Minified React error #130; visit https://reactjs.org/docs/error-decoder.html?invariant=130&args[]=object&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at lX (inspector.b9415ea5.js:1:127164)
+    at l (inspector.b9415ea5.js:1:68514)
+    at ol (inspector.b9415ea5.js:1:82233)
+    at i (inspector.b9415ea5.js:1:132348)
+    at lM (inspector.b9415ea5.js:1:110198)
+    at inspector.b9415ea5.js:1:110064
+    at lO (inspector.b9415ea5.js:1:110072)
+    at lC (inspector.b9415ea5.js:1:106823)
+    at lw (inspector.b9415ea5.js:1:105378)
+    at C (inspector.b9415ea5.js:1:141367)
+messaging:67 SW registered:  ServiceWorkerRegistration
+messaging:1 <meta name="apple-mobile-web-app-capable" content="yes"> is deprecated. Please include <meta name="mobile-web-app-capable" content="yes">
+use-auth.ts:55 Authentication successful: System Administrator
+simple-messaging-dashboard.tsx:157 === DEBUG INFO ===
+simple-messaging-dashboard.tsx:158 Current user: undefined
+simple-messaging-dashboard.tsx:159 Employee ID: ADMIN001
+simple-messaging-dashboard.tsx:160 Employees: 0
+simple-messaging-dashboard.tsx:161 Session token: Present
+simple-messaging-dashboard.tsx:162 Groups: 0
+simple-messaging-dashboard.tsx:163 First few employees: Array(0)
+simple-messaging-dashboard.tsx:164 ==================
+simple-messaging-dashboard.tsx:157 === DEBUG INFO ===
+simple-messaging-dashboard.tsx:158 Current user: undefined
+simple-messaging-dashboard.tsx:159 Employee ID: ADMIN001
+simple-messaging-dashboard.tsx:160 Employees: 0
+simple-messaging-dashboard.tsx:161 Session token: Present
+simple-messaging-dashboard.tsx:162 Groups: 0
+simple-messaging-dashboard.tsx:163 First few employees: Array(0)
+simple-messaging-dashboard.tsx:164 ==================
+simple-messaging-dashboard.tsx:157 === DEBUG INFO ===
+simple-messaging-dashboard.tsx:158 Current user: undefined
+simple-messaging-dashboard.tsx:159 Employee ID: ADMIN001
+simple-messaging-dashboard.tsx:160 Employees: 0
+simple-messaging-dashboard.tsx:161 Session token: Present
+simple-messaging-dashboard.tsx:162 Groups: 0
+simple-messaging-dashboard.tsx:163 First few employees: Array(0)
+simple-messaging-dashboard.tsx:164 ==================
+simple-messaging-dashboard.tsx:191 Uncaught ReferenceError: Bell is not defined
+    at SimpleMessagingDashboard (simple-messaging-dashboard.tsx:191:31)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=b371dc7e:11548:26)
+    at updateFunctionComponent (chunk-RPCDYKBN.js?v=b371dc7e:14582:28)
+    at beginWork (chunk-RPCDYKBN.js?v=b371dc7e:15924:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=b371dc7e:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=b371dc7e:3699:24)
+    at invokeGuardedCallback (chunk-RPCDYKBN.js?v=b371dc7e:3733:39)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=b371dc7e:19765:15)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=b371dc7e:19198:20)
+    at workLoopSync (chunk-RPCDYKBN.js?v=b371dc7e:19137:13)
+simple-messaging-dashboard.tsx:157 === DEBUG INFO ===
+simple-messaging-dashboard.tsx:158 Current user: undefined
+simple-messaging-dashboard.tsx:159 Employee ID: ADMIN001
+simple-messaging-dashboard.tsx:160 Employees: 0
+simple-messaging-dashboard.tsx:161 Session token: Present
+simple-messaging-dashboard.tsx:162 Groups: 0
+simple-messaging-dashboard.tsx:163 First few employees: Array(0)
+simple-messaging-dashboard.tsx:164 ==================
+simple-messaging-dashboard.tsx:157 === DEBUG INFO ===
+simple-messaging-dashboard.tsx:158 Current user: undefined
+simple-messaging-dashboard.tsx:159 Employee ID: ADMIN001
+simple-messaging-dashboard.tsx:160 Employees: 0
+simple-messaging-dashboard.tsx:161 Session token: Present
+simple-messaging-dashboard.tsx:162 Groups: 0
+simple-messaging-dashboard.tsx:163 First few employees: Array(0)
+simple-messaging-dashboard.tsx:164 ==================
+simple-messaging-dashboard.tsx:191 Uncaught ReferenceError: Bell is not defined
+    at SimpleMessagingDashboard (simple-messaging-dashboard.tsx:191:31)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=b371dc7e:11548:26)
+    at updateFunctionComponent (chunk-RPCDYKBN.js?v=b371dc7e:14582:28)
+    at beginWork (chunk-RPCDYKBN.js?v=b371dc7e:15924:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=b371dc7e:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=b371dc7e:3699:24)
+    at invokeGuardedCallback (chunk-RPCDYKBN.js?v=b371dc7e:3733:39)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=b371dc7e:19765:15)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=b371dc7e:19198:20)
+    at workLoopSync (chunk-RPCDYKBN.js?v=b371dc7e:19137:13)
+chunk-RPCDYKBN.js?v=b371dc7e:14032 The above error occurred in the <SimpleMessagingDashboard> component:
+
+    at SimpleMessagingDashboard (https://6f66349d-7071-4468-8adc-912d316ca54f-00-14ktevkyyqba1.picard.replit.dev/src/components/messaging/simple-messaging-dashboard.tsx?t=1752742904856:37:3)
+    at MessagingPage (https://6f66349d-7071-4468-8adc-912d316ca54f-00-14ktevkyyqba1.picard.replit.dev/src/pages/messaging.tsx?t=1752742904856:26:41)
+    at ProtectedRoute (https://6f66349d-7071-4468-8adc-912d316ca54f-00-14ktevkyyqba1.picard.replit.dev/src/components/auth/protected-route.tsx:22:34)
+    at Route (https://6f66349d-7071-4468-8adc-912d316ca54f-00-14ktevkyyqba1.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=b371dc7e:323:16)
+    at Switch (https://6f66349d-7071-4468-8adc-912d316ca54f-00-14ktevkyyqba1.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=b371dc7e:379:17)
+    at Router (https://6f66349d-7071-4468-8adc-912d316ca54f-00-14ktevkyyqba1.picard.replit.dev/src/App.tsx?t=1752742904856&v=3zRb7JCNpiroBzANYskC1:36:35)
+    at div
+    at Provider (https://6f66349d-7071-4468-8adc-912d316ca54f-00-14ktevkyyqba1.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5AJU3CG7.js?v=b371dc7e:38:15)
+    at TooltipProvider (https://6f66349d-7071-4468-8adc-912d316ca54f-00-14ktevkyyqba1.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=b371dc7e:63:5)
+    at QueryClientProvider (https://6f66349d-7071-4468-8adc-912d316ca54f-00-14ktevkyyqba1.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=b371dc7e:2805:3)
+    at ThemeProvider (https://6f66349d-7071-4468-8adc-912d316ca54f-00-14ktevkyyqba1.picard.replit.dev/src/components/theme-provider.tsx:25:3)
+    at App (https://6f66349d-7071-4468-8adc-912d316ca54f-00-14ktevkyyqba1.picard.replit.dev/src/App.tsx?t=1752742904856&v=3zRb7JCNpiroBzANYskC1:116:49)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-RPCDYKBN.js?v=b371dc7e:14032
+chunk-RPCDYKBN.js?v=b371dc7e:19413 Uncaught ReferenceError: Bell is not defined
+    at SimpleMessagingDashboard (simple-messaging-dashboard.tsx:191:31)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=b371dc7e:11548:26)
+    at updateFunctionComponent (chunk-RPCDYKBN.js?v=b371dc7e:14582:28)
+    at beginWork (chunk-RPCDYKBN.js?v=b371dc7e:15924:22)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=b371dc7e:19753:22)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=b371dc7e:19198:20)
+    at workLoopSync (chunk-RPCDYKBN.js?v=b371dc7e:19137:13)
+    at renderRootSync (chunk-RPCDYKBN.js?v=b371dc7e:19116:15)
+    at recoverFromConcurrentError (chunk-RPCDYKBN.js?v=b371dc7e:18736:28)
+    at performConcurrentWorkOnRoot (chunk-RPCDYKBN.js?v=b371dc7e:18684:30)
+api/employees/[object%20Object]:1  Failed to load resource: the server responded with a status of 400 (Bad Request)
+sw.js:10 Service Worker installing - no caching strategy
+sw.js:14 Only caching essential assets
+sw.js:23 Service Worker activating - clearing old caches
+sw.js:29 Deleting old cache: secl-employee-directory-v9
+sw.js:35 Service Worker activated - claiming clients

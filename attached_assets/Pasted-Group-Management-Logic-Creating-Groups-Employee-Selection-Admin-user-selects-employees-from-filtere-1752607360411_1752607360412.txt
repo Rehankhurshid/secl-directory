@@ -1,0 +1,88 @@
+Group Management Logic
+Creating Groups
+Employee Selection: Admin/user selects employees from filtered list
+Group Creation: System creates group with name and member list
+Member Assignment: Links selected employees to the group
+Access Control: Only group members can see messages
+Group Access
+Creator Access: Group creator can always access
+Member Access: Only selected employees can view/participate
+Shared Visibility: All group members see the same messages
+Message Flow Logic
+Sending Messages
+Authentication: Verify user session and group membership
+Message Creation: Store message with sender info and timestamp
+WebSocket Broadcast: Send message to all online group members
+Database Storage: Persist message for offline users
+Receiving Messages
+Real-Time Delivery: Active users receive messages instantly via WebSocket
+Native Notifications: Browser push notifications for new messages
+Message History: Offline users see messages when they return
+Toast Fallback: In-app notifications as backup
+WebSocket Connection Logic
+Connection Setup
+Protocol Detection: Uses WSS for HTTPS, WS for HTTP
+Session Verification: Validates user session before connection
+Group Subscription: User joins their groups for message delivery
+Connection Tracking: Server maintains active connection map
+Message Broadcasting
+Group Filtering: Only sends messages to relevant group members
+Connection Status: Checks if WebSocket is open before sending
+Real-Time Updates: Updates message lists instantly
+Error Handling: Graceful handling of connection failures
+Notification System Logic
+Native Browser Notifications
+Permission Request: Asks user for notification permission
+Message Alerts: Shows sender name and message preview
+Click Actions: Opens app to specific group/message
+Notification Management: Prevents spam with message grouping
+In-App Notifications
+Toast Messages: Shows brief message preview
+Badge Indicators: Shows unread message count
+Real-Time Updates: Updates UI immediately when messages arrive
+Visual Feedback: Highlights new messages and groups
+Filtering and Employee Selection
+Smart Filtering
+Multi-Criteria Search: Filter by department, grade, category, gender, blood group
+Real-Time Search: Debounced search with instant results
+Bulk Selection: Select all employees matching filters
+Dynamic Counts: Shows how many employees match each filter
+Group Member Selection
+Checkbox Interface: Individual employee selection
+Select All: Bulk selection for filtered results
+Search Integration: Find specific employees quickly
+Visual Feedback: Clear indication of selected members
+Security and Access Control
+Authentication
+Session Validation: All API calls require valid session
+User Verification: Checks user exists and is active
+Employee Lookup: Links user sessions to employee data
+Authorization
+Group Membership: Only members can view/send messages
+Creator Rights: Group creators have full access
+Message Access: Users can only access their group messages
+User Experience Flow
+Creating and Messaging
+Open Notification Panel: Click bell icon to open chat interface
+Create Group: Select "Create Group" and choose employees
+Filter Employees: Use search and filters to find team members
+Send Messages: Type message and send to group
+Real-Time Chat: Messages appear instantly for all members
+Receiving and Responding
+Notification Alert: Browser notification shows new message
+In-App Update: Message appears in chat interface
+Group Selection: Click group to view conversation
+Reply Messages: Type and send responses
+Message History: Scroll through previous conversations
+Technical Features
+Performance Optimizations
+Debounced Search: Prevents excessive API calls
+Query Caching: Stores frequently accessed data
+Lazy Loading: Loads messages only when needed
+Connection Pooling: Efficient WebSocket management
+Error Handling
+Connection Failures: Graceful WebSocket reconnection
+Message Delivery: Retry failed message sends
+Authentication Errors: Clear error messages for users
+Network Issues: Offline/online state detection
+This system provides a comprehensive group messaging and notification platform that works seamlessly across devices with real-time updates, native notifications, and intelligent employee selection.

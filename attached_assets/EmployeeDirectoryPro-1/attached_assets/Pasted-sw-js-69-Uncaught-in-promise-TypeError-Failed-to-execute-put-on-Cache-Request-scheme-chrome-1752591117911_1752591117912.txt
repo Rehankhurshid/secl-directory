@@ -1,0 +1,284 @@
+sw.js:69 Uncaught (in promise) TypeError: Failed to execute 'put' on 'Cache': Request scheme 'chrome-extension' is unsupported
+    at sw.js:69:21Understand this error
+client:536 WebSocket connection to 'wss://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/?token=wdrXOnO8hTBf' failed: 
+setupWebSocket @ client:536Understand this error
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=wdrXOnO8hTBf' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)Understand this error
+chunk-WERSD76P.js?v=5038f6d9:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+App.tsx:16 AuthWrapper state: {isAuthenticated: false, isLoading: true, user: undefined, token: '945a0iltgmhhlxjtvng9gm'}
+inspector.b9415ea5.js:1 Error: Minified React error #130; visit https://reactjs.org/docs/error-decoder.html?invariant=130&args[]=object&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at lX (inspector.b9415ea5.js:1:127164)
+    at l (inspector.b9415ea5.js:1:68514)
+    at ol (inspector.b9415ea5.js:1:82233)
+    at i (inspector.b9415ea5.js:1:132348)
+    at lM (inspector.b9415ea5.js:1:110198)
+    at inspector.b9415ea5.js:1:110064
+    at lO (inspector.b9415ea5.js:1:110072)
+    at lC (inspector.b9415ea5.js:1:106823)
+    at lw (inspector.b9415ea5.js:1:105378)
+    at C (inspector.b9415ea5.js:1:141367)
+s7 @ inspector.b9415ea5.js:1
+r.callback @ inspector.b9415ea5.js:1
+nW @ inspector.b9415ea5.js:1
+oX @ inspector.b9415ea5.js:1
+e @ inspector.b9415ea5.js:1
+(anonymous) @ inspector.b9415ea5.js:1
+lR @ inspector.b9415ea5.js:1
+lw @ inspector.b9415ea5.js:1
+C @ inspector.b9415ea5.js:1
+T @ inspector.b9415ea5.js:1Understand this error
+inspector.b9415ea5.js:1 Uncaught Error: Minified React error #130; visit https://reactjs.org/docs/error-decoder.html?invariant=130&args[]=object&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at lX (inspector.b9415ea5.js:1:127164)
+    at l (inspector.b9415ea5.js:1:68514)
+    at ol (inspector.b9415ea5.js:1:82233)
+    at i (inspector.b9415ea5.js:1:132348)
+    at lM (inspector.b9415ea5.js:1:110198)
+    at inspector.b9415ea5.js:1:110064
+    at lO (inspector.b9415ea5.js:1:110072)
+    at lC (inspector.b9415ea5.js:1:106823)
+    at lw (inspector.b9415ea5.js:1:105378)
+    at C (inspector.b9415ea5.js:1:141367)
+lX @ inspector.b9415ea5.js:1
+l @ inspector.b9415ea5.js:1
+ol @ inspector.b9415ea5.js:1
+i @ inspector.b9415ea5.js:1
+lM @ inspector.b9415ea5.js:1
+(anonymous) @ inspector.b9415ea5.js:1
+lO @ inspector.b9415ea5.js:1
+lC @ inspector.b9415ea5.js:1
+lw @ inspector.b9415ea5.js:1
+C @ inspector.b9415ea5.js:1
+T @ inspector.b9415ea5.js:1Understand this error
+main.tsx:10 ServiceWorker registration successful: ServiceWorkerRegistration {installing: null, waiting: null, active: ServiceWorker, navigationPreload: NavigationPreloadManager, scope: 'https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/', …}
+App.tsx:16 AuthWrapper state: {isAuthenticated: true, isLoading: false, user: {…}, token: '945a0iltgmhhlxjtvng9gm'}
+App.tsx:31 AuthWrapper rendering children for authenticated user: Rehan Khurshid
+dashboard.tsx:20 Dashboard rendered with user: {id: '515cae0c-65bd-4bdf-ad85-085f98a9dc94', employeeId: 'ADMIN001', name: 'Rehan Khurshid', email: 'rehan.khurshid@company.com', designation: 'System Administrator', …}
+employee-grid.tsx:24 EmployeeGrid state: {data: undefined, isLoading: true, error: null, searchQuery: '', filters: {…}, …}
+2@radix-ui_react-select.js?v=5038f6d9:882 Uncaught Error: A <Select.Item /> must have a value prop that is not an empty string. This is because the Select value can be set to an empty string to clear the selection and show the placeholder.
+    at @radix-ui_react-select.js?v=5038f6d9:882:13
+    at renderWithHooks (chunk-WERSD76P.js?v=5038f6d9:11548:26)
+    at updateForwardRef (chunk-WERSD76P.js?v=5038f6d9:14325:28)
+    at beginWork (chunk-WERSD76P.js?v=5038f6d9:15946:22)
+    at HTMLUnknownElement.callCallback2 (chunk-WERSD76P.js?v=5038f6d9:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-WERSD76P.js?v=5038f6d9:3699:24)
+    at invokeGuardedCallback (chunk-WERSD76P.js?v=5038f6d9:3733:39)
+    at beginWork$1 (chunk-WERSD76P.js?v=5038f6d9:19765:15)
+    at performUnitOfWork (chunk-WERSD76P.js?v=5038f6d9:19198:20)
+    at workLoopSync (chunk-WERSD76P.js?v=5038f6d9:19137:13)
+(anonymous) @ @radix-ui_react-select.js?v=5038f6d9:882
+renderWithHooks @ chunk-WERSD76P.js?v=5038f6d9:11548
+updateForwardRef @ chunk-WERSD76P.js?v=5038f6d9:14325
+beginWork @ chunk-WERSD76P.js?v=5038f6d9:15946
+callCallback2 @ chunk-WERSD76P.js?v=5038f6d9:3674
+invokeGuardedCallbackDev @ chunk-WERSD76P.js?v=5038f6d9:3699
+invokeGuardedCallback @ chunk-WERSD76P.js?v=5038f6d9:3733
+beginWork$1 @ chunk-WERSD76P.js?v=5038f6d9:19765
+performUnitOfWork @ chunk-WERSD76P.js?v=5038f6d9:19198
+workLoopSync @ chunk-WERSD76P.js?v=5038f6d9:19137
+renderRootSync @ chunk-WERSD76P.js?v=5038f6d9:19116
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=5038f6d9:18874
+flushSyncCallbacks @ chunk-WERSD76P.js?v=5038f6d9:9119
+(anonymous) @ chunk-WERSD76P.js?v=5038f6d9:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=5038f6d9:555
+flush @ @tanstack_react-query.js?v=5038f6d9:569
+batch @ @tanstack_react-query.js?v=5038f6d9:587
+dispatch_fn @ @tanstack_react-query.js?v=5038f6d9:996
+setData @ @tanstack_react-query.js?v=5038f6d9:696
+onSuccess @ @tanstack_react-query.js?v=5038f6d9:897
+resolve @ @tanstack_react-query.js?v=5038f6d9:456
+Promise.then
+run @ @tanstack_react-query.js?v=5038f6d9:498
+start @ @tanstack_react-query.js?v=5038f6d9:536
+fetch @ @tanstack_react-query.js?v=5038f6d9:926
+executeFetch_fn @ @tanstack_react-query.js?v=5038f6d9:2211
+onSubscribe @ @tanstack_react-query.js?v=5038f6d9:1898
+subscribe @ @tanstack_react-query.js?v=5038f6d9:24
+(anonymous) @ @tanstack_react-query.js?v=5038f6d9:3022
+subscribeToStore @ chunk-WERSD76P.js?v=5038f6d9:11984
+commitHookEffectListMount @ chunk-WERSD76P.js?v=5038f6d9:16915
+commitPassiveMountOnFiber @ chunk-WERSD76P.js?v=5038f6d9:18156
+commitPassiveMountEffects_complete @ chunk-WERSD76P.js?v=5038f6d9:18129
+commitPassiveMountEffects_begin @ chunk-WERSD76P.js?v=5038f6d9:18119
+commitPassiveMountEffects @ chunk-WERSD76P.js?v=5038f6d9:18109
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=5038f6d9:19490
+flushPassiveEffects @ chunk-WERSD76P.js?v=5038f6d9:19447
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=5038f6d9:18868
+flushSyncCallbacks @ chunk-WERSD76P.js?v=5038f6d9:9119
+commitRootImpl @ chunk-WERSD76P.js?v=5038f6d9:19432
+commitRoot @ chunk-WERSD76P.js?v=5038f6d9:19277
+finishConcurrentRender @ chunk-WERSD76P.js?v=5038f6d9:18805
+performConcurrentWorkOnRoot @ chunk-WERSD76P.js?v=5038f6d9:18718
+workLoop @ chunk-WERSD76P.js?v=5038f6d9:197
+flushWork @ chunk-WERSD76P.js?v=5038f6d9:176
+performWorkUntilDeadline @ chunk-WERSD76P.js?v=5038f6d9:384Understand this error
+dashboard.tsx:20 Dashboard rendered with user: {id: '515cae0c-65bd-4bdf-ad85-085f98a9dc94', employeeId: 'ADMIN001', name: 'Rehan Khurshid', email: 'rehan.khurshid@company.com', designation: 'System Administrator', …}
+2@radix-ui_react-select.js?v=5038f6d9:882 Uncaught Error: A <Select.Item /> must have a value prop that is not an empty string. This is because the Select value can be set to an empty string to clear the selection and show the placeholder.
+    at @radix-ui_react-select.js?v=5038f6d9:882:13
+    at renderWithHooks (chunk-WERSD76P.js?v=5038f6d9:11548:26)
+    at updateForwardRef (chunk-WERSD76P.js?v=5038f6d9:14325:28)
+    at beginWork (chunk-WERSD76P.js?v=5038f6d9:15946:22)
+    at HTMLUnknownElement.callCallback2 (chunk-WERSD76P.js?v=5038f6d9:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-WERSD76P.js?v=5038f6d9:3699:24)
+    at invokeGuardedCallback (chunk-WERSD76P.js?v=5038f6d9:3733:39)
+    at beginWork$1 (chunk-WERSD76P.js?v=5038f6d9:19765:15)
+    at performUnitOfWork (chunk-WERSD76P.js?v=5038f6d9:19198:20)
+    at workLoopSync (chunk-WERSD76P.js?v=5038f6d9:19137:13)
+(anonymous) @ @radix-ui_react-select.js?v=5038f6d9:882
+renderWithHooks @ chunk-WERSD76P.js?v=5038f6d9:11548
+updateForwardRef @ chunk-WERSD76P.js?v=5038f6d9:14325
+beginWork @ chunk-WERSD76P.js?v=5038f6d9:15946
+callCallback2 @ chunk-WERSD76P.js?v=5038f6d9:3674
+invokeGuardedCallbackDev @ chunk-WERSD76P.js?v=5038f6d9:3699
+invokeGuardedCallback @ chunk-WERSD76P.js?v=5038f6d9:3733
+beginWork$1 @ chunk-WERSD76P.js?v=5038f6d9:19765
+performUnitOfWork @ chunk-WERSD76P.js?v=5038f6d9:19198
+workLoopSync @ chunk-WERSD76P.js?v=5038f6d9:19137
+renderRootSync @ chunk-WERSD76P.js?v=5038f6d9:19116
+recoverFromConcurrentError @ chunk-WERSD76P.js?v=5038f6d9:18736
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=5038f6d9:18879
+flushSyncCallbacks @ chunk-WERSD76P.js?v=5038f6d9:9119
+(anonymous) @ chunk-WERSD76P.js?v=5038f6d9:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=5038f6d9:555
+flush @ @tanstack_react-query.js?v=5038f6d9:569
+batch @ @tanstack_react-query.js?v=5038f6d9:587
+dispatch_fn @ @tanstack_react-query.js?v=5038f6d9:996
+setData @ @tanstack_react-query.js?v=5038f6d9:696
+onSuccess @ @tanstack_react-query.js?v=5038f6d9:897
+resolve @ @tanstack_react-query.js?v=5038f6d9:456
+Promise.then
+run @ @tanstack_react-query.js?v=5038f6d9:498
+start @ @tanstack_react-query.js?v=5038f6d9:536
+fetch @ @tanstack_react-query.js?v=5038f6d9:926
+executeFetch_fn @ @tanstack_react-query.js?v=5038f6d9:2211
+onSubscribe @ @tanstack_react-query.js?v=5038f6d9:1898
+subscribe @ @tanstack_react-query.js?v=5038f6d9:24
+(anonymous) @ @tanstack_react-query.js?v=5038f6d9:3022
+subscribeToStore @ chunk-WERSD76P.js?v=5038f6d9:11984
+commitHookEffectListMount @ chunk-WERSD76P.js?v=5038f6d9:16915
+commitPassiveMountOnFiber @ chunk-WERSD76P.js?v=5038f6d9:18156
+commitPassiveMountEffects_complete @ chunk-WERSD76P.js?v=5038f6d9:18129
+commitPassiveMountEffects_begin @ chunk-WERSD76P.js?v=5038f6d9:18119
+commitPassiveMountEffects @ chunk-WERSD76P.js?v=5038f6d9:18109
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=5038f6d9:19490
+flushPassiveEffects @ chunk-WERSD76P.js?v=5038f6d9:19447
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=5038f6d9:18868
+flushSyncCallbacks @ chunk-WERSD76P.js?v=5038f6d9:9119
+commitRootImpl @ chunk-WERSD76P.js?v=5038f6d9:19432
+commitRoot @ chunk-WERSD76P.js?v=5038f6d9:19277
+finishConcurrentRender @ chunk-WERSD76P.js?v=5038f6d9:18805
+performConcurrentWorkOnRoot @ chunk-WERSD76P.js?v=5038f6d9:18718
+workLoop @ chunk-WERSD76P.js?v=5038f6d9:197
+flushWork @ chunk-WERSD76P.js?v=5038f6d9:176
+performWorkUntilDeadline @ chunk-WERSD76P.js?v=5038f6d9:384Understand this error
+employee-grid.tsx:24 EmployeeGrid state: {data: undefined, isLoading: true, error: null, searchQuery: '', filters: {…}, …}
+2chunk-WERSD76P.js?v=5038f6d9:14032 The above error occurred in the <SelectItem> component:
+
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-select.js?v=5038f6d9:855:7
+    at _c11 (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/src/components/ui/select.tsx:208:13)
+    at div
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-PALV7G7K.js?v=5038f6d9:42:13
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-LXTJ4TFU.js?v=5038f6d9:79:13
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-LXTJ4TFU.js?v=5038f6d9:56:13
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5P3VKGX5.js?v=5038f6d9:39:15
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-select.js?v=5038f6d9:766:13
+    at div
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-LXTJ4TFU.js?v=5038f6d9:79:13
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-LXTJ4TFU.js?v=5038f6d9:56:13
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5P3VKGX5.js?v=5038f6d9:39:15
+    at Provider (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VJRUVGTI.js?v=5038f6d9:38:15)
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-select.js?v=5038f6d9:309:58
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-LXTJ4TFU.js?v=5038f6d9:79:13
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-LXTJ4TFU.js?v=5038f6d9:56:13
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-PALV7G7K.js?v=5038f6d9:42:13
+    at https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-V72RKQYW.js?v=5038f6d9:260:22
+    at SelectPortal
+    at _c7 (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/src/components/ui/select.tsx:123:12)
+    at Provider (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VJRUVGTI.js?v=5038f6d9:38:15)
+    at Provider (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VJRUVGTI.js?v=5038f6d9:38:15)
+    at CollectionProvider (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5P3VKGX5.js?v=5038f6d9:29:13)
+    at Provider (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VJRUVGTI.js?v=5038f6d9:38:15)
+    at Provider (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VJRUVGTI.js?v=5038f6d9:38:15)
+    at Popper (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-KVEAQMMF.js?v=5038f6d9:1953:11)
+    at Select (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-select.js?v=5038f6d9:97:5)
+    at div
+    at div
+    at div
+    at div
+    at div
+    at SearchFilters (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/src/components/directory/search-filters.tsx:38:33)
+    at div
+    at div
+    at DashboardPage (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/src/pages/dashboard.tsx:30:37)
+    at AuthWrapper (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/src/App.tsx?v=sZncJ0K3cOtjkCypOzlhL:28:24)
+    at component
+    at Route (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=5038f6d9:323:16)
+    at Switch (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=5038f6d9:379:17)
+    at Router
+    at Provider (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VJRUVGTI.js?v=5038f6d9:38:15)
+    at TooltipProvider (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=5038f6d9:60:5)
+    at QueryClientProvider (https://03fbbd90-f2d1-4562-a438-04a4fb46b577-00-2mla7fnmxtyl1.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=5038f6d9:2805:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-WERSD76P.js?v=5038f6d9:14032
+update.callback @ chunk-WERSD76P.js?v=5038f6d9:14052
+callCallback @ chunk-WERSD76P.js?v=5038f6d9:11248
+commitUpdateQueue @ chunk-WERSD76P.js?v=5038f6d9:11265
+commitLayoutEffectOnFiber @ chunk-WERSD76P.js?v=5038f6d9:17093
+commitLayoutMountEffects_complete @ chunk-WERSD76P.js?v=5038f6d9:17980
+commitLayoutEffects_begin @ chunk-WERSD76P.js?v=5038f6d9:17969
+commitLayoutEffects @ chunk-WERSD76P.js?v=5038f6d9:17920
+commitRootImpl @ chunk-WERSD76P.js?v=5038f6d9:19353
+commitRoot @ chunk-WERSD76P.js?v=5038f6d9:19277
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=5038f6d9:18895
+flushSyncCallbacks @ chunk-WERSD76P.js?v=5038f6d9:9119
+(anonymous) @ chunk-WERSD76P.js?v=5038f6d9:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=5038f6d9:555
+flush @ @tanstack_react-query.js?v=5038f6d9:569
+batch @ @tanstack_react-query.js?v=5038f6d9:587
+dispatch_fn @ @tanstack_react-query.js?v=5038f6d9:996
+setData @ @tanstack_react-query.js?v=5038f6d9:696
+onSuccess @ @tanstack_react-query.js?v=5038f6d9:897
+resolve @ @tanstack_react-query.js?v=5038f6d9:456
+Promise.then
+run @ @tanstack_react-query.js?v=5038f6d9:498
+start @ @tanstack_react-query.js?v=5038f6d9:536
+fetch @ @tanstack_react-query.js?v=5038f6d9:926
+executeFetch_fn @ @tanstack_react-query.js?v=5038f6d9:2211
+onSubscribe @ @tanstack_react-query.js?v=5038f6d9:1898
+subscribe @ @tanstack_react-query.js?v=5038f6d9:24
+(anonymous) @ @tanstack_react-query.js?v=5038f6d9:3022
+subscribeToStore @ chunk-WERSD76P.js?v=5038f6d9:11984
+commitHookEffectListMount @ chunk-WERSD76P.js?v=5038f6d9:16915
+commitPassiveMountOnFiber @ chunk-WERSD76P.js?v=5038f6d9:18156
+commitPassiveMountEffects_complete @ chunk-WERSD76P.js?v=5038f6d9:18129
+commitPassiveMountEffects_begin @ chunk-WERSD76P.js?v=5038f6d9:18119
+commitPassiveMountEffects @ chunk-WERSD76P.js?v=5038f6d9:18109
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=5038f6d9:19490
+flushPassiveEffects @ chunk-WERSD76P.js?v=5038f6d9:19447
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=5038f6d9:18868
+flushSyncCallbacks @ chunk-WERSD76P.js?v=5038f6d9:9119
+commitRootImpl @ chunk-WERSD76P.js?v=5038f6d9:19432
+commitRoot @ chunk-WERSD76P.js?v=5038f6d9:19277
+finishConcurrentRender @ chunk-WERSD76P.js?v=5038f6d9:18805
+performConcurrentWorkOnRoot @ chunk-WERSD76P.js?v=5038f6d9:18718
+workLoop @ chunk-WERSD76P.js?v=5038f6d9:197
+flushWork @ chunk-WERSD76P.js?v=5038f6d9:176
+performWorkUntilDeadline @ chunk-WERSD76P.js?v=5038f6d9:384Understand this error
+chunk-WERSD76P.js?v=5038f6d9:9129 Uncaught Error: A <Select.Item /> must have a value prop that is not an empty string. This is because the Select value can be set to an empty string to clear the selection and show the placeholder.
+    at @radix-ui_react-select.js?v=5038f6d9:882:13
+    at renderWithHooks (chunk-WERSD76P.js?v=5038f6d9:11548:26)
+    at updateForwardRef (chunk-WERSD76P.js?v=5038f6d9:14325:28)
+    at beginWork (chunk-WERSD76P.js?v=5038f6d9:15946:22)
+    at beginWork$1 (chunk-WERSD76P.js?v=5038f6d9:19753:22)
+    at performUnitOfWork (chunk-WERSD76P.js?v=5038f6d9:19198:20)
+    at workLoopSync (chunk-WERSD76P.js?v=5038f6d9:19137:13)
+    at renderRootSync (chunk-WERSD76P.js?v=5038f6d9:19116:15)
+    at recoverFromConcurrentError (chunk-WERSD76P.js?v=5038f6d9:18736:28)
+    at performSyncWorkOnRoot (chunk-WERSD76P.js?v=5038f6d9:18879:28)

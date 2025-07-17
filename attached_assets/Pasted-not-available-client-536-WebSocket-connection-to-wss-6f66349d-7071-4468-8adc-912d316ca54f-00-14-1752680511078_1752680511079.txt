@@ -1,0 +1,40 @@
+not available
+﻿
+client:536 WebSocket connection to 'wss://6f66349d-7071-4468-8adc-912d316ca54f-00-14ktevkyyqba1.picard.replit.dev/?token=Ih5IEgzTZfSQ' failed: 
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=Ih5IEgzTZfSQ' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+chunk-RPCDYKBN.js?v=5f90475f:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+inspector.b9415ea5.js:1 Error: Minified React error #130; visit https://reactjs.org/docs/error-decoder.html?invariant=130&args[]=object&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at lX (inspector.b9415ea5.js:1:127164)
+    at l (inspector.b9415ea5.js:1:68514)
+    at ol (inspector.b9415ea5.js:1:82233)
+    at i (inspector.b9415ea5.js:1:132348)
+    at lM (inspector.b9415ea5.js:1:110198)
+    at inspector.b9415ea5.js:1:110064
+    at lO (inspector.b9415ea5.js:1:110072)
+    at lC (inspector.b9415ea5.js:1:106823)
+    at lw (inspector.b9415ea5.js:1:105378)
+    at C (inspector.b9415ea5.js:1:141367)
+inspector.b9415ea5.js:1 Uncaught Error: Minified React error #130; visit https://reactjs.org/docs/error-decoder.html?invariant=130&args[]=object&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at lX (inspector.b9415ea5.js:1:127164)
+    at l (inspector.b9415ea5.js:1:68514)
+    at ol (inspector.b9415ea5.js:1:82233)
+    at i (inspector.b9415ea5.js:1:132348)
+    at lM (inspector.b9415ea5.js:1:110198)
+    at inspector.b9415ea5.js:1:110064
+    at lO (inspector.b9415ea5.js:1:110072)
+    at lC (inspector.b9415ea5.js:1:106823)
+    at lw (inspector.b9415ea5.js:1:105378)
+    at C (inspector.b9415ea5.js:1:141367)
+directory:67 SW registered:  
+ServiceWorkerRegistration {installing: null, waiting: null, active: ServiceWorker, navigationPreload: NavigationPreloadManager, scope: 'https://6f66349d-7071-4468-8adc-912d316ca54f-00-14ktevkyyqba1.picard.replit.dev/', …}
+use-auth.ts:55 Authentication successful: System Administrator
+directory:1 <meta name="apple-mobile-web-app-capable" content="yes"> is deprecated. Please include <meta name="mobile-web-app-capable" content="yes">
+chunk-BFID4ID6.js?v=5f90475f:339 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+directory:1 Blocked aria-hidden on an element because its descendant retained focus. The focus must not be hidden from assistive technology users. Avoid using aria-hidden on a focused element or its ancestor. Consider using the inert attribute instead, which will also prevent focus. For more details, see the aria-hidden section of the WAI-ARIA specification at https://w3c.github.io/aria/#aria-hidden.
+Element with focus: <button.inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-md h-7 w-7 p-0>
+Ancestor with aria-hidden: <div#root> 
+queryClient.ts:24 
+ PUT https://6f66349d-7071-4468-8adc-912d316ca54f-00-14ktevkyyqba1.picard.replit.dev/api/admin/employees/ADMIN002 400 (Bad Request)

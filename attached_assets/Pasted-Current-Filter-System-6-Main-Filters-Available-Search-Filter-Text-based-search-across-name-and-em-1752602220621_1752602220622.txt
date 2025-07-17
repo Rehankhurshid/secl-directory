@@ -1,0 +1,67 @@
+Current Filter System
+6 Main Filters Available:
+Search Filter - Text-based search across name and email
+Category Filter - Employee category (like "Officer", "Executive", etc.)
+Grade Filter - Employee grade levels (like "A", "B", "C", etc.)
+Department Filter - Employee departments (like "HR", "IT", "Finance", etc.)
+Gender Filter - Employee gender (Male/Female)
+Blood Group Filter - Employee blood groups (A+, B+, O+, etc.)
+How Filters Work:
+Frontend Implementation:
+
+Desktop: Full filter panel with all 6 filters visible at once in employee-filters.tsx
+Mobile: Floating filter bar that opens a sheet with all filters in mobile-filter-sheet.tsx
+Real-time: All filters update results immediately with debounced search (300ms delay)
+Backend Processing:
+
+Database Query: Uses SQL ILIKE for search and exact matches for other filters
+Pagination: Server-side pagination with configurable page sizes (default: 25 items)
+Sorting: Multi-column sorting by name, employee_id, designation, department, email, location
+Performance: Efficient PostgreSQL queries with proper indexing
+Data Flow:
+
+User selects filter → State updates → API call with filter parameters
+Backend builds WHERE clause with AND conditions for multiple filters
+Database returns filtered results with total count
+Frontend updates display with real-time count animations
+Filter Features:
+Smart Filtering:
+
+Combines multiple filters with AND logic
+Search works across name and email fields simultaneously
+Empty/null values are filtered out from dropdown options
+User Experience:
+
+Active Filter Display: Shows applied filters as removable badges
+Clear Filters: One-click to remove all filters
+Filter Count: Shows number of active filters with animated badges
+Real-time Results: Instant feedback as users type or select
+Mobile Optimization:
+
+Floating Filter Bar: Fixed position with filter count indicator
+Filter Sheet: 90vh height sheet with all filters
+Item Count Display: Shows current filtered result count
+Touch-friendly: Large touch targets and smooth animations
+Technical Implementation:
+API Endpoint: GET /api/employees?search=...&category=...&grade=...&department=...&gender=...&blood_group=...
+
+Filter Options API: GET /api/employees/filter-options returns available values for each filter
+
+Database Schema: All filter fields are stored as text columns in the employees table with proper indexing
+
+State Management: React Query handles caching, debouncing, and synchronization
+
+Usage Patterns:
+Most Common Use Cases:
+
+Search by name to find specific employees
+Filter by department to view team members
+Combine department + grade for targeted searches
+Use gender filter for demographic analysis
+Blood group filter for emergency/medical purposes
+Performance Optimizations:
+
+Filter options cached for 5 minutes
+Debounced search prevents excessive API calls
+Efficient database queries with proper WHERE clauses
+Pagination prevents large result sets

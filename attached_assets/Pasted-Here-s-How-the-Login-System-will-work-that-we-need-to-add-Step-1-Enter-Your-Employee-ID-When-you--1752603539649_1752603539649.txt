@@ -1,0 +1,36 @@
+Here;s How the Login System will work that we need to add:
+
+Step 1: Enter Your Employee ID
+When you want to log into the app, you start by typing your employee ID (like "EMP001" or whatever ID the company gave you). This is like your username - it tells the system who you are.
+
+Step 2: System Finds Your Phone Number
+Once you enter your employee ID, the app looks up your information in the company database to find your registered phone number. This is the phone number that was stored when you were added to the system.
+
+Step 3: OTP is Sent to Your Phone
+The system sends a special 6-digit code (called an OTP - One Time Password) to your phone via SMS. This code is like a temporary password that only works for a few minutes.
+
+Step 4: Enter the OTP Code
+You check your phone for the text message with the 6-digit code, then type it into the app. This proves that you actually have access to the phone number on file.
+
+Step 5: System Verifies the Code
+The app checks if the code you entered matches the one that was sent to your phone. If it matches, the system knows it's really you trying to log in.
+
+Step 6: You're Logged In
+Once the code is verified, you're logged into the app. The system remembers that you're logged in for about a week, so you don't need to go through this process every time you open the app.
+
+Why This System is Used
+Security: Even if someone knows your employee ID, they can't log in without access to your phone.
+
+No Passwords: You don't need to remember or manage passwords - just your employee ID and your phone.
+
+Company Control: Only employees with registered phone numbers can access the app.
+
+Automatic Logout: After a week, you'll need to log in again for security.
+
+What You Need
+Your employee ID (provided by your company)
+Access to the phone number registered in the system
+Ability to receive text messages
+This system ensures that only authorized employees can access the company directory while keeping the login process simple and secure."
+
+Once the user login it should create some
