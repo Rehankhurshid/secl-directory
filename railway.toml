@@ -2,14 +2,18 @@
 builder = "nixpacks"
 
 [deploy]
-startCommand = "npm start"
-healthcheckPath = "/health"
-healthcheckTimeout = 300
+numReplicas = 1
+sleepApplication = false
 restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
 
-[[services]]
-name = "employee-directory"
+[[deploy.healthcheck]]
+path = "/health"
+interval = 30
+timeout = 10
+retries = 5
+startPeriod = 60
 
-[services.env]
+[env]
 NODE_ENV = "production"
 PORT = "3000" 
