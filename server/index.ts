@@ -4,6 +4,7 @@ import { setupVite, serveStatic, log } from "./vite";
 import { pool } from "./db";
 import { startupService } from "./services/startupService";
 import { permissionService } from "./services/permissionService";
+import { dbInitService } from "./services/dbInit";
 
 const app = express();
 app.use(express.json());
@@ -142,6 +143,17 @@ process.on("SIGINT", () => gracefulShutdown("SIGINT"));
     } catch (dbError) {
       log(`Database connection failed: ${dbError}`, "startup");
       // Continue startup without database for now
+    }
+
+    // Initialize database schema
+    try {
+      await startupService.measureAsync("database_init", async () => {
+        await dbInitService.initializeDatabase();
+      });
+      startupService.markStartupEvent("database_initialized");
+    } catch (dbInitError) {
+      log(`Database initialization failed: ${dbInitError}`, "startup");
+      // Continue startup - might be a connection issue that resolves
     }
 
     // Register routes and initialize services
