@@ -7,13 +7,6 @@ sleepApplication = false
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
 
-[[deploy.healthcheck]]
-path = "/health"
-interval = 30
-timeout = 10
-retries = 5
-startPeriod = 60
-
 [env]
 NODE_ENV = "production"
 PORT = "3000" 
