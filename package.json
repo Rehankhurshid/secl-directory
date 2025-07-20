@@ -14,7 +14,7 @@
     "dev:localtunnel": "node scripts/dev-localtunnel.js",
     "tunnel": "node scripts/ngrok-dual-tunnel.js",
     "tunnel:unified": "node scripts/unified-ngrok-tunnel.js",
-    "build": "next build",
+    "build": "npm run db:generate && next build",
     "start": "NODE_ENV=production node server.js",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
