@@ -22,6 +22,13 @@
       "when": 1752932744851,
       "tag": "0002_sticky_skrulls",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1753053103232,
+      "tag": "0003_dark_mandroid",
+      "breakpoints": true
     }
   ]
 }

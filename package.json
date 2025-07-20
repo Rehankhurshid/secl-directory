@@ -14,7 +14,7 @@
     "dev:localtunnel": "node scripts/dev-localtunnel.js",
     "tunnel": "node scripts/ngrok-dual-tunnel.js",
     "tunnel:unified": "node scripts/unified-ngrok-tunnel.js",
-    "build": "npm run db:generate && next build",
+    "build": "next build",
     "start": "NODE_ENV=production node server.js",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
@@ -111,7 +111,8 @@
     "zustand": "^5.0.6",
     "autoprefixer": "^10.4.0",
     "postcss": "^8.4.0",
-    "tailwindcss": "^3.4.0"
+    "tailwindcss": "^3.4.0",
+    "drizzle-kit": "^0.24.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.0",
@@ -125,7 +126,6 @@
     "@typescript-eslint/parser": "^7.16.0",
     "@vitejs/plugin-react": "^4.3.0",
     "commander": "^14.0.0",
-    "drizzle-kit": "^0.24.0",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.2.0",
     "jsdom": "^24.1.0",
