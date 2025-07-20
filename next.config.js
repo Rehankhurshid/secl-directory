@@ -3,6 +3,7 @@ const withPWA = require("@ducanh2912/next-pwa").default({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === "development" ? false : false, // Enable in development for testing
+  customWorkerDir: "worker", // This tells Next PWA to use our custom worker
 
   // Caching strategies for employee directory and messaging
   runtimeCaching: [

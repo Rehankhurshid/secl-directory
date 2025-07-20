@@ -17,6 +17,7 @@ import { ArrowLeft, MoreVertical, WifiOff, AlertTriangle } from 'lucide-react';
 import { formatDateSeparator, shouldShowDateSeparator, getInitials } from '@/lib/messaging/utils';
 import { cn } from '@/lib/utils';
 import offlineSyncManager from '@/lib/storage/offline-sync-manager';
+import { PushNotificationSetup } from '@/components/notifications/push-notification-setup';
 
 // Employee and Group types
 interface Employee {
@@ -534,6 +535,9 @@ export default function ModernMessagingLayout() {
         isCreating={isCreatingGroup}
         isLoadingEmployees={isLoadingEmployees}
       />
+      
+      {/* Push Notification Setup - Runs automatically */}
+      <PushNotificationSetup />
     </div>
   );
 } 

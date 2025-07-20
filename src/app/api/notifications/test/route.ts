@@ -37,7 +37,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Send test notification
-    const success = await pushNotificationService.sendTestNotification(session.employeeId);
+    const success = await pushNotificationService.sendToEmployee(session.employeeId, {
+      title: '🧪 SECL Chat Test',
+      body: `Test notification sent at ${new Date().toLocaleTimeString()}`,
+      icon: '/icon-192x192.png',
+      badge: '/icon-72x72.png',
+      data: {
+        type: 'test',
+        url: '/messaging',
+        timestamp: Date.now()
+      }
+    });
 
     if (success) {
       console.log(`✅ Test notification sent successfully to: ${session.employeeId}`);
@@ -85,7 +95,7 @@ export async function GET(request: NextRequest) {
 
     // Check if VAPID keys are configured
     const vapidConfigured = !!(
-      process.env.VAPID_PUBLIC_KEY && 
+      process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && 
       process.env.VAPID_PRIVATE_KEY && 
       process.env.VAPID_EMAIL
     );
@@ -94,7 +104,7 @@ export async function GET(request: NextRequest) {
       vapidConfigured,
       userId: session.employeeId,
       environment: {
-        hasVapidPublic: !!process.env.VAPID_PUBLIC_KEY,
+        hasVapidPublic: !!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
         hasVapidPrivate: !!process.env.VAPID_PRIVATE_KEY,
         hasVapidEmail: !!process.env.VAPID_EMAIL,
       }

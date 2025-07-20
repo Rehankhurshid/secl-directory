@@ -211,9 +211,16 @@ export async function DELETE(request: NextRequest) {
 
 // Helper function to validate base64 encoding
 function isValidBase64(str: string): boolean {
-  try {
-    return btoa(atob(str)) === str;
-  } catch (error) {
+  if (!str || typeof str !== 'string') {
     return false;
   }
+  
+  // Check if it's URL-safe base64 (used by push subscriptions)
+  // URL-safe base64 uses - and _ instead of + and /
+  const urlSafeBase64Regex = /^[A-Za-z0-9\-_]+={0,2}$/;
+  
+  // Check if it's standard base64
+  const standardBase64Regex = /^[A-Za-z0-9+/]+={0,2}$/;
+  
+  return urlSafeBase64Regex.test(str) || standardBase64Regex.test(str);
 } 

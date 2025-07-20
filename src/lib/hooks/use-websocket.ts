@@ -171,7 +171,8 @@ export function useRealTimeMessages(conversationId: string) {
           throw new Error(`Failed to load messages: ${response.status}`);
         }
 
-        const apiMessages = await response.json();
+        const data = await response.json();
+        const apiMessages = data.messages || [];
         
         // Convert API messages to Message objects
         const dbMessages = apiMessages.map((msg: any) => new Message(

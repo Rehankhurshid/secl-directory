@@ -6,13 +6,13 @@ import { eq, inArray, and } from 'drizzle-orm';
 // Configure VAPID details
 const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
 const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY;
-const vapidEmail = process.env.VAPID_EMAIL || 'admin@secl.co.in';
+const vapidEmail = process.env.VAPID_EMAIL || 'mailto:admin@secl.co.in';
 
 if (!vapidPublicKey || !vapidPrivateKey) {
   console.error('❌ VAPID keys not configured properly');
 } else {
   webpush.setVapidDetails(
-    `mailto:${vapidEmail}`,
+    vapidEmail.startsWith('mailto:') ? vapidEmail : `mailto:${vapidEmail}`,
     vapidPublicKey,
     vapidPrivateKey
   );

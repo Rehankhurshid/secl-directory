@@ -1,6 +1,6 @@
 # Push Notifications Setup Guide
 
-This guide walks through setting up push notifications in the SECL Directory app.
+Push notifications are now fully integrated into the SECL Chat messaging system. Messages sent while users are offline will trigger push notifications on their devices.
 
 ## 1. Generate VAPID Keys
 

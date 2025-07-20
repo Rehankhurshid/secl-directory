@@ -7,6 +7,18 @@ const server = http.createServer((req, res) => {
   // Prevent duplicate response handling
   if (res.headersSent) return;
 
+  // Add CORS headers for browser compatibility
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  // Handle preflight requests
+  if (req.method === "OPTIONS") {
+    res.writeHead(200);
+    res.end();
+    return;
+  }
+
   // Handle health check
   if (req.url === "/health") {
     res.writeHead(200, { "Content-Type": "application/json" });

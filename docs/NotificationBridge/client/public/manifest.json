@@ -1,0 +1,30 @@
+{
+  "name": "PWA Notification Demo",
+  "short_name": "NotifyDemo",
+  "description": "A Progressive Web App demonstrating browser notifications with open source libraries",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAFAFA",
+  "theme_color": "#1976D2",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0ODggNDg4Ij48cmVjdCB3aWR0aD0iNDg4IiBoZWlnaHQ9IjQ4OCIgZmlsbD0iIzE5NzZEMiIvPjx0ZXh0IHg9IjI0MyIgeT0iMjQzIiBmaWxsPSIjZmZmIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNzBweCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+Tk9USUZZVEVNUE88L3RleHQ+PHRleHQgeD0iMjMiIHk9IjUwMiIgZmlsbD0iI2RkZGQiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIzMXB4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5QV0EgLSBwZXJtaXNzaW9uX0RlbW8gQ2xpY2sgdG8gc3RyaWdnZXIgbm90aWZpY2F0aW9uczwvdGV4dD48L3N2Zz4=",
+      "sizes": "48x48",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0ODggNDg4Ij48cmVjdCB3aWR0aD0iNDg4IiBoZWlnaHQ9IjQ4OCIgZmlsbD0iIzE5NzZEMiIvPjx0ZXh0IHg9IjI0MyIgeT0iMjQzIiBmaWxsPSIjZmZmIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNzBweCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+Tk9USUZZVEVNUE88L3RleHQ+PHRleHQgeD0iMjMiIHk9IjUwMiIgZmlsbD0iI2RkZGQiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIzMXB4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5QV0EgLSBwZXJtaXNzaW9uX0RlbW8gQ2xpY2sgdG8gc3RyaWdnZXIgbm90aWZpY2F0aW9uczwvdGV4dD48L3N2Zz4=",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0ODggNDg4Ij48cmVjdCB3aWR0aD0iNDg4IiBoZWlnaHQ9IjQ4OCIgZmlsbD0iIzE5NzZEMiIvPjx0ZXh0IHg9IjI0MyIgeT0iMjQzIiBmaWxsPSIjZmZmIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNzBweCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+Tk9USUZZVEVNUE88L3RleHQ+PHRleHQgeD0iMjMiIHk9IjUwMiIgZmlsbD0iI2RkZGQiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIzMXB4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5QV0EgLSBwZXJtaXNzaW9uX0RlbW8gQ2xpY2sgdG8gc3RyaWdnZXIgbm90aWZpY2F0aW9uczwvdGV4dD48L3N2Zz4=",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

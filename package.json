@@ -11,6 +11,7 @@
     "dev:share": "node scripts/dev-share.js",
     "dev:tunnel": "node scripts/tunnel.js",
     "dev:ngrok": "node scripts/ngrok-tunnel.js",
+    "dev:localtunnel": "node scripts/dev-localtunnel.js",
     "tunnel": "node scripts/ngrok-dual-tunnel.js",
     "tunnel:unified": "node scripts/unified-ngrok-tunnel.js",
     "build": "next build",

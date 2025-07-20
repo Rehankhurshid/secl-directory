@@ -38,44 +38,82 @@ class WebSocketManager extends EventEmitter {
     super();
     // Use dynamic URL based on environment configuration or current host
     this.url = url || this.getDefaultWebSocketUrl();
+    console.log('🔌 WebSocketManager initialized with URL:', this.url);
   }
   
   private getDefaultWebSocketUrl(): string {
     // Check for environment variable first
     if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_WEBSOCKET_URL) {
+      console.log('🔌 Using environment variable for default WebSocket URL:', process.env.NEXT_PUBLIC_WEBSOCKET_URL);
       return process.env.NEXT_PUBLIC_WEBSOCKET_URL;
     }
     
     // Use current hostname (works for both desktop and mobile)
     if (typeof window !== 'undefined') {
+      // Check if we're in local development (localhost or 127.0.0.1)
+      const isLocalDev = window.location.hostname === 'localhost' || 
+                        window.location.hostname === '127.0.0.1' ||
+                        window.location.hostname.includes('loca.lt'); // ngrok local tunnel
+      
+      if (isLocalDev) {
+        // For local development (including ngrok), always use localhost:3002
+        const localUrl = `ws://localhost:3002`;
+        console.log('🔌 Using local development default WebSocket URL:', localUrl);
+        console.log('🔌 Current location:', window.location.href);
+        console.log('🔌 Protocol:', window.location.protocol);
+        console.log('🔌 Hostname:', window.location.hostname);
+        console.log('🔌 Detected local development environment');
+        return localUrl;
+      }
+      
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      return `${protocol}//${window.location.hostname}:3002`;
+      const defaultUrl = `${protocol}//${window.location.hostname}:3002`;
+      console.log('🔌 Using default WebSocket URL:', defaultUrl);
+      console.log('🔌 Current location:', window.location.href);
+      console.log('🔌 Protocol:', window.location.protocol);
+      console.log('🔌 Hostname:', window.location.hostname);
+      return defaultUrl;
     }
     
     // Server-side fallback (shouldn't be used in practice)
+    console.log('🔌 Using server-side fallback WebSocket URL: ws://localhost:3002');
     return 'ws://localhost:3002';
   }
 
   private getWebSocketUrl(): string {
     // Priority 1: Environment variable (for production/ngrok)
     if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_WEBSOCKET_URL) {
+      console.log('🔌 Using environment variable for WebSocket URL:', process.env.NEXT_PUBLIC_WEBSOCKET_URL);
       return process.env.NEXT_PUBLIC_WEBSOCKET_URL;
     }
     
-    // Priority 2: Check for ngrok domains
+    // Priority 2: For local development, always use localhost:3002
     if (typeof window !== 'undefined') {
-      try {
-        if (window.location.hostname.includes('ngrok-free.app') || window.location.hostname.includes('ngrok.app')) {
-          // For ngrok, use the same domain but WebSocket protocol
-          const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-          return `${protocol}//${window.location.hostname}:3002`;
-        }
-      } catch (error) {
-        console.warn('Could not determine ngrok WebSocket URL:', error);
+      // Check if we're in local development (localhost or 127.0.0.1)
+      const isLocalDev = window.location.hostname === 'localhost' || 
+                        window.location.hostname === '127.0.0.1' ||
+                        window.location.hostname.includes('loca.lt'); // ngrok local tunnel
+      
+      if (isLocalDev) {
+        // For local development (including ngrok), always use localhost:3002
+        const localUrl = `ws://localhost:3002`;
+        console.log('🔌 Using local development WebSocket URL:', localUrl);
+        console.log('🔌 Current location:', window.location.href);
+        console.log('🔌 Detected local development environment');
+        return localUrl;
+      }
+      
+      // For production ngrok domains, use the same domain but WebSocket protocol
+      if (window.location.hostname.includes('ngrok-free.app') || window.location.hostname.includes('ngrok.app')) {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const ngrokUrl = `${protocol}//${window.location.hostname}:3002`;
+        console.log('🔌 Using production ngrok WebSocket URL:', ngrokUrl);
+        return ngrokUrl;
       }
     }
     
     // Priority 3: Use configured URL (includes local network IP)
+    console.log('🔌 Using configured WebSocket URL:', this.url);
     return this.url;
   }
 
@@ -98,16 +136,19 @@ class WebSocketManager extends EventEmitter {
       const fullUrl = `${wsUrl}?userId=${encodeURIComponent(userId)}`;
       
       console.log('🔌 Connecting to WebSocket:', fullUrl);
+      console.log('🔌 WebSocket URL resolved to:', wsUrl);
+      console.log('🔌 User ID:', userId);
       
       // Set connection timeout
       this.connectionTimeout = setTimeout(() => {
         if (this.status === 'connecting') {
-          console.warn('🔌 Connection timeout');
+          console.warn('🔌 Connection timeout after 10 seconds');
           this.handleConnectionFailure();
         }
       }, 10000); // 10 second timeout
 
       this.ws = new WebSocket(fullUrl);
+      console.log('🔌 WebSocket object created, setting up event listeners...');
       this.setupEventListeners();
       
     } catch (error) {
@@ -118,6 +159,8 @@ class WebSocketManager extends EventEmitter {
 
   private setupEventListeners(): void {
     if (!this.ws) return;
+
+    console.log('🔌 Setting up WebSocket event listeners...');
 
     this.ws.onopen = () => {
       console.log('🔌 WebSocket connected successfully');
@@ -152,7 +195,7 @@ class WebSocketManager extends EventEmitter {
     };
 
     this.ws.onclose = (event) => {
-      console.log('🔌 WebSocket disconnected:', event.code);
+      console.log('🔌 WebSocket disconnected:', event.code, event.reason);
       this.status = 'disconnected';
       this.stopHeartbeat();
       
@@ -180,9 +223,12 @@ class WebSocketManager extends EventEmitter {
 
     this.ws.onerror = (error) => {
       console.error('🔌 WebSocket error:', error);
+      console.error('🔌 WebSocket readyState:', this.ws?.readyState);
       this.status = 'error';
       this.emit('statusChange', this.status);
     };
+
+    console.log('🔌 WebSocket event listeners set up successfully');
   }
 
   private startHeartbeat(): void {

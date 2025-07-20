@@ -43,7 +43,7 @@ function startServers() {
       stdio: "pipe",
       env: {
         ...process.env,
-        NEXT_PUBLIC_WEBSOCKET_URL: "wss://secl-websocket.loca.lt",
+        NEXT_PUBLIC_WEBSOCKET_URL: "ws://localhost:3002",
         NEXT_PUBLIC_APP_URL: "https://secl-messaging.loca.lt",
       },
     });
