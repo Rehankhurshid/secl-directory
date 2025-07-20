@@ -131,7 +131,7 @@ export class AuthService {
    */
   getEmployeePhone(employee: any): string | null {
     // Check for phone fields in order of preference
-    // Drizzle returns camelCase property names
+    // Drizzle maps phone_1 -> phoneNumber1, phone_2 -> phoneNumber2
     return employee.phoneNumber1 || 
            employee.phoneNumber2 || 
            null;
