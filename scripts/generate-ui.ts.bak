@@ -1,0 +1,111 @@
+#!/usr/bin/env node
+
+import { generateText } from 'ai';
+import { openai } from '@ai-sdk/openai';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as readline from 'readline';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config({ path: '.env.local' });
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+const question = (prompt: string): Promise<string> => {
+  return new Promise((resolve) => {
+    rl.question(prompt, resolve);
+  });
+};
+
+async function generateComponent(description: string) {
+  if (!process.env.V0_API_KEY) {
+    console.error('❌ V0_API_KEY not found in .env.local');
+    console.log('\nTo get your API key:');
+    console.log('1. Visit https://v0.dev/settings');
+    console.log('2. Create an API key');
+    console.log('3. Add to .env.local: V0_API_KEY=your-key-here\n');
+    process.exit(1);
+  }
+
+  const prompt = `Generate a React component using shadcn/ui and Tailwind CSS based on this description:
+
+${description}
+
+Requirements:
+- Use TypeScript
+- Use shadcn/ui components from @/components/ui
+- Use Tailwind CSS for styling
+- Make it responsive and accessible
+- Export as a named export
+- Include proper TypeScript interfaces
+- Use 'use client' directive if needed for interactivity
+
+Return ONLY the component code without any explanation or markdown formatting.`;
+
+  console.log('\n🎨 Generating UI component...\n');
+
+  try {
+    const { text } = await generateText({
+      model: openai('gpt-4o'),
+      prompt,
+      apiKey: process.env.V0_API_KEY,
+      baseURL: 'https://api.v0.dev/v1',
+      headers: {
+        'Authorization': `Bearer ${process.env.V0_API_KEY}`
+      }
+    });
+
+    return text;
+  } catch (error: any) {
+    console.error('❌ Error generating component:', error.message);
+    throw error;
+  }
+}
+
+async function saveComponent(code: string, componentName: string) {
+  const componentDir = path.join(process.cwd(), 'src/components/generated');
+  
+  // Create directory if it doesn't exist
+  if (!fs.existsSync(componentDir)) {
+    fs.mkdirSync(componentDir, { recursive: true });
+  }
+
+  const filePath = path.join(componentDir, `${componentName}.tsx`);
+  fs.writeFileSync(filePath, code);
+  
+  return filePath;
+}
+
+async function main() {
+  console.log('🚀 v0 UI Generator\n');
+  
+  const description = await question('Describe the UI component you want to create:\n> ');
+  const componentName = await question('\nComponent name (e.g., EmployeeCard):\n> ');
+  
+  try {
+    const code = await generateComponent(description);
+    const filePath = await saveComponent(code, componentName);
+    
+    console.log(`\n✅ Component generated successfully!`);
+    console.log(`📁 Saved to: ${filePath}`);
+    console.log('\n📝 Next steps:');
+    console.log('1. Review the generated code');
+    console.log('2. Install any missing shadcn/ui components');
+    console.log('3. Update imports and adapt to your needs\n');
+    
+    // Show a preview of the code
+    console.log('Preview:\n');
+    console.log(code.substring(0, 500) + '...\n');
+    
+  } catch (error) {
+    console.error('\n❌ Generation failed');
+  }
+  
+  rl.close();
+}
+
+main();

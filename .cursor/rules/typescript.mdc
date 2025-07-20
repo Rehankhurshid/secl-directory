@@ -1,0 +1,147 @@
+# TypeScript Rules - Maximum Type Safety
+
+## Core Principles
+
+- **NEVER** use `any` type
+- **ALWAYS** define interfaces for props and parameters
+- **USE** branded types for IDs: `type UserId = string & { __brand: 'UserId' }`
+- **HANDLE** null/undefined explicitly with optional chaining
+
+## Type Definitions
+
+### Interface Patterns
+
+```typescript
+// ✅ CORRECT - Comprehensive interface definitions
+interface Employee {
+  readonly id: EmployeeId;
+  name: string;
+  email: string;
+  department: Department;
+  role: EmployeeRole;
+  startDate: Date;
+  isActive: boolean;
+  manager?: EmployeeId; // Optional with explicit undefined
+  skills: readonly string[]; // Readonly arrays
+  metadata: Record<string, unknown>; // Use unknown instead of any
+}
+
+// ✅ CORRECT - Component props interface
+interface EmployeeCardProps {
+  employee: Employee;
+  variant?: "compact" | "detailed";
+  onSelect?: (employee: Employee) => void;
+  onEdit?: (employeeId: EmployeeId) => Promise<void>;
+  className?: string;
+  children?: React.ReactNode;
+}
+
+// ❌ FORBIDDEN - Loose typing
+interface BadProps {
+  data: any; // ❌ Use specific types
+  callback: Function; // ❌ Use specific function signature
+  config: object; // ❌ Use specific object shape
+}
+```
+
+### Branded Types for IDs
+
+```typescript
+// ✅ CORRECT - Branded types for type safety
+declare const __brand: unique symbol;
+type Brand<K, T> = K & { [__brand]: T };
+
+type EmployeeId = Brand<string, "EmployeeId">;
+type DepartmentId = Brand<string, "DepartmentId">;
+type MessageId = Brand<string, "MessageId">;
+type ConversationId = Brand<string, "ConversationId">;
+
+// Helper functions for creating branded types
+export const createEmployeeId = (id: string): EmployeeId => id as EmployeeId;
+export const createDepartmentId = (id: string): DepartmentId =>
+  id as DepartmentId;
+```
+
+### Utility Types and Advanced Patterns
+
+```typescript
+// ✅ CORRECT - Utility types for transformations
+type CreateEmployeeRequest = Omit<Employee, "id" | "startDate"> & {
+  startDate?: Date;
+};
+
+type UpdateEmployeeRequest = Partial<
+  Pick<Employee, "name" | "email" | "department" | "role">
+>;
+
+type EmployeeListItem = Pick<Employee, "id" | "name" | "department" | "role">;
+
+// ✅ CORRECT - Discriminated unions for state management
+type LoadingState = {
+  status: "loading";
+  progress?: number;
+};
+
+type SuccessState = {
+  status: "success";
+  data: Employee[];
+  lastUpdated: Date;
+};
+
+type ErrorState = {
+  status: "error";
+  error: string;
+  retry: () => void;
+};
+
+type DataState = LoadingState | SuccessState | ErrorState;
+```
+
+## Error Handling with Types
+
+```typescript
+// ✅ CORRECT - Result type for error handling
+type Result<T, E = Error> =
+  | { success: true; data: T }
+  | { success: false; error: E };
+
+async function fetchEmployee(
+  id: EmployeeId
+): Promise<Result<Employee, string>> {
+  try {
+    const response = await fetch(`/api/employees/${id}`);
+
+    if (!response.ok) {
+      return { success: false, error: `HTTP ${response.status}` };
+    }
+
+    const employee = await response.json();
+    return { success: true, data: employee };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+```
+
+## Forbidden Patterns
+
+```typescript
+// ❌ FORBIDDEN - Using any
+function badFunction(data: any): any {
+  return data.whatever.goes.here;
+}
+
+// ❌ FORBIDDEN - Non-null assertion without good reason
+function dangerousFunction(employee: Employee | null) {
+  return employee!.name; // ❌ Could throw at runtime
+}
+
+// ❌ FORBIDDEN - Type assertions without validation
+function unsafeAssertion(data: unknown) {
+  const employee = data as Employee; // ❌ No runtime validation
+  return employee.name;
+}
+```

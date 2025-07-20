@@ -1,0 +1,167 @@
+# Next.js App Router Patterns
+
+## Server vs Client Components
+
+- **PREFER** Server Components by default
+- **USE** 'use client' ONLY for:
+  - Web API access (geolocation, camera, etc.)
+  - Interactive state (form inputs, toggles)
+  - Event handlers requiring immediate response
+  - Third-party libraries requiring browser APIs
+
+## Data Fetching
+
+- **USE** native fetch with caching in Server Components
+- **USE** Server Actions for data mutations
+- **WRAP** client components in Suspense with meaningful fallbacks
+- **FOLLOW** Next.js data fetching patterns (fetch with caching)
+
+## Server Component Examples
+
+```typescript
+// ✅ CORRECT - Server Component with native fetch
+import { getEmployees } from "@/lib/employee-service";
+
+export default async function EmployeePage({
+  searchParams,
+}: {
+  searchParams: { department?: string; search?: string };
+}) {
+  const employees = await getEmployees({
+    department: searchParams.department,
+    search: searchParams.search,
+  });
+
+  return <EmployeeList employees={employees} />;
+}
+```
+
+## Server Actions for Mutations
+
+```typescript
+// ✅ CORRECT - Server Action for mutations
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+
+export async function createEmployee(formData: FormData) {
+  "use server";
+
+  const validatedFields = CreateEmployeeSchema.safeParse({
+    name: formData.get("name"),
+    email: formData.get("email"),
+    department: formData.get("department"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      error: "Invalid fields",
+      fieldErrors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  try {
+    const employee = await employeeService.create(validatedFields.data);
+    revalidatePath("/employees");
+    redirect(`/employees/${employee.id}`);
+  } catch (error) {
+    return { error: "Failed to create employee" };
+  }
+}
+```
+
+## Client Component Patterns
+
+```typescript
+// ✅ CORRECT - Client Component when interactivity needed
+"use client";
+
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
+
+export function SearchInput({
+  onSearch,
+}: {
+  onSearch: (query: string) => void;
+}) {
+  const [query, setQuery] = useState("");
+
+  return (
+    <div className="relative">
+      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <Input
+        placeholder="Search employees..."
+        value={query}
+        onChange={(e) => {
+          setQuery(e.target.value);
+          onSearch(e.target.value);
+        }}
+        className="pl-10"
+      />
+    </div>
+  );
+}
+```
+
+## Suspense and Loading Patterns
+
+```typescript
+// ✅ CORRECT - Server Component with Suspense boundaries
+import { Suspense } from "react";
+import { EmployeeList } from "./employee-list";
+import { EmployeeListSkeleton } from "./employee-list-skeleton";
+
+export default function EmployeePage() {
+  return (
+    <div>
+      <h1>Employees</h1>
+      <Suspense fallback={<EmployeeListSkeleton />}>
+        <EmployeeList />
+      </Suspense>
+    </div>
+  );
+}
+```
+
+## File-based Routing
+
+- **USE** layout.tsx for shared layouts
+- **USE** loading.tsx and error.tsx for route-level states
+- **USE** route groups with (name) for organization
+- **USE** dynamic routes with [param] syntax
+
+## Forbidden Patterns
+
+```typescript
+// ❌ FORBIDDEN - Unnecessary client component
+"use client";
+export function StaticEmployeeList({ employees }: { employees: Employee[] }) {
+  // This should be a Server Component - no interactivity needed
+  return (
+    <div>
+      {employees.map((employee) => (
+        <EmployeeCard key={employee.id} employee={employee} />
+      ))}
+    </div>
+  );
+}
+
+// ❌ FORBIDDEN - Unnecessary client state for server data
+("use client");
+export function EmployeeList() {
+  const [employees, setEmployees] = useState<Employee[]>([]);
+
+  useEffect(() => {
+    fetch("/api/employees")
+      .then((r) => r.json())
+      .then(setEmployees);
+  }, []);
+
+  return <div>{/* ... */}</div>;
+}
+```
+
+Reference templates:
+
+- @page-template.tsx for new pages
+- @server-action-template.ts for data mutations

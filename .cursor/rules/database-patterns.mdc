@@ -1,0 +1,240 @@
+# Database Patterns (PostgreSQL + Drizzle ORM)
+
+## Connection Setup
+
+```typescript
+// lib/db/index.ts
+import { drizzle } from "drizzle-orm/neon-http";
+import { neon } from "@neondatabase/serverless";
+import * as schema from "./schema";
+
+const sql = neon(process.env.DATABASE_URL!);
+export const db = drizzle(sql, { schema });
+```
+
+## Schema Patterns
+
+- **USE** branded types for IDs: `type EmployeeId = string & { __brand: 'EmployeeId' }`
+- **IMPLEMENT** proper indexes for search queries
+- **USE** relations for type-safe joins
+- **FOLLOW** naming conventions: snake_case for columns, camelCase for TypeScript
+
+## Employee Directory Schema
+
+```typescript
+import {
+  pgTable,
+  serial,
+  varchar,
+  timestamp,
+  boolean,
+  text,
+} from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+
+export const employees = pgTable("employees", {
+  id: serial("id").primaryKey(),
+  employeeId: varchar("employee_id", { length: 50 }).notNull().unique(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }),
+  department: varchar("department", { length: 100 }),
+  designation: varchar("designation", { length: 100 }),
+  phoneNumber: varchar("phone_number", { length: 20 }),
+  profileImage: text("profile_image"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const departments = pgTable("departments", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 100 }).notNull(),
+  description: text("description"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+```
+
+## Messaging Schema
+
+```typescript
+export const conversations = pgTable("conversations", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }),
+  type: varchar("type", { length: 20 }).notNull(), // 'direct' | 'group'
+  createdBy: varchar("created_by", { length: 50 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const messages = pgTable("messages", {
+  id: serial("id").primaryKey(),
+  conversationId: varchar("conversation_id", { length: 50 }).notNull(),
+  senderId: varchar("sender_id", { length: 50 }).notNull(),
+  content: text("content").notNull(),
+  messageType: varchar("message_type", { length: 20 }).default("text"),
+  status: varchar("status", { length: 20 }).default("sent"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const conversationParticipants = pgTable("conversation_participants", {
+  id: serial("id").primaryKey(),
+  conversationId: varchar("conversation_id", { length: 50 }).notNull(),
+  participantId: varchar("participant_id", { length: 50 }).notNull(),
+  joinedAt: timestamp("joined_at").defaultNow(),
+});
+```
+
+## Relations
+
+```typescript
+export const employeesRelations = relations(employees, ({ many, one }) => ({
+  sentMessages: many(messages, { relationName: "sender" }),
+  conversations: many(conversationParticipants, {
+    relationName: "participant",
+  }),
+  department: one(departments, {
+    fields: [employees.department],
+    references: [departments.name],
+  }),
+}));
+
+export const messagesRelations = relations(messages, ({ one }) => ({
+  sender: one(employees, {
+    fields: [messages.senderId],
+    references: [employees.employeeId],
+    relationName: "sender",
+  }),
+  conversation: one(conversations, {
+    fields: [messages.conversationId],
+    references: [conversations.id],
+  }),
+}));
+```
+
+## Query Patterns with Server Actions
+
+```typescript
+// Server Action example
+"use server";
+import { db } from "@/lib/db";
+import { employees, departments } from "@/lib/db/schema";
+import { eq, ilike, and, desc } from "drizzle-orm";
+
+export async function searchEmployees(query: string, department?: string) {
+  const conditions = [];
+
+  if (query) {
+    conditions.push(ilike(employees.name, `%${query}%`));
+  }
+
+  if (department) {
+    conditions.push(eq(employees.department, department));
+  }
+
+  return await db
+    .select({
+      id: employees.id,
+      employeeId: employees.employeeId,
+      name: employees.name,
+      email: employees.email,
+      department: employees.department,
+      designation: employees.designation,
+    })
+    .from(employees)
+    .where(and(...conditions))
+    .orderBy(employees.name)
+    .limit(50);
+}
+
+export async function getEmployeeById(employeeId: string) {
+  const result = await db
+    .select()
+    .from(employees)
+    .where(eq(employees.employeeId, employeeId))
+    .limit(1);
+
+  return result[0] || null;
+}
+
+export async function createEmployee(data: CreateEmployeeData) {
+  const result = await db
+    .insert(employees)
+    .values({
+      employeeId: generateEmployeeId(),
+      name: data.name,
+      email: data.email,
+      department: data.department,
+      designation: data.designation,
+    })
+    .returning();
+
+  return result[0];
+}
+```
+
+## Messaging Queries
+
+```typescript
+export async function getConversationMessages(conversationId: string) {
+  return await db
+    .select({
+      id: messages.id,
+      content: messages.content,
+      createdAt: messages.createdAt,
+      sender: {
+        id: employees.employeeId,
+        name: employees.name,
+        profileImage: employees.profileImage,
+      },
+    })
+    .from(messages)
+    .innerJoin(employees, eq(messages.senderId, employees.employeeId))
+    .where(eq(messages.conversationId, conversationId))
+    .orderBy(desc(messages.createdAt))
+    .limit(100);
+}
+
+export async function sendMessage(data: SendMessageData) {
+  const result = await db
+    .insert(messages)
+    .values({
+      conversationId: data.conversationId,
+      senderId: data.senderId,
+      content: data.content,
+      messageType: data.messageType || "text",
+    })
+    .returning();
+
+  return result[0];
+}
+```
+
+## Migration Commands
+
+```bash
+# Generate migrations
+npx drizzle-kit generate
+
+# Push to database
+npx drizzle-kit push
+
+# Studio for database inspection
+npx drizzle-kit studio
+```
+
+## Drizzle Config
+
+```typescript
+// drizzle.config.ts
+import type { Config } from "drizzle-kit";
+
+export default {
+  schema: "./lib/db/schema.ts",
+  out: "./drizzle",
+  driver: "pg",
+  dbCredentials: {
+    connectionString: process.env.DATABASE_URL!,
+  },
+} satisfies Config;
+```
+
+Reference template: @schema-template.ts

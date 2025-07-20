@@ -1,0 +1,42 @@
+import { db } from '../src/lib/db';
+import { employees } from '../src/lib/database/schema';
+
+async function addSystemAdmin() {
+  try {
+    console.log('Adding System Admin user...');
+    
+    const [admin] = await db.insert(employees).values({
+      empCode: 'ADMIN001',
+      name: 'System Admin',
+      phoneNumber1: '9999999999', // You can change this to your phone number
+      emailId: 'admin@secl.com',
+      designation: 'System Administrator',
+      category: 'OFFICER',
+      grade: 'E-8',
+      discipline: 'IT',
+      department: 'ADMINISTRATION',
+      areaName: 'HEAD OFFICE',
+      unitName: 'HQ',
+      unitCode: 'HQ001',
+      deptCode: 'ADMIN',
+      isActive: true,
+      payFlag: 'Y',
+      gender: 'M',
+      dob: new Date('1990-01-01'),
+      dateOfAppointment: new Date('2020-01-01'),
+    }).returning();
+
+    console.log('System Admin added successfully!');
+    console.log('Employee Code:', admin.empCode);
+    console.log('Name:', admin.name);
+    console.log('Phone:', admin.phoneNumber1);
+    console.log('Use Employee Code "ADMIN001" to login');
+    
+    process.exit(0);
+  } catch (error) {
+    console.error('Error adding System Admin:', error);
+    process.exit(1);
+  }
+}
+
+addSystemAdmin();

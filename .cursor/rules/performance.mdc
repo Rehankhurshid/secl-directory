@@ -1,0 +1,331 @@
+# Performance Optimization
+
+## Core Performance Principles
+
+- **MINIMIZE** 'use client' usage - favor Server Components
+- **OPTIMIZE** Web Vitals: LCP, CLS, FID/INP
+- **USE** dynamic imports for heavy client components
+- **IMPLEMENT** virtual scrolling for lists >100 items
+
+## Image Optimization
+
+```typescript
+// ✅ CORRECT - Image optimization
+import Image from "next/image";
+
+export function EmployeeAvatar({ employee }: { employee: Employee }) {
+  return (
+    <Image
+      src={employee.avatarUrl}
+      alt={`${employee.name} avatar`}
+      width={40}
+      height={40}
+      className="rounded-full"
+      loading="lazy"
+      placeholder="blur"
+      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ..."
+    />
+  );
+}
+
+// ✅ CORRECT - Responsive images
+export function HeroBanner() {
+  return (
+    <div className="relative h-[500px]">
+      <Image
+        src="/hero-image.jpg"
+        alt="Hero banner"
+        fill
+        className="object-cover"
+        priority // Critical for LCP
+        sizes="100vw"
+      />
+    </div>
+  );
+}
+```
+
+## Dynamic Imports
+
+```typescript
+// ✅ CORRECT - Dynamic import for heavy client components
+import dynamic from "next/dynamic";
+import { EmployeeChartSkeleton } from "./employee-chart-skeleton";
+
+const EmployeeChart = dynamic(() => import("./employee-chart"), {
+  loading: () => <EmployeeChartSkeleton />,
+  ssr: false, // Only if component requires browser APIs
+});
+
+// ✅ CORRECT - Conditional dynamic imports
+const AdminPanel = dynamic(() => import("./admin-panel"), {
+  loading: () => <div>Loading admin panel...</div>,
+});
+
+export function Dashboard({ user }: { user: User }) {
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      {user.role === "admin" && <AdminPanel />}
+    </div>
+  );
+}
+```
+
+## Virtual Scrolling for Large Lists
+
+```typescript
+// ✅ CORRECT - Virtual scrolling for large lists
+"use client";
+import { useVirtualizer } from "@tanstack/react-virtual";
+
+export function VirtualizedEmployeeList({
+  employees,
+}: {
+  employees: Employee[];
+}) {
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  const virtualizer = useVirtualizer({
+    count: employees.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 80,
+    overscan: 10,
+  });
+
+  return (
+    <div ref={parentRef} className="h-[400px] overflow-auto">
+      <div
+        style={{
+          height: `${virtualizer.getTotalSize()}px`,
+          position: "relative",
+        }}
+      >
+        {virtualizer.getVirtualItems().map((virtualItem) => (
+          <div
+            key={virtualItem.key}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: `${virtualItem.size}px`,
+              transform: `translateY(${virtualItem.start}px)`,
+            }}
+          >
+            <EmployeeCard employee={employees[virtualItem.index]} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+## Bundle Optimization
+
+```typescript
+// ✅ CORRECT - Tree-shaking friendly imports
+import { format } from "date-fns";
+import { debounce } from "lodash-es";
+
+// ✅ CORRECT - Specific icon imports
+import { Search, User, MessageCircle } from "lucide-react";
+
+// ❌ FORBIDDEN - Full library imports
+import * as _ from "lodash"; // Import specific functions instead
+import * as dateFns from "date-fns"; // Import specific functions instead
+```
+
+## Web Vitals Optimization
+
+### Largest Contentful Paint (LCP)
+
+```typescript
+// ✅ CORRECT - Optimize LCP with priority images
+export function HeroBanner() {
+  return (
+    <div className="relative h-[500px]">
+      <Image
+        src="/hero-image.jpg"
+        alt="Hero banner"
+        fill
+        className="object-cover"
+        priority // Critical for LCP
+        sizes="100vw"
+      />
+    </div>
+  );
+}
+```
+
+### Cumulative Layout Shift (CLS)
+
+```typescript
+// ✅ CORRECT - Prevent layout shift with aspect ratio
+export function VideoPlayer({ videoUrl }: { videoUrl: string }) {
+  return (
+    <div className="aspect-video w-full">
+      <video src={videoUrl} className="h-full w-full object-cover" controls />
+    </div>
+  );
+}
+
+// ✅ CORRECT - Reserve space for dynamic content
+export function EmployeeCard({ employee }: { employee: Employee }) {
+  return (
+    <Card className="h-[200px] w-full">
+      {" "}
+      {/* Fixed height prevents shift */}
+      <CardContent className="flex h-full flex-col justify-between p-4">
+        <div>
+          <h3 className="font-semibold">{employee.name}</h3>
+          <p className="text-sm text-muted-foreground">{employee.department}</p>
+        </div>
+        <div className="h-[40px]">
+          {" "}
+          {/* Reserved space for actions */}
+          <Button size="sm" className="w-full">
+            View Profile
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+### First Input Delay (FID) / Interaction to Next Paint (INP)
+
+```typescript
+// ✅ CORRECT - Debounce expensive operations
+"use client";
+import { useMemo, useState } from "react";
+import { debounce } from "lodash-es";
+
+export function SearchEmployees() {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<Employee[]>([]);
+
+  const debouncedSearch = useMemo(
+    () =>
+      debounce(async (searchQuery: string) => {
+        if (searchQuery.length < 2) return;
+
+        const employees = await searchEmployees(searchQuery);
+        setResults(employees);
+      }, 300),
+    []
+  );
+
+  return (
+    <Input
+      placeholder="Search employees..."
+      onChange={(e) => {
+        setQuery(e.target.value);
+        debouncedSearch(e.target.value);
+      }}
+    />
+  );
+}
+
+// ✅ CORRECT - Use transitions for non-urgent updates
+("use client");
+import { useTransition } from "react";
+
+export function EmployeeFilters() {
+  const [isPending, startTransition] = useTransition();
+  const [department, setDepartment] = useState("");
+
+  const handleDepartmentChange = (value: string) => {
+    startTransition(() => {
+      setDepartment(value); // Non-urgent update
+    });
+  };
+
+  return (
+    <Select value={department} onValueChange={handleDepartmentChange}>
+      <SelectTrigger className={isPending ? "opacity-50" : ""}>
+        <SelectValue placeholder="Select department" />
+      </SelectTrigger>
+      {/* ... */}
+    </Select>
+  );
+}
+```
+
+## Memory Optimization
+
+```typescript
+// ✅ CORRECT - Cleanup subscriptions and timers
+"use client";
+export function RealTimeUpdates() {
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Update logic
+    }, 5000);
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        clearInterval(interval);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
+  return <div>Real-time content</div>;
+}
+
+// ✅ CORRECT - Memoize expensive calculations
+("use client");
+export function EmployeeAnalytics({ employees }: { employees: Employee[] }) {
+  const analytics = useMemo(() => {
+    return {
+      totalEmployees: employees.length,
+      departmentCounts: employees.reduce((acc, emp) => {
+        acc[emp.department] = (acc[emp.department] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>),
+      averageTenure:
+        employees.reduce((sum, emp) => sum + emp.tenure, 0) / employees.length,
+    };
+  }, [employees]);
+
+  return <AnalyticsDisplay analytics={analytics} />;
+}
+```
+
+## Forbidden Performance Anti-Patterns
+
+```typescript
+// ❌ FORBIDDEN - Unnecessary client component
+"use client";
+export function StaticContent() {
+  return <div>This should be a Server Component</div>;
+}
+
+// ❌ FORBIDDEN - Blocking operations in render
+export function SlowComponent() {
+  const expensiveValue = heavyCalculation(); // ❌ Should be memoized
+
+  return <div>{expensiveValue}</div>;
+}
+
+// ❌ FORBIDDEN - Memory leaks
+("use client");
+export function LeakyComponent() {
+  useEffect(() => {
+    const timer = setInterval(() => {
+      // Some operation
+    }, 1000);
+
+    // ❌ Missing cleanup
+  }, []);
+}
+```

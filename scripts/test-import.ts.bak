@@ -1,0 +1,83 @@
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+import { employees } from '../src/lib/database/schema';
+import * as fs from 'fs';
+import * as path from 'path';
+import { parse } from 'csv-parse/sync';
+import * as dotenv from 'dotenv';
+
+dotenv.config({ path: '.env.local' });
+
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  throw new Error('DATABASE_URL environment variable is required');
+}
+
+const sql = postgres(connectionString);
+const db = drizzle(sql);
+
+async function testImport() {
+  try {
+    console.log('🚀 Starting test import...');
+    
+    // Read CSV file
+    const csvPath = path.join(process.cwd(), 'instructions', 'employee-sheet.csv');
+    const csvContent = fs.readFileSync(csvPath, 'utf-8');
+    
+    // Parse CSV
+    const records = parse(csvContent, {
+      columns: true,
+      skip_empty_lines: true,
+      trim: true,
+    });
+    
+    console.log(`📊 Found ${records.length} records. Testing with first 5...`);
+    
+    // Import only first 5 employees
+    const testRecords = records.slice(0, 5);
+    
+    for (const record of testRecords) {
+      try {
+        console.log(`Importing: ${record.emp_code} - ${record.name}`);
+        
+        await db.insert(employees).values({
+          empCode: record.emp_code,
+          name: record.name || 'Unknown',
+          fatherName: record.father_name || null,
+          dob: record.dob ? new Date(record.dob) : null,
+          gender: record.gender || null,
+          emailId: record.email_id || null,
+          phoneNumber1: record.phno_1 || null,
+          phoneNumber2: record.phno_2 || null,
+          designation: record.designation || null,
+          category: record.category || null,
+          grade: record.grade || null,
+          discipline: record.discipline || null,
+          areaName: record.area_name || null,
+          unitCode: record.unit_code || null,
+          unitName: record.unit_name || null,
+          deptCode: record.dept_code || null,
+          department: record.dept || null,
+          bloodGroup: record.blood || null,
+          isActive: true,
+          payFlag: record.pay_flag || 'Y',
+        });
+        
+        console.log(`✅ Successfully imported ${record.name}`);
+      } catch (error) {
+        console.error(`❌ Error importing ${record.emp_code}:`, error);
+      }
+    }
+    
+    // Check count
+    const result = await sql`SELECT COUNT(*) as count FROM employees`;
+    console.log(`\n✅ Total employees in database: ${result[0].count}`);
+    
+  } catch (error) {
+    console.error('💥 Import failed:', error);
+  } finally {
+    await sql.end();
+  }
+}
+
+testImport();

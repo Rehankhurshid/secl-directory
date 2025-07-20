@@ -1,0 +1,673 @@
+{
+  "id": "d62a0162-7ab9-4fa3-a613-a60becf5e984",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.areas": {
+      "name": "areas",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "unit_code": {
+          "name": "unit_code",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "area_name": {
+          "name": "area_name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "unit_name": {
+          "name": "unit_name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "areas_unit_code_unique": {
+          "name": "areas_unit_code_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "unit_code"
+          ]
+        }
+      }
+    },
+    "public.departments": {
+      "name": "departments",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "dept_code": {
+          "name": "dept_code",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "parent_dept_id": {
+          "name": "parent_dept_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "departments_dept_code_unique": {
+          "name": "departments_dept_code_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "dept_code"
+          ]
+        }
+      }
+    },
+    "public.designations": {
+      "name": "designations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "grade": {
+          "name": "grade",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "category": {
+          "name": "category",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "discipline": {
+          "name": "discipline",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "designations_title_unique": {
+          "name": "designations_title_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "title"
+          ]
+        }
+      }
+    },
+    "public.employee_audit_log": {
+      "name": "employee_audit_log",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "employee_id": {
+          "name": "employee_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "action": {
+          "name": "action",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "changed_fields": {
+          "name": "changed_fields",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "old_values": {
+          "name": "old_values",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_values": {
+          "name": "new_values",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "changed_by": {
+          "name": "changed_by",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "changed_at": {
+          "name": "changed_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "employee_audit_log_employee_id_employees_id_fk": {
+          "name": "employee_audit_log_employee_id_employees_id_fk",
+          "tableFrom": "employee_audit_log",
+          "tableTo": "employees",
+          "columnsFrom": [
+            "employee_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.employees": {
+      "name": "employees",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "emp_code": {
+          "name": "emp_code",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "father_name": {
+          "name": "father_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dob": {
+          "name": "dob",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gender": {
+          "name": "gender",
+          "type": "varchar(1)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email_id": {
+          "name": "email_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone_1": {
+          "name": "phone_1",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone_2": {
+          "name": "phone_2",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "permanent_address": {
+          "name": "permanent_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "present_address": {
+          "name": "present_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "designation": {
+          "name": "designation",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "category": {
+          "name": "category",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "grade": {
+          "name": "grade",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "discipline": {
+          "name": "discipline",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dt_appt": {
+          "name": "dt_appt",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "area_joining_date": {
+          "name": "area_joining_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "grade_joining_date": {
+          "name": "grade_joining_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "incr_date": {
+          "name": "incr_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "expected_exit_date": {
+          "name": "expected_exit_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "company_posting_date": {
+          "name": "company_posting_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "area_name": {
+          "name": "area_name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "unit_code": {
+          "name": "unit_code",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "unit_name": {
+          "name": "unit_name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dept_code": {
+          "name": "dept_code",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dept": {
+          "name": "dept",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sub_dept": {
+          "name": "sub_dept",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "blood_group": {
+          "name": "blood_group",
+          "type": "varchar(5)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "caste_code": {
+          "name": "caste_code",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "religion_code": {
+          "name": "religion_code",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "marital_status_code": {
+          "name": "marital_status_code",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "spouse_name": {
+          "name": "spouse_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "spouse_emp_code": {
+          "name": "spouse_emp_code",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bank_acc_no": {
+          "name": "bank_acc_no",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bank": {
+          "name": "bank",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "basic_salary": {
+          "name": "basic_salary",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hra": {
+          "name": "hra",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ncwa_basic": {
+          "name": "ncwa_basic",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "aadhaar_no": {
+          "name": "aadhaar_no",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pan_no": {
+          "name": "pan_no",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "pay_flag": {
+          "name": "pay_flag",
+          "type": "varchar(1)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Y'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "emp_code_idx": {
+          "name": "emp_code_idx",
+          "columns": [
+            {
+              "expression": "emp_code",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "name_idx": {
+          "name": "name_idx",
+          "columns": [
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "department_idx": {
+          "name": "department_idx",
+          "columns": [
+            {
+              "expression": "dept",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "designation_idx": {
+          "name": "designation_idx",
+          "columns": [
+            {
+              "expression": "designation",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "area_idx": {
+          "name": "area_idx",
+          "columns": [
+            {
+              "expression": "area_name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "email_idx": {
+          "name": "email_idx",
+          "columns": [
+            {
+              "expression": "email_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "search_idx": {
+          "name": "search_idx",
+          "columns": [
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "emp_code",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "designation",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "employees_emp_code_unique": {
+          "name": "employees_emp_code_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "emp_code"
+          ]
+        }
+      }
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

@@ -1,0 +1,332 @@
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+import { employees, departments, areas, designations } from '../src/lib/database/schema';
+import { eq } from 'drizzle-orm';
+import * as fs from 'fs';
+import * as path from 'path';
+import { parse } from 'csv-parse/sync';
+import * as dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config({ path: '.env.local' });
+
+// Database connection
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  throw new Error('DATABASE_URL environment variable is required');
+}
+
+const sql = postgres(connectionString);
+const db = drizzle(sql);
+
+interface CSVEmployee {
+  si_no: string;
+  area_name: string;
+  unit_code: string;
+  unit_name: string;
+  emp_code: string;
+  name: string;
+  dob: string;
+  father_name: string;
+  designation: string;
+  category: string;
+  grade: string;
+  discipline: string;
+  bank_acc_no: string;
+  bank: string;
+  cmpf: string;
+  dept_code: string;
+  dept: string;
+  sub_dept: string;
+  dt_appt: string;
+  area_joining_date: string;
+  grade_joining_date: string;
+  incr_date: string;
+  expected_exit_date: string;
+  pay_flag: string;
+  aadhaar: string;
+  pan_no: string;
+  email_id: string;
+  phno_1: string;
+  phno_2: string;
+  gender: string;
+  permanent_address: string;
+  present_address: string;
+  spouse_name: string;
+  spouse_emp_code: string;
+  blood: string;
+  caste_code: string;
+  religion_code: string;
+  ex_emp_relation: string;
+  marital_status_code: string;
+  b_form_name: string;
+  hra: string;
+  basic: string;
+  ncwa_basic: string;
+  mtk_id: string;
+  ot_code: string;
+  ug_code: string;
+  company_posting_date: string;
+}
+
+function parseDate(dateStr: string): Date | null {
+  if (!dateStr || dateStr === 'null' || dateStr === '') return null;
+  
+  // Handle different date formats
+  const formats = [
+    /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/, // MM/DD/YYYY or DD/MM/YYYY
+    /^(\d{4})-(\d{2})-(\d{2})$/, // YYYY-MM-DD
+  ];
+  
+  for (const format of formats) {
+    const match = dateStr.match(format);
+    if (match) {
+      if (format === formats[0]) {
+        // Assume DD/MM/YYYY format for Indian data
+        const [, day, month, year] = match;
+        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+      } else {
+        // YYYY-MM-DD format
+        const [, year, month, day] = match;
+        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+      }
+    }
+  }
+  
+  console.warn(`Could not parse date: ${dateStr}`);
+  return null;
+}
+
+function parseDecimal(value: string): number | null {
+  if (!value || value === 'null' || value === '') return null;
+  
+  // Remove any non-numeric characters except decimal point
+  const cleaned = value.replace(/[^\d.-]/g, '');
+  const num = parseFloat(cleaned);
+  
+  return isNaN(num) ? null : num;
+}
+
+function sanitizeString(value: string): string | null {
+  if (!value || value === 'null' || value.trim() === '') return null;
+  return value.trim();
+}
+
+async function importEmployees() {
+  try {
+    console.log('🚀 Starting employee data import...');
+    
+    // Read CSV file
+    const csvPath = path.join(process.cwd(), 'instructions', 'employee-sheet.csv');
+    const csvContent = fs.readFileSync(csvPath, 'utf-8');
+    
+    // Parse CSV
+    const records: CSVEmployee[] = parse(csvContent, {
+      columns: true,
+      skip_empty_lines: true,
+      trim: true,
+    });
+    
+    console.log(`📊 Found ${records.length} employee records to import`);
+    
+    // Create reference data first
+    console.log('📋 Creating reference data...');
+    
+    // Extract unique departments
+    const uniqueDepartments = [...new Set(records
+      .filter(r => r.dept && r.dept !== 'null')
+      .map(r => ({ code: r.dept_code, name: r.dept }))
+      .filter(d => d.code && d.name)
+    )];
+    
+    for (const dept of uniqueDepartments) {
+      try {
+        await db.insert(departments).values({
+          deptCode: dept.code,
+          name: dept.name,
+          isActive: true,
+        }).onConflictDoNothing();
+      } catch (error) {
+        console.warn(`Warning: Could not insert department ${dept.name}:`, error);
+      }
+    }
+    
+    // Extract unique areas
+    const uniqueAreas = [...new Set(records
+      .filter(r => r.area_name && r.unit_code)
+      .map(r => ({ 
+        unitCode: r.unit_code, 
+        areaName: r.area_name, 
+        unitName: r.unit_name || r.area_name 
+      }))
+    )];
+    
+    for (const area of uniqueAreas) {
+      try {
+        await db.insert(areas).values({
+          unitCode: area.unitCode,
+          areaName: area.areaName,
+          unitName: area.unitName,
+          isActive: true,
+        }).onConflictDoNothing();
+      } catch (error) {
+        console.warn(`Warning: Could not insert area ${area.areaName}:`, error);
+      }
+    }
+    
+    // Extract unique designations
+    const uniqueDesignations = [...new Set(records
+      .filter(r => r.designation && r.designation !== 'null')
+      .map(r => ({
+        title: r.designation,
+        grade: r.grade,
+        category: r.category,
+        discipline: r.discipline,
+      }))
+    )];
+    
+    for (const designation of uniqueDesignations) {
+      try {
+        await db.insert(designations).values({
+          title: designation.title,
+          grade: sanitizeString(designation.grade),
+          category: sanitizeString(designation.category),
+          discipline: sanitizeString(designation.discipline),
+          isActive: true,
+        }).onConflictDoNothing();
+      } catch (error) {
+        console.warn(`Warning: Could not insert designation ${designation.title}:`, error);
+      }
+    }
+    
+    console.log(`✅ Created ${uniqueDepartments.length} departments, ${uniqueAreas.length} areas, ${uniqueDesignations.length} designations`);
+    
+    // Import employees in batches
+    console.log('👥 Importing employee data...');
+    const batchSize = 100;
+    let imported = 0;
+    let skipped = 0;
+    
+    for (let i = 0; i < records.length; i += batchSize) {
+      const batch = records.slice(i, i + batchSize);
+      
+      for (const record of batch) {
+        try {
+          // Check if employee already exists
+          const existing = await db.select()
+            .from(employees)
+            .where(eq(employees.empCode, record.emp_code))
+            .limit(1);
+          
+          if (existing.length > 0) {
+            console.log(`⏭️  Skipping existing employee: ${record.emp_code}`);
+            skipped++;
+            continue;
+          }
+          
+          // Prepare employee data
+          const employeeData = {
+            empCode: record.emp_code,
+            name: record.name,
+            fatherName: sanitizeString(record.father_name),
+            dob: parseDate(record.dob),
+            gender: sanitizeString(record.gender),
+            
+            // Contact Information
+            emailId: sanitizeString(record.email_id),
+            phoneNumber1: sanitizeString(record.phno_1),
+            phoneNumber2: sanitizeString(record.phno_2),
+            permanentAddress: sanitizeString(record.permanent_address),
+            presentAddress: sanitizeString(record.present_address),
+            
+            // Employment Details
+            designation: sanitizeString(record.designation),
+            category: sanitizeString(record.category),
+            grade: sanitizeString(record.grade),
+            discipline: sanitizeString(record.discipline),
+            dateOfAppointment: parseDate(record.dt_appt),
+            areaJoiningDate: parseDate(record.area_joining_date),
+            gradeJoiningDate: parseDate(record.grade_joining_date),
+            incrementDate: parseDate(record.incr_date),
+            expectedExitDate: parseDate(record.expected_exit_date),
+            companyPostingDate: parseDate(record.company_posting_date),
+            
+            // Organizational Structure
+            areaName: sanitizeString(record.area_name),
+            unitCode: sanitizeString(record.unit_code),
+            unitName: sanitizeString(record.unit_name),
+            deptCode: sanitizeString(record.dept_code),
+            department: sanitizeString(record.dept),
+            subDepartment: sanitizeString(record.sub_dept),
+            
+            // Personal Information
+            bloodGroup: sanitizeString(record.blood),
+            casteCode: sanitizeString(record.caste_code),
+            religionCode: sanitizeString(record.religion_code),
+            maritalStatusCode: sanitizeString(record.marital_status_code),
+            spouseName: sanitizeString(record.spouse_name),
+            spouseEmpCode: sanitizeString(record.spouse_emp_code),
+            
+            // Financial Information (consider encryption in production)
+            bankAccountNo: sanitizeString(record.bank_acc_no),
+            bankName: sanitizeString(record.bank),
+            basicSalary: parseDecimal(record.basic),
+            hra: parseDecimal(record.hra),
+            ncwaBasic: parseDecimal(record.ncwa_basic),
+            
+            // Identity Documents (consider encryption in production)
+            aadhaarNo: sanitizeString(record.aadhaar),
+            panNo: sanitizeString(record.pan_no),
+            
+            // System Fields
+            isActive: true,
+            payFlag: record.pay_flag || 'Y',
+          };
+          
+          await db.insert(employees).values(employeeData);
+          imported++;
+          
+          if (imported % 50 === 0) {
+            console.log(`📈 Imported ${imported} employees...`);
+          }
+          
+        } catch (error) {
+          console.error(`❌ Error importing employee ${record.emp_code}:`, error);
+          skipped++;
+        }
+      }
+    }
+    
+    console.log('🎉 Import completed!');
+    console.log(`✅ Successfully imported: ${imported} employees`);
+    console.log(`⏭️  Skipped: ${skipped} employees`);
+    console.log(`📊 Total processed: ${imported + skipped} employees`);
+    
+    // Create full-text search index
+    console.log('🔍 Creating search indexes...');
+    await sql`
+      CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_employees_search 
+      ON employees USING gin(to_tsvector('english', 
+        COALESCE(name, '') || ' ' || 
+        COALESCE(emp_code, '') || ' ' || 
+        COALESCE(designation, '') || ' ' ||
+        COALESCE(department, '')
+      ));
+    `;
+    
+    console.log('✅ Search indexes created successfully!');
+    
+  } catch (error) {
+    console.error('💥 Import failed:', error);
+    process.exit(1);
+  } finally {
+    await sql.end();
+  }
+}
+
+// Run the import
+if (require.main === module) {
+  importEmployees();
+}
+
+export default importEmployees; 

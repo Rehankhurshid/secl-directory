@@ -1,0 +1,254 @@
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+// Importing from the correct schema location
+// Note: we're using raw SQL queries, so we don't need the schema import
+import { sql as sqlTag } from 'drizzle-orm';
+import * as dotenv from 'dotenv';
+
+dotenv.config({ path: '.env.local' });
+
+const connectionString = process.env.DATABASE_URL!;
+const sql = postgres(connectionString);
+const db = drizzle(sql);
+
+async function analyzeEmployees() {
+  try {
+    console.log('🔍 Employee Database Analysis\n');
+    console.log('=' .repeat(80));
+    
+    // 1. Total number of employees
+    const totalEmployees = await sql`SELECT COUNT(*) as count FROM employees`;
+    console.log(`\n1. TOTAL EMPLOYEES: ${totalEmployees[0].count}`);
+    
+    // 2. Breakdown by department
+    console.log('\n2. EMPLOYEES BY DEPARTMENT:');
+    console.log('-' .repeat(50));
+    const deptBreakdown = await sql`
+      SELECT 
+        COALESCE(dept, 'No Department') as department,
+        COUNT(*) as count
+      FROM employees
+      GROUP BY dept
+      ORDER BY count DESC
+    `;
+    deptBreakdown.forEach(dept => {
+      console.log(`   ${dept.department}: ${dept.count}`);
+    });
+    
+    // 3. Distribution by gender, category, and grade
+    console.log('\n3. DISTRIBUTION ANALYSIS:');
+    console.log('-' .repeat(50));
+    
+    // Gender distribution
+    console.log('\n   Gender Distribution:');
+    const genderDist = await sql`
+      SELECT 
+        COALESCE(gender, 'Not Specified') as gender,
+        COUNT(*) as count,
+        ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM employees), 2) as percentage
+      FROM employees
+      GROUP BY gender
+      ORDER BY count DESC
+    `;
+    genderDist.forEach(g => {
+      console.log(`     ${g.gender}: ${g.count} (${g.percentage}%)`);
+    });
+    
+    // Category distribution
+    console.log('\n   Category Distribution:');
+    const categoryDist = await sql`
+      SELECT 
+        COALESCE(category, 'Not Specified') as category,
+        COUNT(*) as count,
+        ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM employees), 2) as percentage
+      FROM employees
+      GROUP BY category
+      ORDER BY count DESC
+      LIMIT 10
+    `;
+    categoryDist.forEach(c => {
+      console.log(`     ${c.category}: ${c.count} (${c.percentage}%)`);
+    });
+    
+    // Grade distribution
+    console.log('\n   Grade Distribution:');
+    const gradeDist = await sql`
+      SELECT 
+        COALESCE(grade, 'Not Specified') as grade,
+        COUNT(*) as count,
+        ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM employees), 2) as percentage
+      FROM employees
+      GROUP BY grade
+      ORDER BY count DESC
+      LIMIT 10
+    `;
+    gradeDist.forEach(g => {
+      console.log(`     ${g.grade}: ${g.count} (${g.percentage}%)`);
+    });
+    
+    // 4. Age distribution
+    console.log('\n4. AGE DISTRIBUTION:');
+    console.log('-' .repeat(50));
+    const ageDist = await sql`
+      WITH age_groups AS (
+        SELECT 
+          CASE 
+            WHEN EXTRACT(YEAR FROM AGE(dob)) < 25 THEN 'Under 25'
+            WHEN EXTRACT(YEAR FROM AGE(dob)) BETWEEN 25 AND 34 THEN '25-34'
+            WHEN EXTRACT(YEAR FROM AGE(dob)) BETWEEN 35 AND 44 THEN '35-44'
+            WHEN EXTRACT(YEAR FROM AGE(dob)) BETWEEN 45 AND 54 THEN '45-54'
+            WHEN EXTRACT(YEAR FROM AGE(dob)) >= 55 THEN '55+'
+            ELSE 'No DOB'
+          END as age_group
+        FROM employees
+      )
+      SELECT 
+        age_group,
+        COUNT(*) as count,
+        ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM employees), 2) as percentage
+      FROM age_groups
+      GROUP BY age_group
+      ORDER BY 
+        CASE age_group
+          WHEN 'Under 25' THEN 1
+          WHEN '25-34' THEN 2
+          WHEN '35-44' THEN 3
+          WHEN '45-54' THEN 4
+          WHEN '55+' THEN 5
+          ELSE 6
+        END
+    `;
+    ageDist.forEach(a => {
+      console.log(`   ${a.age_group}: ${a.count} (${a.percentage}%)`);
+    });
+    
+    // Average age
+    const avgAge = await sql`
+      SELECT ROUND(AVG(EXTRACT(YEAR FROM AGE(dob))), 1) as avg_age
+      FROM employees
+      WHERE dob IS NOT NULL
+    `;
+    console.log(`\n   Average Age: ${avgAge[0].avg_age} years`);
+    
+    // 5. Data quality issues
+    console.log('\n5. DATA QUALITY ANALYSIS:');
+    console.log('-' .repeat(50));
+    
+    // Check for missing critical data
+    const missingData = await sql`
+      SELECT 
+        COUNT(*) FILTER (WHERE email_id IS NULL) as missing_email,
+        COUNT(*) FILTER (WHERE phone_1 IS NULL AND phone_2 IS NULL) as missing_phone,
+        COUNT(*) FILTER (WHERE dob IS NULL) as missing_dob,
+        COUNT(*) FILTER (WHERE gender IS NULL) as missing_gender,
+        COUNT(*) FILTER (WHERE dept IS NULL) as missing_dept,
+        COUNT(*) FILTER (WHERE designation IS NULL) as missing_designation,
+        COUNT(*) FILTER (WHERE grade IS NULL) as missing_grade,
+        COUNT(*) FILTER (WHERE category IS NULL) as missing_category,
+        COUNT(*) FILTER (WHERE area_name IS NULL) as missing_area
+      FROM employees
+    `;
+    
+    console.log('   Missing Data Count:');
+    console.log(`     Email: ${missingData[0].missing_email}`);
+    console.log(`     Phone: ${missingData[0].missing_phone}`);
+    console.log(`     Date of Birth: ${missingData[0].missing_dob}`);
+    console.log(`     Gender: ${missingData[0].missing_gender}`);
+    console.log(`     Department: ${missingData[0].missing_dept}`);
+    console.log(`     Designation: ${missingData[0].missing_designation}`);
+    console.log(`     Grade: ${missingData[0].missing_grade}`);
+    console.log(`     Category: ${missingData[0].missing_category}`);
+    console.log(`     Area: ${missingData[0].missing_area}`);
+    
+    // 6. Additional insights
+    console.log('\n6. ADDITIONAL INSIGHTS:');
+    console.log('-' .repeat(50));
+    
+    // Active vs Inactive employees
+    const activeStatus = await sql`
+      SELECT 
+        is_active,
+        COUNT(*) as count
+      FROM employees
+      GROUP BY is_active
+    `;
+    console.log('\n   Employee Status:');
+    activeStatus.forEach(s => {
+      console.log(`     ${s.is_active ? 'Active' : 'Inactive'}: ${s.count}`);
+    });
+    
+    // Top designations
+    console.log('\n   Top 10 Designations:');
+    const topDesignations = await sql`
+      SELECT 
+        designation,
+        COUNT(*) as count
+      FROM employees
+      WHERE designation IS NOT NULL
+      GROUP BY designation
+      ORDER BY count DESC
+      LIMIT 10
+    `;
+    topDesignations.forEach(d => {
+      console.log(`     ${d.designation}: ${d.count}`);
+    });
+    
+    // Areas with most employees
+    console.log('\n   Top 10 Areas by Employee Count:');
+    const topAreas = await sql`
+      SELECT 
+        area_name,
+        COUNT(*) as count
+      FROM employees
+      WHERE area_name IS NOT NULL
+      GROUP BY area_name
+      ORDER BY count DESC
+      LIMIT 10
+    `;
+    topAreas.forEach(a => {
+      console.log(`     ${a.area_name}: ${a.count}`);
+    });
+    
+    // Service tenure analysis
+    console.log('\n   Service Tenure Analysis:');
+    const tenureAnalysis = await sql`
+      WITH tenure_groups AS (
+        SELECT 
+          CASE 
+            WHEN EXTRACT(YEAR FROM AGE(dt_appt)) < 5 THEN '0-5 years'
+            WHEN EXTRACT(YEAR FROM AGE(dt_appt)) BETWEEN 5 AND 10 THEN '5-10 years'
+            WHEN EXTRACT(YEAR FROM AGE(dt_appt)) BETWEEN 10 AND 20 THEN '10-20 years'
+            WHEN EXTRACT(YEAR FROM AGE(dt_appt)) > 20 THEN '20+ years'
+            ELSE 'No appointment date'
+          END as tenure_group
+        FROM employees
+      )
+      SELECT 
+        tenure_group,
+        COUNT(*) as count
+      FROM tenure_groups
+      GROUP BY tenure_group
+      ORDER BY 
+        CASE tenure_group
+          WHEN '0-5 years' THEN 1
+          WHEN '5-10 years' THEN 2
+          WHEN '10-20 years' THEN 3
+          WHEN '20+ years' THEN 4
+          ELSE 5
+        END
+    `;
+    tenureAnalysis.forEach(t => {
+      console.log(`     ${t.tenure_group}: ${t.count}`);
+    });
+    
+    console.log('\n' + '=' .repeat(80));
+    console.log('Analysis completed successfully!\n');
+    
+  } catch (error) {
+    console.error('Error analyzing employees:', error);
+  } finally {
+    await sql.end();
+  }
+}
+
+analyzeEmployees();

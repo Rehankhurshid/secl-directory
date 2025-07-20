@@ -1,0 +1,312 @@
+# Testing Guidelines
+
+## Testing Strategy
+
+- **WRITE** tests for all business logic (domain layer)
+- **TEST** user behavior, not implementation details
+- **COVER** error scenarios and edge cases
+- **USE** React Testing Library for component tests
+
+## Test Structure - Behavior Over Implementation
+
+- **TEST** behavior, not implementation details
+- **USE** user-centric testing with React Testing Library
+- **AVOID** testing internal state or methods
+- **FOCUS** on what users see and interact with
+- **WRITE** tests that would survive refactoring
+
+## Component Testing
+
+```typescript
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+
+// ✅ CORRECT - Test behavior, not implementation
+describe("Employee Search", () => {
+  it("filters employees by department", async () => {
+    // Arrange
+    const employees = [
+      { id: "1", name: "John Doe", department: "Engineering" },
+      { id: "2", name: "Jane Smith", department: "Design" },
+    ];
+
+    render(<EmployeeDirectory employees={employees} />);
+
+    // Act
+    await userEvent.selectOptions(
+      screen.getByRole("combobox", { name: /department/i }),
+      "Engineering"
+    );
+
+    // Assert
+    await waitFor(() => {
+      expect(screen.getByText("John Doe")).toBeInTheDocument();
+      expect(screen.queryByText("Jane Smith")).not.toBeInTheDocument();
+    });
+  });
+
+  it("shows no results message when search yields no matches", async () => {
+    render(<EmployeeDirectory employees={[]} />);
+
+    await userEvent.type(
+      screen.getByRole("searchbox", { name: /search employees/i }),
+      "nonexistent"
+    );
+
+    expect(screen.getByText(/no employees found/i)).toBeInTheDocument();
+  });
+});
+
+// ❌ FORBIDDEN - Testing implementation details
+it("calls useState with correct value", () => {
+  const useStateSpy = jest.spyOn(React, "useState");
+  render(<EmployeeList />);
+  expect(useStateSpy).toHaveBeenCalledWith([]);
+});
+```
+
+## Form Testing
+
+```typescript
+describe("CreateEmployeeForm", () => {
+  it("validates required fields", async () => {
+    const onSubmit = jest.fn();
+    const user = userEvent.setup();
+
+    render(<CreateEmployeeForm onSubmit={onSubmit} />);
+
+    // Submit without filling required fields
+    await user.click(screen.getByRole("button", { name: /create employee/i }));
+
+    expect(screen.getByText(/name is required/i)).toBeInTheDocument();
+    expect(screen.getByText(/email is required/i)).toBeInTheDocument();
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("submits form with valid data", async () => {
+    const onSubmit = jest.fn();
+    const user = userEvent.setup();
+
+    render(<CreateEmployeeForm onSubmit={onSubmit} />);
+
+    await user.type(screen.getByLabelText(/name/i), "John Doe");
+    await user.type(screen.getByLabelText(/email/i), "john@example.com");
+    await user.selectOptions(
+      screen.getByLabelText(/department/i),
+      "Engineering"
+    );
+
+    await user.click(screen.getByRole("button", { name: /create employee/i }));
+
+    expect(onSubmit).toHaveBeenCalledWith({
+      name: "John Doe",
+      email: "john@example.com",
+      department: "Engineering",
+    });
+  });
+});
+```
+
+## API Testing with MSW
+
+```typescript
+import { server } from "../mocks/server";
+import { rest } from "msw";
+
+describe("Employee API Integration", () => {
+  it("fetches and displays employees", async () => {
+    // Mock successful API response
+    server.use(
+      rest.get("/api/employees", (req, res, ctx) => {
+        return res(
+          ctx.json([
+            { id: "1", name: "John Doe", department: "Engineering" },
+            { id: "2", name: "Jane Smith", department: "Design" },
+          ])
+        );
+      })
+    );
+
+    render(<EmployeeList />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByText("John Doe")).toBeInTheDocument();
+      expect(screen.getByText("Jane Smith")).toBeInTheDocument();
+    });
+  });
+
+  it("handles API errors gracefully", async () => {
+    server.use(
+      rest.get("/api/employees", (req, res, ctx) => {
+        return res(ctx.status(500), ctx.json({ error: "Server error" }));
+      })
+    );
+
+    render(<EmployeeList />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByRole("alert")).toHaveTextContent(
+        /failed to load employees/i
+      );
+    });
+  });
+});
+```
+
+## Custom Hook Testing
+
+```typescript
+import { renderHook, waitFor } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const createWrapper = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+
+  return ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+};
+
+describe("useEmployees", () => {
+  it("fetches employees on mount", async () => {
+    const { result } = renderHook(() => useEmployees(), {
+      wrapper: createWrapper(),
+    });
+
+    expect(result.current.isLoading).toBe(true);
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.employees).toEqual([
+      expect.objectContaining({ id: "1", name: "John Doe" }),
+    ]);
+  });
+});
+```
+
+## Accessibility Testing
+
+```typescript
+import { axe, toHaveNoViolations } from "jest-axe";
+
+expect.extend(toHaveNoViolations);
+
+describe("EmployeeCard Accessibility", () => {
+  it("should have no accessibility violations", async () => {
+    const { container } = render(<EmployeeCard employee={mockEmployee} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it("supports keyboard navigation", async () => {
+    const onSelect = jest.fn();
+    const user = userEvent.setup();
+
+    render(<EmployeeCard employee={mockEmployee} onSelect={onSelect} />);
+
+    const card = screen.getByRole("button");
+
+    // Tab to the card
+    await user.tab();
+    expect(card).toHaveFocus();
+
+    // Press Enter to select
+    await user.keyboard("{Enter}");
+    expect(onSelect).toHaveBeenCalledWith(mockEmployee);
+  });
+});
+```
+
+## Test Setup
+
+```typescript
+// setupTests.ts
+import "@testing-library/jest-dom";
+import { server } from "./mocks/server";
+
+// MSW setup
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
+// Mock IntersectionObserver
+global.IntersectionObserver = jest.fn().mockImplementation(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+}));
+```
+
+## MSW Handlers
+
+```typescript
+// mocks/handlers.ts
+import { rest } from "msw";
+
+export const handlers = [
+  rest.get("/api/employees", (req, res, ctx) => {
+    const search = req.url.searchParams.get("search");
+    const department = req.url.searchParams.get("department");
+
+    let employees = [
+      { id: "1", name: "John Doe", department: "Engineering" },
+      { id: "2", name: "Jane Smith", department: "Design" },
+    ];
+
+    if (search) {
+      employees = employees.filter((emp) =>
+        emp.name.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+
+    if (department) {
+      employees = employees.filter((emp) => emp.department === department);
+    }
+
+    return res(ctx.json(employees));
+  }),
+
+  rest.post("/api/employees", (req, res, ctx) => {
+    return res(
+      ctx.json({ id: "3", ...req.body, createdAt: new Date().toISOString() })
+    );
+  }),
+];
+```
+
+## Coverage Requirements
+
+- **MINIMUM** 90% code coverage for business logic
+- **TEST** all acceptance criteria from PRD
+- **COVER** accessibility requirements
+- **VALIDATE** error scenarios
+
+## Forbidden Testing Anti-Patterns
+
+```typescript
+// ❌ FORBIDDEN - Testing implementation details
+it("calls useEffect with correct dependencies", () => {
+  const useEffectSpy = jest.spyOn(React, "useEffect");
+  render(<Component />);
+  expect(useEffectSpy).toHaveBeenCalledWith(expect.any(Function), []);
+});
+
+// ❌ FORBIDDEN - Testing CSS classes
+it("applies correct CSS classes", () => {
+  render(<Button variant="primary" />);
+  expect(screen.getByRole("button")).toHaveClass("btn-primary");
+});
+
+// ❌ FORBIDDEN - No user interaction simulation
+it("handles click events", () => {
+  const onClick = jest.fn();
+  render(<Button onClick={onClick} />);
+
+  onClick(); // ❌ Directly calling instead of simulating user interaction
+  expect(onClick).toHaveBeenCalled();
+});
+```

@@ -1,0 +1,429 @@
+---
+alwaysApply: true
+---
+
+# Shadcn/UI Component Guidelines
+
+## Component Architecture
+
+- **USE** Shadcn/UI and Radix primitives for all UI components
+- **FOLLOW** compound component pattern for complex UI elements
+- **SEPARATE** presentation logic from business logic completely
+- **IMPLEMENT** responsive design with Tailwind CSS (mobile-first approach)
+- **USE** declarative JSX patterns
+
+## Styling Requirements
+
+- **USE** Shadcn/UI, Radix, and Tailwind for all components and styling
+- **NEVER** write custom CSS except for design tokens in globals.css
+- **USE** Tailwind utility classes exclusively
+- **FOLLOW** cn() utility pattern for conditional classes
+
+## Component Examples
+
+```typescript
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+interface EmployeeCardProps {
+  employee: Employee;
+  variant?: "compact" | "detailed";
+  onSelect?: (employee: Employee) => void;
+  className?: string;
+}
+
+export function EmployeeCard({
+  employee,
+  variant = "compact",
+  onSelect,
+  className,
+}: EmployeeCardProps) {
+  return (
+    <Card
+      className={cn(
+        "w-full transition-all duration-200",
+        variant === "compact" && "max-w-sm",
+        variant === "detailed" && "max-w-2xl",
+        className
+      )}
+    >
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          {employee.name}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm text-muted-foreground">{employee.department}</p>
+        {onSelect && (
+          <Button onClick={() => onSelect(employee)} className="w-full mt-4">
+            View Profile
+          </Button>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+## Form Components with Shadcn/UI
+
+```typescript
+"use client";
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
+const formSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Invalid email address"),
+});
+
+export function CreateEmployeeForm({
+  onSubmit,
+}: {
+  onSubmit: (data: z.infer<typeof formSchema>) => void;
+}) {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+    },
+  });
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter employee name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input
+                  type="email"
+                  placeholder="Enter email address"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button type="submit">Create Employee</Button>
+      </form>
+    </Form>
+  );
+}
+```
+
+## Responsive Design Patterns
+
+```typescript
+// ✅ CORRECT - Mobile-first responsive design
+export function EmployeeGrid({ employees }: { employees: Employee[] }) {
+  return (
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {employees.map((employee) => (
+        <EmployeeCard key={employee.id} employee={employee} />
+      ))}
+    </div>
+  );
+}
+
+// ✅ CORRECT - Responsive navigation
+export function Navigation() {
+  return (
+    <nav className="flex flex-col space-y-2 md:flex-row md:space-x-4 md:space-y-0">
+      <Button variant="ghost" className="justify-start">
+        <Users className="mr-2 h-4 w-4" />
+        Employees
+      </Button>
+      <Button variant="ghost" className="justify-start">
+        <MessageCircle className="mr-2 h-4 w-4" />
+        Messages
+      </Button>
+    </nav>
+  );
+}
+```
+
+## Accessibility Patterns
+
+```typescript
+// ✅ CORRECT - Accessible components
+export function EmployeeList({ employees }: { employees: Employee[] }) {
+  return (
+    <div role="list" aria-label="Employee directory">
+      {employees.map((employee) => (
+        <div
+          key={employee.id}
+          role="listitem"
+          className="focus:outline-none focus:ring-2 focus:ring-primary"
+          tabIndex={0}
+        >
+          <EmployeeCard employee={employee} />
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+## Forbidden Patterns
+
+```typescript
+// ❌ FORBIDDEN - Custom CSS classes
+<div className="my-custom-card" style={{ width: '300px' }}>
+
+// ❌ FORBIDDEN - Mixed concerns in components
+export function EmployeeCard() {
+  const [data] = useState(); // ❌ State in presentation
+  useEffect(() => {
+    fetch("/api"); // ❌ API call in component
+  }, []);
+}
+```
+
+Reference template: @component-template.tsx
+
+# Shadcn/UI Component Guidelines
+
+## Component Architecture
+
+- **USE** Shadcn/UI and Radix primitives for all UI components
+- **FOLLOW** compound component pattern for complex UI elements
+- **SEPARATE** presentation logic from business logic completely
+- **IMPLEMENT** responsive design with Tailwind CSS (mobile-first approach)
+- **USE** declarative JSX patterns
+
+## Styling Requirements
+
+- **USE** Shadcn/UI, Radix, and Tailwind for all components and styling
+- **NEVER** write custom CSS except for design tokens in globals.css
+- **USE** Tailwind utility classes exclusively
+- **FOLLOW** cn() utility pattern for conditional classes
+
+## Component Examples
+
+```typescript
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+interface EmployeeCardProps {
+  employee: Employee;
+  variant?: "compact" | "detailed";
+  onSelect?: (employee: Employee) => void;
+  className?: string;
+}
+
+export function EmployeeCard({
+  employee,
+  variant = "compact",
+  onSelect,
+  className,
+}: EmployeeCardProps) {
+  return (
+    <Card
+      className={cn(
+        "w-full transition-all duration-200",
+        variant === "compact" && "max-w-sm",
+        variant === "detailed" && "max-w-2xl",
+        className
+      )}
+    >
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          {employee.name}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm text-muted-foreground">{employee.department}</p>
+        {onSelect && (
+          <Button onClick={() => onSelect(employee)} className="w-full mt-4">
+            View Profile
+          </Button>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+## Form Components with Shadcn/UI
+
+```typescript
+"use client";
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
+const formSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Invalid email address"),
+});
+
+export function CreateEmployeeForm({
+  onSubmit,
+}: {
+  onSubmit: (data: z.infer<typeof formSchema>) => void;
+}) {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+    },
+  });
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter employee name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input
+                  type="email"
+                  placeholder="Enter email address"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button type="submit">Create Employee</Button>
+      </form>
+    </Form>
+  );
+}
+```
+
+## Responsive Design Patterns
+
+```typescript
+// ✅ CORRECT - Mobile-first responsive design
+export function EmployeeGrid({ employees }: { employees: Employee[] }) {
+  return (
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {employees.map((employee) => (
+        <EmployeeCard key={employee.id} employee={employee} />
+      ))}
+    </div>
+  );
+}
+
+// ✅ CORRECT - Responsive navigation
+export function Navigation() {
+  return (
+    <nav className="flex flex-col space-y-2 md:flex-row md:space-x-4 md:space-y-0">
+      <Button variant="ghost" className="justify-start">
+        <Users className="mr-2 h-4 w-4" />
+        Employees
+      </Button>
+      <Button variant="ghost" className="justify-start">
+        <MessageCircle className="mr-2 h-4 w-4" />
+        Messages
+      </Button>
+    </nav>
+  );
+}
+```
+
+## Accessibility Patterns
+
+```typescript
+// ✅ CORRECT - Accessible components
+export function EmployeeList({ employees }: { employees: Employee[] }) {
+  return (
+    <div role="list" aria-label="Employee directory">
+      {employees.map((employee) => (
+        <div
+          key={employee.id}
+          role="listitem"
+          className="focus:outline-none focus:ring-2 focus:ring-primary"
+          tabIndex={0}
+        >
+          <EmployeeCard employee={employee} />
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+## Forbidden Patterns
+
+```typescript
+// ❌ FORBIDDEN - Custom CSS classes
+<div className="my-custom-card" style={{ width: '300px' }}>
+
+// ❌ FORBIDDEN - Mixed concerns in components
+export function EmployeeCard() {
+  const [data] = useState(); // ❌ State in presentation
+  useEffect(() => {
+    fetch("/api"); // ❌ API call in component
+  }, []);
+}
+```
+
+Reference template: @component-template.tsx

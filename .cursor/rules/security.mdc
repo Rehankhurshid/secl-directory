@@ -1,0 +1,349 @@
+# Security Guidelines
+
+## Input Validation
+
+- **VALIDATE** all user inputs with Zod schemas
+- **SANITIZE** user content before display using DOMPurify
+- **ESCAPE** all user input in templates
+- **IMPLEMENT** rate limiting for API calls
+
+## XSS Prevention
+
+- **NEVER** use dangerouslySetInnerHTML without sanitization
+- **VALIDATE** forms at both client and server level
+- **USE** Content Security Policy headers
+
+## Zod Schema Validation
+
+```typescript
+import { z } from "zod";
+
+const CreateEmployeeSchema = z.object({
+  name: z
+    .string()
+    .min(1, "Name is required")
+    .max(100, "Name must be less than 100 characters")
+    .regex(/^[a-zA-Z\s]+$/, "Name can only contain letters and spaces"),
+
+  email: z
+    .string()
+    .email("Invalid email format")
+    .toLowerCase()
+    .max(255, "Email must be less than 255 characters"),
+
+  department: z
+    .string()
+    .min(1, "Department is required")
+    .max(50, "Department name too long"),
+
+  role: z.enum(["employee", "manager", "admin"], {
+    errorMap: () => ({ message: "Invalid role selected" }),
+  }),
+});
+
+// Server Action with validation
+export async function createEmployee(formData: FormData) {
+  "use server";
+
+  try {
+    const validatedFields = CreateEmployeeSchema.safeParse({
+      name: formData.get("name"),
+      email: formData.get("email"),
+      department: formData.get("department"),
+      role: formData.get("role"),
+    });
+
+    if (!validatedFields.success) {
+      return {
+        error: "Invalid input data",
+        fieldErrors: validatedFields.error.flatten().fieldErrors,
+      };
+    }
+
+    const employee = await employeeService.create(validatedFields.data);
+    revalidatePath("/employees");
+    return { success: true, employee };
+  } catch (error) {
+    console.error("Error creating employee:", error);
+    return { error: "Failed to create employee. Please try again." };
+  }
+}
+```
+
+## Content Sanitization
+
+```typescript
+import DOMPurify from "isomorphic-dompurify";
+
+// ✅ CORRECT - Safe HTML rendering with DOMPurify
+interface SafeHtmlProps {
+  content: string;
+  allowedTags?: string[];
+  className?: string;
+}
+
+export function SafeHtml({ content, allowedTags, className }: SafeHtmlProps) {
+  const sanitizedContent = DOMPurify.sanitize(content, {
+    ALLOWED_TAGS: allowedTags || ["p", "br", "strong", "em", "u", "a"],
+    ALLOWED_ATTR: ["href", "target", "rel"],
+    ADD_ATTR: ["target", "rel"], // Ensure external links are safe
+  });
+
+  return (
+    <div
+      className={className}
+      dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+    />
+  );
+}
+
+// ❌ FORBIDDEN - Unsafe HTML rendering
+export function UnsafeHtml({ content }: { content: string }) {
+  return (
+    <div dangerouslySetInnerHTML={{ __html: content }} /> // ❌ No sanitization
+  );
+}
+```
+
+## Authentication & Authorization
+
+```typescript
+// ✅ CORRECT - Secure session handling
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
+export async function getCurrentUser(): Promise<User | null> {
+  try {
+    const sessionCookie = cookies().get("session");
+
+    if (!sessionCookie) {
+      return null;
+    }
+
+    const session = await validateSessionToken(sessionCookie.value);
+
+    if (!session || session.expiresAt < new Date()) {
+      cookies().delete("session");
+      return null;
+    }
+
+    return session.user;
+  } catch (error) {
+    console.error("Session validation error:", error);
+    return null;
+  }
+}
+
+// ✅ CORRECT - Role-based access control
+interface User {
+  id: string;
+  email: string;
+  role: "admin" | "manager" | "employee";
+  permissions: string[];
+}
+
+const ROLE_PERMISSIONS = {
+  admin: ["*"], // All permissions
+  manager: [
+    "employee:read",
+    "employee:create",
+    "employee:update",
+    "department:read",
+  ],
+  employee: ["employee:read", "profile:update"],
+} as const;
+
+export function hasPermission(user: User, permission: string): boolean {
+  if (user.role === "admin") {
+    return true;
+  }
+
+  const rolePermissions = ROLE_PERMISSIONS[user.role] || [];
+
+  return (
+    rolePermissions.includes(permission) ||
+    user.permissions.includes(permission)
+  );
+}
+
+// ✅ CORRECT - Protected server action
+export async function deleteEmployee(employeeId: string) {
+  "use server";
+
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  if (!hasPermission(user, "employee:delete")) {
+    throw new Error("Insufficient permissions");
+  }
+
+  const validatedId = z.string().uuid().parse(employeeId);
+
+  try {
+    await employeeService.delete(validatedId);
+    revalidatePath("/employees");
+    return { success: true };
+  } catch (error) {
+    return { error: "Failed to delete employee" };
+  }
+}
+```
+
+## Rate Limiting
+
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+
+export function rateLimit(
+  limit: number = 100,
+  windowMs: number = 15 * 60 * 1000 // 15 minutes
+) {
+  return (req: NextRequest) => {
+    const ip = req.ip || req.headers.get("x-forwarded-for") || "unknown";
+    const now = Date.now();
+    const windowStart = now - windowMs;
+
+    // Clean up old entries
+    for (const [key, value] of rateLimitMap.entries()) {
+      if (value.resetTime < windowStart) {
+        rateLimitMap.delete(key);
+      }
+    }
+
+    const current = rateLimitMap.get(ip);
+
+    if (!current) {
+      rateLimitMap.set(ip, { count: 1, resetTime: now + windowMs });
+      return null; // Allow request
+    }
+
+    if (current.count >= limit) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
+
+    current.count += 1;
+    return null; // Allow request
+  };
+}
+```
+
+## CSRF Protection
+
+```typescript
+import { cookies, headers } from "next/headers";
+import crypto from "crypto";
+
+export function generateCSRFToken(): string {
+  return crypto.randomBytes(32).toString("hex");
+}
+
+export function validateCSRFToken(token: string): boolean {
+  const sessionToken = cookies().get("csrf-token")?.value;
+  const headerToken = headers().get("x-csrf-token");
+
+  return sessionToken === token && headerToken === token && token.length === 64;
+}
+
+// ✅ CORRECT - Protected form with CSRF
+export async function ProtectedForm() {
+  const csrfToken = generateCSRFToken();
+
+  cookies().set("csrf-token", csrfToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
+
+  return (
+    <form action={protectedAction}>
+      <input type="hidden" name="csrf-token" value={csrfToken} />
+      <Input name="name" placeholder="Employee name" />
+      <Button type="submit">Create Employee</Button>
+    </form>
+  );
+}
+```
+
+## Error Handling
+
+```typescript
+// ✅ CORRECT - Safe error responses
+export class AppError extends Error {
+  constructor(
+    message: string,
+    public statusCode: number = 500,
+    public isOperational: boolean = true,
+    public code?: string
+  ) {
+    super(message);
+    this.name = "AppError";
+  }
+}
+
+export function handleError(error: unknown): {
+  message: string;
+  statusCode: number;
+  code?: string;
+} {
+  // Log the full error for debugging (server-side only)
+  if (typeof window === "undefined") {
+    console.error("Application error:", error);
+  }
+
+  if (error instanceof AppError) {
+    return {
+      message: error.message,
+      statusCode: error.statusCode,
+      code: error.code,
+    };
+  }
+
+  if (error instanceof z.ZodError) {
+    return {
+      message: "Invalid input data",
+      statusCode: 400,
+      code: "VALIDATION_ERROR",
+    };
+  }
+
+  // Don't expose internal errors to clients
+  return {
+    message: "An unexpected error occurred",
+    statusCode: 500,
+    code: "INTERNAL_ERROR",
+  };
+}
+```
+
+## Forbidden Security Anti-Patterns
+
+```typescript
+// ❌ FORBIDDEN - Exposing sensitive information
+export function BadErrorHandler({ error }: { error: Error }) {
+  return (
+    <div>
+      <h1>Error occurred</h1>
+      <pre>{error.stack}</pre> {/* ❌ Exposes stack trace */}
+      <p>Database: {process.env.DATABASE_URL}</p> {/* ❌ Exposes secrets */}
+    </div>
+  );
+}
+
+// ❌ FORBIDDEN - No input validation
+export async function unsafeAction(formData: FormData) {
+  "use server";
+
+  const name = formData.get("name"); // ❌ No validation
+  const email = formData.get("email"); // ❌ No validation
+
+  await db.employee.create({ data: { name, email } }); // ❌ SQL injection risk
+}
+
+// ❌ FORBIDDEN - Hardcoded secrets
+const API_KEY = "sk-1234567890abcdef"; // ❌ Use environment variables
+```

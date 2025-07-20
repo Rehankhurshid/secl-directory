@@ -1,0 +1,130 @@
+---
+type: Always
+description: Core clean architecture principles for modular PWA development
+---
+
+# Core Architecture Rules
+
+## Project Structure (MANDATORY)
+
+```
+src/
+├── app/                    # Next.js App Router pages and layouts
+│   ├── (auth)/            # Route groups for organization
+│   ├── employee-directory/ # Feature-based routes
+│   ├── messaging/         # Feature-based routes
+│   ├── layout.tsx         # Root layout (Server Component)
+│   └── page.tsx           # Home page (Server Component)
+├── components/            # Shared UI components (Shadcn/UI)
+│   ├── ui/               # Shadcn UI components
+│   └── shared/           # Custom shared components
+├── contexts/             # Domain modules (Clean Architecture)
+│   ├── employee-directory/
+│   │   ├── domain/        # Pure business logic (NO React, NO APIs)
+│   │   ├── application/   # Custom hooks & use cases
+│   │   └── infrastructure/# API adapters & client components
+│   └── messaging/
+│       ├── domain/        # Message entities & business rules
+│       ├── application/   # Messaging hooks & orchestration
+│       └── infrastructure/# WebSocket services & UI
+├── lib/                  # Utilities and configurations
+│   ├── utils.ts          # cn() utility and helpers
+│   ├── validations.ts    # Zod schemas
+│   └── auth.ts           # Authentication utilities
+└── types/                # Global TypeScript definitions
+```
+
+## Clean Architecture - ENFORCE LAYERS
+
+- **Domain layer**: NO React, NO APIs, NO external deps - pure business logic only
+- **Application layer**: Custom hooks, orchestration - NO direct API calls, prefer Server Actions
+- **Infrastructure layer**: Client components, API adapters - NO business logic
+
+## File and Directory Naming
+
+- **USE** lowercase with dashes for directories (employee-directory, auth-wizard)
+- **FAVOR** named exports for components
+- **USE** PascalCase for component files (EmployeeCard.tsx)
+- **USE** camelCase for utility files (messageUtils.ts)
+
+## Domain Entities - Pure Business Logic
+
+```typescript
+// ✅ CORRECT - Pure business logic
+export class Employee {
+  constructor(
+    private readonly id: EmployeeId,
+    private readonly name: string,
+    private readonly department: Department
+  ) {}
+
+  canSendMessageTo(recipient: Employee): boolean {
+    return this.department.canCommunicateWith(recipient.department);
+  }
+
+  getDisplayName(): string {
+    return this.name.toUpperCase();
+  }
+}
+
+// ❌ FORBIDDEN - External dependencies
+export class Employee {
+  async save() {
+    await fetch("/api/employees"); // ❌ API call in domain
+  }
+  render() {
+    return <div>{this.name}</div>; // ❌ React in domain
+  }
+}
+```
+
+## Application Layer - Custom Hooks
+
+```typescript
+// ✅ CORRECT - Orchestration only
+export function useEmployeeDirectory() {
+  const employeeService = useEmployeeService(); // Injected dependency
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["employees"],
+    queryFn: () => employeeService.getAll(), // Service handles API
+  });
+
+  return { employees: data, isLoading, error };
+}
+
+// ❌ FORBIDDEN - Direct API calls
+export function useEmployees() {
+  return useQuery({
+    queryKey: ["employees"],
+    queryFn: () => fetch("/api/employees").then((r) => r.json()), // ❌ Direct API
+  });
+}
+```
+
+## Infrastructure Layer - API Integration
+
+```typescript
+// ✅ CORRECT - Repository pattern
+export class EmployeeRepository {
+  async findById(id: EmployeeId): Promise<Employee> {
+    try {
+      const response = await this.apiClient.get(`/employees/${id}`);
+      return Employee.fromJSON(response.data);
+    } catch (error) {
+      if (error.status === 404) {
+        throw new EmployeeNotFoundError(id);
+      }
+      throw new NetworkError("Failed to fetch employee");
+    }
+  }
+}
+```
+
+## Absolute Prohibitions
+
+1. **NEVER** mix business logic in React components
+2. **NEVER** make direct API calls in components (use Server Actions)
+3. **NEVER** use custom CSS classes (Tailwind utilities only)
+4. **NEVER** use `any` type in TypeScript
+5. **NEVER** violate architectural layer boundaries

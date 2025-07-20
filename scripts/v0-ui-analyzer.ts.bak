@@ -1,0 +1,292 @@
+import * as fs from 'fs/promises';
+import * as path from 'path';
+
+interface V0Response {
+  code?: string;
+  url?: string;
+  components?: Array<{
+    name: string;
+    code: string;
+    dependencies?: string[];
+  }>;
+  styles?: {
+    tailwind?: string;
+    css?: string;
+  };
+  metadata?: {
+    framework: string;
+    ui_library: string;
+    styling: string;
+  };
+}
+
+interface UIAnalysis {
+  componentName: string;
+  designPatterns: string[];
+  colorScheme: string[];
+  layoutStructure: string;
+  responsiveFeatures: string[];
+  accessibilityFeatures: string[];
+  interactionPatterns: string[];
+  shadcnComponents: string[];
+  customizations: string[];
+}
+
+/**
+ * Analyzes V0-generated UI code and extracts design patterns
+ */
+export class V0UIAnalyzer {
+  /**
+   * Analyze the V0 response and extract useful patterns
+   */
+  static analyzeResponse(response: V0Response, componentName: string): UIAnalysis {
+    const analysis: UIAnalysis = {
+      componentName,
+      designPatterns: [],
+      colorScheme: [],
+      layoutStructure: '',
+      responsiveFeatures: [],
+      accessibilityFeatures: [],
+      interactionPatterns: [],
+      shadcnComponents: [],
+      customizations: []
+    };
+
+    if (response.code) {
+      // Extract design patterns
+      analysis.designPatterns = this.extractDesignPatterns(response.code);
+      
+      // Extract color scheme
+      analysis.colorScheme = this.extractColorScheme(response.code);
+      
+      // Extract layout structure
+      analysis.layoutStructure = this.extractLayoutStructure(response.code);
+      
+      // Extract responsive features
+      analysis.responsiveFeatures = this.extractResponsiveFeatures(response.code);
+      
+      // Extract accessibility features
+      analysis.accessibilityFeatures = this.extractAccessibilityFeatures(response.code);
+      
+      // Extract interaction patterns
+      analysis.interactionPatterns = this.extractInteractionPatterns(response.code);
+      
+      // Extract shadcn components used
+      analysis.shadcnComponents = this.extractShadcnComponents(response.code);
+    }
+
+    return analysis;
+  }
+
+  private static extractDesignPatterns(code: string): string[] {
+    const patterns: string[] = [];
+    
+    // Card-based layout
+    if (code.includes('Card') || code.includes('card')) {
+      patterns.push('Card-based layout');
+    }
+    
+    // Grid layout
+    if (code.includes('grid')) {
+      patterns.push('Grid layout');
+    }
+    
+    // Flex layout
+    if (code.includes('flex')) {
+      patterns.push('Flexbox layout');
+    }
+    
+    // Modal/Dialog patterns
+    if (code.includes('Dialog') || code.includes('Modal')) {
+      patterns.push('Modal interactions');
+    }
+    
+    // Drawer pattern
+    if (code.includes('Drawer') || code.includes('Sheet')) {
+      patterns.push('Drawer/Sheet pattern');
+    }
+    
+    return patterns;
+  }
+
+  private static extractColorScheme(code: string): string[] {
+    const colors: string[] = [];
+    const colorRegex = /(?:bg|text|border)-(\w+)-(\d+)/g;
+    const matches = code.matchAll(colorRegex);
+    
+    const colorSet = new Set<string>();
+    for (const match of matches) {
+      colorSet.add(match[1]);
+    }
+    
+    return Array.from(colorSet);
+  }
+
+  private static extractLayoutStructure(code: string): string {
+    if (code.includes('grid-cols-2')) return 'Two-column grid';
+    if (code.includes('grid-cols-3')) return 'Three-column grid';
+    if (code.includes('grid-cols-1')) return 'Single column';
+    if (code.includes('flex-col')) return 'Vertical flex layout';
+    if (code.includes('flex-row')) return 'Horizontal flex layout';
+    return 'Custom layout';
+  }
+
+  private static extractResponsiveFeatures(code: string): string[] {
+    const features: string[] = [];
+    
+    // Responsive grid
+    if (code.includes('md:grid-cols') || code.includes('lg:grid-cols')) {
+      features.push('Responsive grid');
+    }
+    
+    // Hidden elements
+    if (code.includes('hidden md:block') || code.includes('md:hidden')) {
+      features.push('Responsive visibility');
+    }
+    
+    // Responsive spacing
+    if (code.includes('md:p-') || code.includes('lg:p-')) {
+      features.push('Responsive spacing');
+    }
+    
+    return features;
+  }
+
+  private static extractAccessibilityFeatures(code: string): string[] {
+    const features: string[] = [];
+    
+    if (code.includes('aria-')) features.push('ARIA attributes');
+    if (code.includes('role=')) features.push('Semantic roles');
+    if (code.includes('alt=')) features.push('Alt text for images');
+    if (code.includes('sr-only')) features.push('Screen reader support');
+    
+    return features;
+  }
+
+  private static extractInteractionPatterns(code: string): string[] {
+    const patterns: string[] = [];
+    
+    if (code.includes('onClick') || code.includes('handleClick')) {
+      patterns.push('Click interactions');
+    }
+    
+    if (code.includes('hover:')) {
+      patterns.push('Hover effects');
+    }
+    
+    if (code.includes('onChange')) {
+      patterns.push('Form interactions');
+    }
+    
+    if (code.includes('transition')) {
+      patterns.push('Smooth transitions');
+    }
+    
+    return patterns;
+  }
+
+  private static extractShadcnComponents(code: string): string[] {
+    const components: string[] = [];
+    const componentRegex = /from ["']@\/components\/ui\/([\w-]+)["']/g;
+    const matches = code.matchAll(componentRegex);
+    
+    const componentSet = new Set<string>();
+    for (const match of matches) {
+      componentSet.add(match[1]);
+    }
+    
+    return Array.from(componentSet);
+  }
+
+  /**
+   * Generate implementation recommendations based on analysis
+   */
+  static generateRecommendations(analysis: UIAnalysis): string[] {
+    const recommendations: string[] = [];
+    
+    // Layout recommendations
+    if (analysis.layoutStructure.includes('grid')) {
+      recommendations.push('Use CSS Grid for complex layouts with defined columns');
+    }
+    
+    // Responsive recommendations
+    if (analysis.responsiveFeatures.length > 0) {
+      recommendations.push('Implement mobile-first responsive design');
+    }
+    
+    // Component recommendations
+    if (analysis.shadcnComponents.length > 0) {
+      recommendations.push(`Utilize these shadcn/ui components: ${analysis.shadcnComponents.join(', ')}`);
+    }
+    
+    // Accessibility recommendations
+    if (analysis.accessibilityFeatures.length < 2) {
+      recommendations.push('Enhance accessibility with ARIA labels and semantic HTML');
+    }
+    
+    return recommendations;
+  }
+
+  /**
+   * Save analysis results
+   */
+  static async saveAnalysis(analysis: UIAnalysis, outputPath: string): Promise<void> {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const filename = `${analysis.componentName}-analysis-${timestamp}.json`;
+    const filepath = path.join(outputPath, filename);
+    
+    await fs.mkdir(outputPath, { recursive: true });
+    await fs.writeFile(filepath, JSON.stringify(analysis, null, 2));
+    
+    console.log(`Analysis saved to: ${filepath}`);
+  }
+}
+
+// Example usage
+async function analyzeV0Output() {
+  // This would be called after getting V0 API response
+  const mockResponse: V0Response = {
+    code: `
+      import { Card, CardContent, CardHeader } from "@/components/ui/card"
+      import { Button } from "@/components/ui/button"
+      
+      export function EmployeeCard({ employee }) {
+        return (
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">{employee.name}</h3>
+                <Badge variant="secondary">{employee.grade}</Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+                <div>
+                  <p className="text-sm text-muted-foreground">Department</p>
+                  <p className="font-medium">{employee.department}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )
+      }
+    `,
+    url: 'https://v0.dev/...',
+    metadata: {
+      framework: 'react',
+      ui_library: 'shadcn-ui',
+      styling: 'tailwindcss'
+    }
+  };
+
+  const analysis = V0UIAnalyzer.analyzeResponse(mockResponse, 'employeeCard');
+  console.log('Analysis:', analysis);
+  
+  const recommendations = V0UIAnalyzer.generateRecommendations(analysis);
+  console.log('Recommendations:', recommendations);
+  
+  await V0UIAnalyzer.saveAnalysis(analysis, './v0-ui-analysis');
+}
+
+// Export for use in other modules
+export { analyzeV0Output };

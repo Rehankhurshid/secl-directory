@@ -1,0 +1,181 @@
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+import { employees } from '../src/lib/database/schema';
+import * as fs from 'fs';
+import * as path from 'path';
+import { parse } from 'csv-parse/sync';
+import * as dotenv from 'dotenv';
+
+dotenv.config({ path: '.env.local' });
+
+const connectionString = process.env.DATABASE_URL!;
+const sql = postgres(connectionString);
+const db = drizzle(sql);
+
+function parseDate(dateStr: string): string | null {
+  if (!dateStr || dateStr === 'null' || dateStr === '') return null;
+  
+  // Handle MM/DD/YYYY format
+  const match = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (match) {
+    const [, month, day, year] = match;
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
+  
+  return null;
+}
+
+function clean(value: string): string | null {
+  if (!value || value === 'null' || value.trim() === '') return null;
+  return value.trim();
+}
+
+function parseNumericOrText(value: string): string | null {
+  if (!value || value === 'null' || value.trim() === '') return null;
+  
+  // Check if it's "2% OF BASIC" or similar text
+  if (value.includes('%') || value.match(/[a-zA-Z]/)) {
+    // Return null for text values in numeric fields
+    return null;
+  }
+  
+  // Remove commas and try to parse
+  const cleaned = value.replace(/[,]/g, '');
+  const num = parseFloat(cleaned);
+  
+  return isNaN(num) ? null : num.toString();
+}
+
+async function importAllEmployees() {
+  try {
+    console.log('🚀 Starting complete employee import to Supabase...\n');
+    
+    // Read and parse CSV
+    const csvPath = path.join(process.cwd(), 'instructions', 'employee-sheet.csv');
+    const csvContent = fs.readFileSync(csvPath, 'utf-8');
+    const records = parse(csvContent, {
+      columns: true,
+      skip_empty_lines: true,
+      trim: true,
+    });
+    
+    // Filter out empty records
+    const validRecords = records.filter(r => r.emp_code && r.name);
+    console.log(`📊 Found ${validRecords.length} valid employee records\n`);
+    
+    // Import employees in batches
+    console.log('👥 Importing employees...');
+    let successCount = 0;
+    let errorCount = 0;
+    const errors: any[] = [];
+    const batchSize = 100;
+    
+    for (let i = 0; i < validRecords.length; i += batchSize) {
+      const batch = validRecords.slice(i, i + batchSize);
+      
+      for (const r of batch) {
+        try {
+          await db.insert(employees).values({
+            empCode: r.emp_code,
+            name: r.name,
+            fatherName: clean(r.father_name),
+            dob: parseDate(r.dob),
+            gender: clean(r.gender),
+            emailId: clean(r.email_id),
+            phoneNumber1: clean(r.phno_1),
+            phoneNumber2: clean(r.phno_2),
+            permanentAddress: clean(r.permanent_address),
+            presentAddress: clean(r.present_address),
+            designation: clean(r.designation),
+            category: clean(r.category),
+            grade: clean(r.grade),
+            discipline: clean(r.discipline),
+            dateOfAppointment: parseDate(r.dt_appt),
+            areaJoiningDate: parseDate(r.area_joining_date),
+            gradeJoiningDate: parseDate(r.grade_joining_date),
+            incrementDate: parseDate(r.incr_date),
+            expectedExitDate: parseDate(r.expected_exit_date),
+            companyPostingDate: parseDate(r.company_posting_date),
+            areaName: clean(r.area_name),
+            unitCode: clean(r.unit_code),
+            unitName: clean(r.unit_name),
+            deptCode: clean(r.dept_code),
+            department: clean(r.dept),
+            subDepartment: clean(r.sub_dept),
+            bloodGroup: clean(r.blood),
+            casteCode: clean(r.caste_code),
+            religionCode: clean(r.religion_code),
+            maritalStatusCode: clean(r.marital_status_code),
+            spouseName: clean(r.spouse_name),
+            spouseEmpCode: clean(r.spouse_emp_code),
+            bankAccountNo: clean(r.bank_acc_no),
+            bankName: clean(r.bank),
+            // Handle numeric fields that might contain text
+            basicSalary: parseNumericOrText(r.basic),
+            hra: parseNumericOrText(r.hra),
+            ncwaBasic: parseNumericOrText(r.ncwa_basic),
+            aadhaarNo: clean(r.aadhaar),
+            panNo: clean(r.pan_no),
+            isActive: true,
+            payFlag: r.pay_flag || 'Y',
+          });
+          
+          successCount++;
+          
+          if (successCount % 100 === 0) {
+            console.log(`  Progress: ${successCount}/${validRecords.length} imported`);
+          }
+        } catch (e: any) {
+          errorCount++;
+          errors.push({
+            empCode: r.emp_code,
+            name: r.name,
+            error: e.message
+          });
+          
+          if (errorCount <= 5) {
+            console.error(`  ❌ Error with ${r.emp_code} (${r.name}):`, e.message);
+          }
+        }
+      }
+    }
+    
+    console.log(`\n✅ Import completed!`);
+    console.log(`  - Successfully imported: ${successCount} employees`);
+    console.log(`  - Errors: ${errorCount}`);
+    
+    if (errorCount > 0) {
+      console.log('\n❌ Failed imports:');
+      errors.slice(0, 10).forEach(err => {
+        console.log(`  ${err.empCode}: ${err.name} - ${err.error}`);
+      });
+      if (errors.length > 10) {
+        console.log(`  ... and ${errors.length - 10} more errors`);
+      }
+    }
+    
+    // Verify final count
+    const finalCount = await sql`SELECT COUNT(*) as count FROM employees`;
+    console.log(`\n📊 Total employees in database: ${finalCount[0].count}`);
+    
+    // Show some sample data
+    const samples = await sql`
+      SELECT emp_code, name, designation, department, hra 
+      FROM employees 
+      WHERE hra IS NULL
+      LIMIT 5
+    `;
+    
+    console.log('\nSample employees with HRA = "2% OF BASIC" (stored as NULL):');
+    samples.forEach(s => {
+      console.log(`  ${s.emp_code}: ${s.name} - ${s.designation}`);
+    });
+    
+  } catch (error) {
+    console.error('💥 Import failed:', error);
+  } finally {
+    await sql.end();
+  }
+}
+
+importAllEmployees();
