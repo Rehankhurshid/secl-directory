@@ -124,7 +124,7 @@ export default function OfflinePage() {
 
             {/* Action Buttons */}
             <div className="flex gap-3">
-              <Button 
+        <Button 
                 onClick={handleRetry} 
                 disabled={isRetrying || isOnline}
                 className="flex-1"
@@ -136,7 +136,7 @@ export default function OfflinePage() {
               <Button variant="outline" onClick={handleGoHome} className="flex-1">
                 <Home className="h-4 w-4 mr-2" />
                 Go Home
-              </Button>
+        </Button>
             </div>
 
             {/* Last Checked */}

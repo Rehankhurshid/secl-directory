@@ -31,14 +31,14 @@ export async function GET(
     // Check if user is a member of this group
     const membership = await db
       .select()
-      .from(groupMembers)
-      .where(
-        and(
-          eq(groupMembers.groupId, groupId),
-          eq(groupMembers.employeeId, session.employeeId)
+        .from(groupMembers)
+        .where(
+          and(
+            eq(groupMembers.groupId, groupId),
+            eq(groupMembers.employeeId, session.employeeId)
+          )
         )
-      )
-      .limit(1);
+        .limit(1);
 
     if (membership.length === 0) {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 });
@@ -57,7 +57,7 @@ export async function GET(
       .orderBy(desc(messages.createdAt))
       .limit(limit)
       .offset(offset);
-
+    
     return NextResponse.json({
       messages: groupMessages.reverse(), // Reverse to show oldest first
       hasMore: groupMessages.length === limit,

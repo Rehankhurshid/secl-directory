@@ -3,7 +3,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { AuthProvider } from '@/components/auth/auth-provider';
-import { Toaster } from '@/components/ui/toaster';
+import { Toaster } from 'sonner';
 import { ServiceWorkerProvider } from '@/components/providers/service-worker-provider';
 import { InstallBanner } from '@/components/pwa/install-banner';
 
@@ -25,10 +25,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <ServiceWorkerProvider />
+        <ServiceWorkerProvider>
         {children}
         <Toaster />
-        <InstallBanner />
+          <InstallBanner />
+        </ServiceWorkerProvider>
       </AuthProvider>
       {process.env.NODE_ENV === 'development' && (
         <ReactQueryDevtools 

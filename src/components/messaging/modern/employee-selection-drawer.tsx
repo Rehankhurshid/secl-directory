@@ -124,7 +124,7 @@ function EmployeeCard({
                 <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0 ml-2" />
               )}
             </div>
-
+            
             <div className="flex items-center gap-2 mt-1.5">
               {employee.department && (
                 <Badge variant="outline" className="text-xs py-0 h-5">
@@ -206,7 +206,7 @@ function FilterSheet({
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
-          {/* Department Filter */}
+              {/* Department Filter */}
           <div className="space-y-2">
             <Label htmlFor="department">Department</Label>
             <Select
@@ -215,9 +215,9 @@ function FilterSheet({
             >
               <SelectTrigger id="department">
                 <SelectValue placeholder="All Departments" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Departments</SelectItem>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Departments</SelectItem>
                 {stats?.departments
                   ?.filter((dept: any) => dept.name && dept.name.trim())
                   .map((dept: any) => (
@@ -228,11 +228,11 @@ function FilterSheet({
                       </div>
                     </SelectItem>
                   ))}
-              </SelectContent>
-            </Select>
+                </SelectContent>
+              </Select>
           </div>
 
-          {/* Location Filter */}
+              {/* Location Filter */}
           <div className="space-y-2">
             <Label htmlFor="location">Location</Label>
             <Select
@@ -241,22 +241,22 @@ function FilterSheet({
             >
               <SelectTrigger id="location">
                 <SelectValue placeholder="All Locations" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Locations</SelectItem>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Locations</SelectItem>
                 {stats?.locations?.map((loc: any) => (
                   <SelectItem key={loc.name} value={loc.name}>
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4" />
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4" />
                       {loc.name} ({loc.count})
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
           </div>
 
-          {/* Grade Filter */}
+              {/* Grade Filter */}
           <div className="space-y-2">
             <Label htmlFor="grade">Grade</Label>
             <Select
@@ -265,22 +265,22 @@ function FilterSheet({
             >
               <SelectTrigger id="grade">
                 <SelectValue placeholder="All Grades" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Grades</SelectItem>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Grades</SelectItem>
                 {stats?.grades?.map((grade: any) => (
                   <SelectItem key={grade.name} value={grade.name}>
-                    <div className="flex items-center gap-2">
-                      <Award className="w-4 h-4" />
+                      <div className="flex items-center gap-2">
+                        <Award className="w-4 h-4" />
                       {grade.name} ({grade.count})
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
           </div>
 
-          {/* Category Filter */}
+              {/* Category Filter */}
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
             <Select
@@ -289,22 +289,22 @@ function FilterSheet({
             >
               <SelectTrigger id="category">
                 <SelectValue placeholder="All Categories" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
                 {stats?.categories?.map((cat: any) => (
                   <SelectItem key={cat.name} value={cat.name}>
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4" />
+                        <div className="flex items-center gap-2">
+                          <Users className="w-4 h-4" />
                       {cat.name} ({cat.count})
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
           </div>
 
-          {/* Gender Filter */}
+              {/* Gender Filter */}
           <div className="space-y-2">
             <Label htmlFor="gender">Gender</Label>
             <Select
@@ -313,12 +313,12 @@ function FilterSheet({
             >
               <SelectTrigger id="gender">
                 <SelectValue placeholder="All Genders" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Genders</SelectItem>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Genders</SelectItem>
                 {stats?.genders?.map((gender: any) => (
                   <SelectItem key={gender.name} value={gender.name}>
-                    <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2">
                       <UserCheck className="w-4 h-4" />
                       {gender.name === 'M'
                         ? 'Male'
@@ -326,11 +326,11 @@ function FilterSheet({
                         ? 'Female'
                         : gender.name}{' '}
                       ({gender.count})
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
           </div>
 
         </div>
@@ -678,17 +678,17 @@ export default function EmployeeSelectionDrawer({
                   <div className="text-center py-8">
                     <Users className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
                     <p className="text-muted-foreground">No employees found</p>
-                  </div>
-                ) : (
+              </div>
+            ) : (
                   <>
                     {displayedEmployees.map((employee) => (
-                      <EmployeeCard
-                        key={employee.empCode}
-                        employee={employee}
+                  <EmployeeCard
+                    key={employee.empCode}
+                    employee={employee}
                         isSelected={selectedEmployees.has(employee.empCode)}
                         onToggle={handleEmployeeToggle}
-                      />
-                    ))}
+                  />
+                ))}
                     {hasMore && (
                       <div className="text-center py-4">
                         <Skeleton className="h-20 w-full" />
@@ -699,28 +699,28 @@ export default function EmployeeSelectionDrawer({
                 )}
               </div>
             </div>
-          </div>
+        </div>
 
           <SheetFooter className="border-t pt-4">
-            <div className="flex gap-2 w-full">
-              <Button
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-                className="flex-1"
-              >
-                Cancel
-              </Button>
-              <Button
+          <div className="flex gap-2 w-full">
+            <Button
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button
                 onClick={handleConfirmSelection}
                 disabled={selectedEmployees.size === 0}
-                className="flex-1"
-              >
+              className="flex-1"
+            >
                 Add Selected ({selectedEmployees.size})
-              </Button>
-            </div>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
+            </Button>
+          </div>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
 
       {/* Filter Sheet */}
       <FilterSheet

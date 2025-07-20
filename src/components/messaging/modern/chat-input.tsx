@@ -181,56 +181,56 @@ export default function ChatInput({
       )}
 
       <div className="p-4">
-        <div className="relative flex items-end gap-2">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="flex-shrink-0 h-10 w-10 text-muted-foreground hover:text-foreground"
-            disabled={disabled}
-          >
-            <Paperclip className="h-5 w-5" />
-            <span className="sr-only">Attach file</span>
-          </Button>
-          
-          <div className="flex-1 relative">
-            <Textarea
-              ref={textareaRef}
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              onKeyDown={handleKeyDown}
+      <div className="relative flex items-end gap-2">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="flex-shrink-0 h-10 w-10 text-muted-foreground hover:text-foreground"
+          disabled={disabled}
+        >
+          <Paperclip className="h-5 w-5" />
+          <span className="sr-only">Attach file</span>
+        </Button>
+        
+        <div className="flex-1 relative">
+          <Textarea
+            ref={textareaRef}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onKeyDown={handleKeyDown}
               placeholder={placeholder}
-              rows={1}
-              disabled={disabled}
+            rows={1}
+            disabled={disabled}
               className={`resize-none bg-muted/50 border-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 rounded-2xl min-h-[2.5rem] max-h-32 pr-12 text-sm ${
                 replyToMessage ? 'border-primary/20 ring-1 ring-primary/10' : ''
               }`}
-            />
-            <Button 
-              variant="ghost"
-              size="icon"
-              className="absolute right-2 bottom-1 h-8 w-8 text-muted-foreground hover:text-foreground"
-              disabled={disabled}
-            >
-              <Smile className="h-4 w-4" />
-              <span className="sr-only">Add emoji</span>
-            </Button>
-          </div>
-          
+          />
+          <Button 
+            variant="ghost"
+            size="icon"
+            className="absolute right-2 bottom-1 h-8 w-8 text-muted-foreground hover:text-foreground"
+            disabled={disabled}
+          >
+            <Smile className="h-4 w-4" />
+            <span className="sr-only">Add emoji</span>
+          </Button>
+        </div>
+        
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button 
-                  size="icon" 
+        <Button 
+          size="icon" 
                   className={`rounded-full flex-shrink-0 h-10 w-10 transition-all duration-200 ${
                     replyToMessage ? 'bg-primary hover:bg-primary/90' : ''
                   } ${!isFullyConnected ? 'bg-yellow-500 hover:bg-yellow-600' : ''}`}
-                  onClick={handleSend}
+          onClick={handleSend}
                   disabled={!text.trim() || disabled || isQueueing}
                   aria-label={
                     !isFullyConnected ? "Offline - message will be queued for sync" : 
                     replyToMessage ? `Reply to ${replyToMessage.senderName}` : "Send message"
                   }
-                >
+        >
                   {isQueueing ? (
                     <Clock className="h-4 w-4 animate-pulse" />
                   ) : !isOnline ? (
@@ -240,7 +240,7 @@ export default function ChatInput({
                   ) : (
                     <Send className="h-4 w-4" />
                   )}
-                </Button>
+        </Button>
               </TooltipTrigger>
               
               <TooltipContent side="top">

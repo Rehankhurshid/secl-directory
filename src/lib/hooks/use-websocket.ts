@@ -152,7 +152,7 @@ export function useRealTimeMessages(conversationId: string) {
         if (!token) {
           console.warn('No auth token available, falling back to localStorage');
           // Fallback to localStorage if no token
-          const storedMessages = getStoredMessages(conversationId);
+      const storedMessages = getStoredMessages(conversationId);
           setMessages(storedMessages);
           setIsLoading(false);
           return;
@@ -290,7 +290,7 @@ export function useRealTimeMessages(conversationId: string) {
 
   const sendMessage = useCallback(async (content: string, senderId: string) => {
     const tempId = `temp-${Date.now()}`;
-    
+
     // Optimistically add message to UI with pending status
     const optimisticMessage = new Message(
       tempId,
@@ -339,7 +339,7 @@ export function useRealTimeMessages(conversationId: string) {
         
         // Update to failed status
         const failedMessage = new Message(
-          tempId,
+        tempId,
           conversationId,
           senderId,
           content,
@@ -390,7 +390,7 @@ export function useRealTimeMessages(conversationId: string) {
         MessageStatus.SENT,
         new Date(savedMessage.createdAt)
       );
-
+      
       // Update stored message with real ID
       storeMessage(conversationId, dbMessage);
       setMessages(prev => prev.map(msg => 

@@ -3,7 +3,6 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Providers } from '@/components/providers';
-import { AppLayout } from '@/components/layout/app-layout';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -23,30 +22,16 @@ export const metadata: Metadata = {
   formatDetection: {
     telephone: false,
   },
-  openGraph: {
-    type: 'website',
-    siteName: 'SECL Messaging',
-    title: 'SECL Messaging',
-    description: 'Secure employee communication and messaging platform',
-  },
-  twitter: {
-    card: 'summary',
-    title: 'SECL Messaging',
-    description: 'Secure employee communication and messaging platform',
-  },
-  icons: {
-    icon: '/icon-192x192.png',
-    apple: '/apple-touch-icon.png',
-  },
 };
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
+  userScalable: false,
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#09090b' },
+    { media: '(prefers-color-scheme: light)', color: 'white' },
+    { media: '(prefers-color-scheme: dark)', color: 'black' },
   ],
 };
 
@@ -60,17 +45,12 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider 
           attribute="class" 
-          defaultTheme="system" 
-          enableSystem={true}
-          disableTransitionOnChange={false}
-          storageKey="theme"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
         >
           <Providers>
-            <div className="min-h-screen bg-background font-sans antialiased transition-colors">
-              <AppLayout>
                 {children}
-              </AppLayout>
-            </div>
           </Providers>
         </ThemeProvider>
       </body>

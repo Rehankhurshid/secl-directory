@@ -481,7 +481,7 @@ export default function ModernMessagingLayout() {
                             >
                               <MessageBubble 
                                 message={messageForBubble}
-                                isOwnMessage={isOwn}
+                                isOwnMessage={isOwn} 
                                 currentUserId={currentUserId}
                               />
                             </motion.div>

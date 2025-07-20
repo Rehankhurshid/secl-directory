@@ -5,6 +5,7 @@ import { FilterProvider } from '@/contexts/filter-context';
 import { Employee } from '@/lib/services/employee-service';
 import { FilterOptions } from '@/lib/services/filter-service';
 import { FilteredContent } from './components/filtered-content';
+import { AppLayout } from '@/components/layout/app-layout';
 
 interface EmployeeDirectoryClientProps {
   initialEmployees: Employee[];
@@ -32,15 +33,17 @@ export function EmployeeDirectoryClient({
   enhancedFilterOptions
 }: EmployeeDirectoryClientProps) {
   return (
-    <FilterProvider>
-      <div className="container mx-auto px-4 py-6">
-        <FilteredContent 
-          initialEmployees={initialEmployees}
-          stats={stats}
-          filterOptions={filterOptions}
-          enhancedFilterOptions={enhancedFilterOptions} // Pass enhanced options
-        />
-      </div>
-    </FilterProvider>
+    <AppLayout>
+      <FilterProvider>
+        <div className="container mx-auto px-4 py-6">
+          <FilteredContent 
+            initialEmployees={initialEmployees}
+            stats={stats}
+            filterOptions={filterOptions}
+            enhancedFilterOptions={enhancedFilterOptions} // Pass enhanced options
+          />
+        </div>
+      </FilterProvider>
+    </AppLayout>
   );
 }

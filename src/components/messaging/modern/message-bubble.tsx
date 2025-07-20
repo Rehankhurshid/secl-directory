@@ -57,16 +57,16 @@ export default function MessageBubble({
   const [showQuickReactions, setShowQuickReactions] = useState(false);
   // Handle deleted messages
   if (message.isDeleted) {
-    return (
-      <div className={cn("flex w-full items-end gap-2", isOwnMessage ? "justify-end" : "justify-start")}>
+  return (
+    <div className={cn("flex w-full items-end gap-2", isOwnMessage ? "justify-end" : "justify-start")}>
+      <div className={cn(
+          "flex flex-col max-w-[75%]", 
+          isOwnMessage ? "items-end" : "items-start"
+      )}>
+        {!isOwnMessage && (
+            <span className="text-xs text-muted-foreground px-1 mb-0.5">{message.senderName}</span>
+        )}
         <div className={cn(
-            "flex flex-col max-w-[75%]", 
-            isOwnMessage ? "items-end" : "items-start"
-        )}>
-          {!isOwnMessage && (
-              <span className="text-xs text-muted-foreground px-1 mb-0.5">{message.senderName}</span>
-          )}
-          <div className={cn(
             "rounded-2xl px-3.5 py-2.5 text-sm shadow-sm italic",
             "bg-muted text-muted-foreground border border-dashed"
           )}>
