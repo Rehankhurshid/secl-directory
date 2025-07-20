@@ -31,13 +31,6 @@
       "description": "View employee directory",
       "url": "/employee-directory",
       "icons": [{ "src": "/icon-96x96.png", "sizes": "96x96" }]
-    },
-    {
-      "name": "Messages",
-      "short_name": "Messages",
-      "description": "View messages",
-      "url": "/messages",
-      "icons": [{ "src": "/icon-96x96.png", "sizes": "96x96" }]
     }
   ],
   "icons": [

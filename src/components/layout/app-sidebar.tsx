@@ -71,9 +71,8 @@ const navigationItems = [
       },
       {
         title: "Messages",
-        url: "/messages",
+        url: "/messaging",
         icon: MessageSquare,
-        badge: "Soon",
       },
     ],
   },
@@ -185,11 +184,11 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
                           <a href={item.url}>
                             <Icon className="size-4" />
                             <span>{item.title}</span>
-                            {'badge' in item && item.badge && (
+                            {('badge' in item && item.badge) ? (
                               <Badge variant="secondary" className="ml-auto h-5 px-1.5 text-xs">
-                                {item.badge}
+                                {String(item.badge)}
                               </Badge>
-                            )}
+                            ) : null}
                           </a>
                         </SidebarMenuButton>
                       </SidebarMenuItem>

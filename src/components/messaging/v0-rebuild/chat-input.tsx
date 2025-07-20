@@ -86,7 +86,7 @@ export default function ChatInput({ onSendMessage, groupId }: ChatInputProps) {
 
 
   return (
-    <div ref={containerRef} className="p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] border-t bg-background">
+    <div ref={containerRef} className="p-4 pb-[calc(1rem+env(safe-area-inset-bottom)+4rem)] md:pb-[calc(1rem+env(safe-area-inset-bottom))] border-t bg-background">
       <div className="relative flex items-end gap-2">
         <Button variant="ghost" size="icon" className="flex-shrink-0">
           <Paperclip className="h-5 w-5" />

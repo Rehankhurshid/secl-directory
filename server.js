@@ -21,16 +21,6 @@ app.prepare().then(() => {
     }
   });
 
-  // Initialize Socket.IO after Next.js is ready
-  // We'll import and initialize it dynamically to handle TypeScript
-  import('./dist/socket-server.js').then(({ initializeSocketServer }) => {
-    const io = initializeSocketServer(server);
-    console.log('Socket.IO server initialized');
-  }).catch(err => {
-    console.error('Failed to initialize Socket.IO:', err);
-    console.log('Running without Socket.IO support');
-  });
-
   server.listen(port, (err) => {
     if (err) throw err;
     console.log(`> Ready on http://${hostname}:${port}`);

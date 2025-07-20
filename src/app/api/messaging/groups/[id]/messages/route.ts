@@ -125,8 +125,6 @@ export async function POST(
         groupId,
         senderId: session.employeeId,
         content,
-        messageType,
-        readBy: [session.employeeId], // Mark as read by sender
       })
       .returning();
 
@@ -139,17 +137,13 @@ export async function POST(
       .where(eq(employees.empCode, session.employeeId))
       .limit(1);
 
-    // Update group's updatedAt timestamp
-    await db
-      .update(groups)
-      .set({ updatedAt: new Date() })
-      .where(eq(groups.id, groupId));
+    // Group last activity will be updated by trigger or separate process
 
     if (!newMessage) {
       return NextResponse.json({ error: 'Failed to send message' }, { status: 500 });
     }
 
-    return NextResponse.json({
+    const responseData = {
       id: newMessage.id,
       content: newMessage.content,
       senderId: newMessage.senderId,
@@ -157,7 +151,11 @@ export async function POST(
       messageType: newMessage.messageType,
       createdAt: newMessage.createdAt,
       readBy: newMessage.readBy,
-    });
+    };
+
+    // TODO: Implement real-time message broadcasting when real-time system is ready
+
+    return NextResponse.json(responseData);
   } catch (error) {
     console.error('Error sending message:', error);
     return NextResponse.json({ error: 'Failed to send message' }, { status: 500 });

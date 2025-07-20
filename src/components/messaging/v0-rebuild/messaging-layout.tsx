@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 // Mock hooks and API functions - replace with your actual implementations
 import { useAuth } from '@/lib/hooks/use-auth';
-import { useSocketStore } from '@/lib/socket/client';
 
 import ConversationSidebar from './conversation-sidebar';
 import ChatView from './chat-view';
@@ -22,10 +22,27 @@ export default function MessagingLayout() {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [isMobileChatVisible, setIsMobileChatVisible] = useState(false);
 
-  // NOTE: Assuming useSocketStore and useAuth are implemented as in your original code
-  const connectionStatus = { connected: true, authenticated: true };
+  // Connection status placeholder
+  const connectionStatus = { connected: false, authenticated: false };
   const token = typeof window !== 'undefined' ? localStorage.getItem('sessionToken') || 'test-token' : 'test-token';
   const currentUserId = auth.employee?.empCode || '';
+
+  // Store current user ID for notifications
+  useEffect(() => {
+    if (currentUserId && typeof window !== 'undefined') {
+      localStorage.setItem('currentUserId', currentUserId);
+    }
+  }, [currentUserId]);
+
+  // TODO: Initialize real-time connection when implemented
+  useEffect(() => {
+    console.log('🔌 Real-time connection placeholder');
+  }, []);
+
+  // TODO: Set up real-time message listener when implemented
+  useEffect(() => {
+    console.log('📨 Real-time message listener placeholder');
+  }, [selectedGroupId]);
 
   // --- DATA FETCHING ---
   const { data: groups = [], isLoading: groupsLoading } = useQuery<Group[]>({
@@ -57,10 +74,84 @@ export default function MessagingLayout() {
         if (!response.ok) throw new Error('Failed to send message');
         return response.json();
     },
+    onMutate: async ({ groupId, content }) => {
+      console.log('📤 Sending message optimistically:', { groupId, content });
+      
+      // Cancel any outgoing refetches to prevent race conditions
+      await queryClient.cancelQueries({ queryKey: ['messaging', 'groups', groupId, 'messages'] });
+
+      // Get previous messages
+      const previousMessages = queryClient.getQueryData(['messaging', 'groups', groupId, 'messages']) || [];
+      console.log('📋 Previous messages count:', (previousMessages as any[]).length);
+
+      // Create optimistic message with unique temp ID
+      const tempId = `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const optimisticMessage = {
+        id: tempId,
+        text: content,
+        timestamp: new Date().toISOString(),
+        sender: {
+          id: currentUserId,
+          name: auth.employee?.name || 'You',
+        },
+        status: 'sending' as const,
+      };
+
+      // Optimistically update messages
+      queryClient.setQueryData(['messaging', 'groups', groupId, 'messages'], (old: any) => {
+        const newMessages = [...(old || []), optimisticMessage];
+        console.log('✅ Updated messages optimistically, new count:', newMessages.length);
+        return newMessages;
+      });
+
+      return { previousMessages, optimisticMessage, tempId };
+    },
+    onError: (err, variables, context) => {
+      // Rollback on error
+      if (context?.previousMessages) {
+        queryClient.setQueryData(
+          ['messaging', 'groups', variables.groupId, 'messages'], 
+          context.previousMessages
+        );
+      }
+    },
     onSuccess: (data, variables) => {
-      // Invalidate both groups and messages queries
-      queryClient.invalidateQueries({ queryKey: ['messaging', 'groups'] });
-      queryClient.invalidateQueries({ queryKey: ['messaging', 'groups', variables.groupId, 'messages'] });
+      console.log('✅ Message sent successfully:', data);
+      
+      // Update the optimistic message with real data
+      queryClient.setQueryData(['messaging', 'groups', variables.groupId, 'messages'], (old: any) => {
+        const messages = old || [];
+        const realMessage = {
+          id: data.id.toString(),
+          text: data.content,
+          timestamp: data.createdAt,
+          sender: {
+            id: data.senderId,
+            name: data.senderName || auth.employee?.name || 'You',
+          },
+          status: 'delivered' as const,
+        };
+        
+        // First, remove any temp messages with the same content
+        const withoutTemp = messages.filter((msg: any) => 
+          !(msg.id.startsWith('temp-') && msg.text === data.content)
+        );
+        
+        // Check if real message already exists (from socket)
+        const realExists = withoutTemp.some((msg: any) => msg.id === realMessage.id);
+        
+        if (realExists) {
+          console.log('🔄 Real message already exists (from socket), keeping it');
+          return withoutTemp;
+        }
+        
+        // Add the real message
+        console.log('🆕 Adding real message to replace optimistic one');
+        return [...withoutTemp, realMessage];
+      });
+      
+      // Don't invalidate queries immediately - let the socket handle updates for better UX
+      // queryClient.invalidateQueries({ queryKey: ['messaging', 'groups'] });
     },
   });
 
@@ -88,6 +179,7 @@ export default function MessagingLayout() {
 
   const handleSendMessage = (content: string) => {
     if (selectedGroupId) {
+      // Send via API which will handle persistence and broadcast via WebSocket
       sendMessageMutation.mutate({ groupId: selectedGroupId, content });
     }
   };
@@ -99,7 +191,7 @@ export default function MessagingLayout() {
   const selectedGroup = groups.find(g => g.id === selectedGroupId);
 
   return (
-    <>
+    <TooltipProvider>
       <div className="h-full flex bg-background overflow-hidden">
         {/* Desktop Sidebar & Mobile View */}
         <div className={cn("w-full md:w-[340px] md:flex flex-col border-r h-full overflow-hidden", 
@@ -157,6 +249,6 @@ export default function MessagingLayout() {
         isCreating={createGroupMutation.isPending}
         isLoadingEmployees={employeesLoading}
       />
-    </>
+    </TooltipProvider>
   );
 }

@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-} from '@/components/ui/drawer'
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -133,8 +133,8 @@ function EmployeeCard({
   )
 }
 
-// Filter Drawer Component
-function FilterDrawer({
+// Filter Sheet Component
+function FilterSheet({
   open,
   onOpenChange,
   filters,
@@ -167,7 +167,8 @@ function FilterDrawer({
 
   const handleApply = () => {
     Object.keys(draftFilters).forEach(key => {
-      onFilterChange(key as keyof EmployeeSearch, draftFilters[key as keyof EmployeeSearch] || 'all')
+      const value = draftFilters[key as keyof EmployeeSearch]
+      onFilterChange(key as keyof EmployeeSearch, String(value) || 'all')
     })
     onApply()
     onOpenChange(false)
@@ -184,14 +185,14 @@ function FilterDrawer({
   }
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[95vh] flex flex-col">
-        <DrawerHeader className="flex-shrink-0">
-          <DrawerTitle>Filter Employees</DrawerTitle>
-          <DrawerDescription>
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent className="w-full sm:max-w-md overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle>Filter Employees</SheetTitle>
+          <SheetDescription>
             Narrow down your search with filters
-          </DrawerDescription>
-        </DrawerHeader>
+          </SheetDescription>
+        </SheetHeader>
 
         <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
           {/* Department Filter */}
@@ -323,7 +324,7 @@ function FilterDrawer({
 
         </div>
 
-        <DrawerFooter className="flex-shrink-0 border-t">
+        <SheetFooter className="mt-6 border-t pt-4">
           <div className="flex gap-2 w-full">
             <Button
               variant="outline"
@@ -339,9 +340,9 @@ function FilterDrawer({
               Apply Filters
             </Button>
           </div>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   )
 }
 
@@ -570,17 +571,17 @@ export default function EmployeeSelectionDrawer({
 
   return (
     <>
-      <Drawer open={open} onOpenChange={onOpenChange}>
-        <DrawerContent className="h-[90vh] max-h-[95vh] flex flex-col">
-          <DrawerHeader className="flex-shrink-0 pb-0">
-            <DrawerTitle className="flex items-center gap-2">
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent side="right" className="w-full sm:max-w-lg flex flex-col h-full">
+          <SheetHeader className="pb-0">
+            <SheetTitle className="flex items-center gap-2">
               <Users className="w-5 h-5" />
               Select Team Members
-            </DrawerTitle>
-            <DrawerDescription>
+            </SheetTitle>
+            <SheetDescription>
               Search and filter employees to add to your group
-            </DrawerDescription>
-          </DrawerHeader>
+            </SheetDescription>
+          </SheetHeader>
 
           <div className="flex-1 px-4 overflow-hidden flex flex-col">
             {/* Search and Filter Bar */}
@@ -689,7 +690,7 @@ export default function EmployeeSelectionDrawer({
             </div>
           </div>
 
-          <DrawerFooter className="flex-shrink-0 border-t">
+          <SheetFooter className="border-t pt-4">
             <div className="flex gap-2 w-full">
               <Button
                 variant="outline"
@@ -706,12 +707,12 @@ export default function EmployeeSelectionDrawer({
                 Add Selected ({selectedEmployees.size})
               </Button>
             </div>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
 
-      {/* Filter Drawer */}
-      <FilterDrawer
+      {/* Filter Sheet */}
+      <FilterSheet
         open={isFiltersOpen}
         onOpenChange={setIsFiltersOpen}
         filters={filters}

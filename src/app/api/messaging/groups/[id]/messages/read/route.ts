@@ -41,19 +41,16 @@ export async function POST(
     }
 
     // Mark all messages in the group as read by this user
-    // Using a more efficient update query
-    await db
-      .update(messages)
-      .set({
-        readBy: sql`array_append(${messages.readBy}, ${session.employeeId})`,
-        updatedAt: new Date(),
-      })
-      .where(
-        and(
-          eq(messages.groupId, groupId),
-          sql`NOT (${session.employeeId} = ANY(${messages.readBy}))`
-        )
-      );
+    // Using raw SQL for array operations
+    await db.execute(sql`
+      UPDATE messages 
+      SET 
+        read_by = array_append(read_by, ${session.employeeId}),
+        updated_at = ${new Date()}
+      WHERE 
+        group_id = ${groupId} 
+        AND NOT (${session.employeeId} = ANY(read_by))
+    `);
 
     return NextResponse.json({ success: true });
   } catch (error) {

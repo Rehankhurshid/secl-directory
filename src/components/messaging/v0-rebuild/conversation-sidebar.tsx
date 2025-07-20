@@ -5,6 +5,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
 import { Search, Plus, MessageSquareText } from 'lucide-react';
 import { Group, ConnectionStatus } from './types';
 import { getInitials, formatTimeAgo } from './utils';
@@ -37,9 +48,16 @@ function GroupCard({ group, isSelected, onClick }: { group: Group; isSelected: b
         <div className="flex justify-between items-center">
           <h3 className="font-semibold text-sm truncate">{group.name}</h3>
           {group.lastMessageTime && (
-            <time className="text-xs text-muted-foreground flex-shrink-0 ml-2">
-              {formatTimeAgo(new Date(group.lastMessageTime))}
-            </time>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <time className="text-xs text-muted-foreground flex-shrink-0 ml-2">
+                  {formatTimeAgo(new Date(group.lastMessageTime))}
+                </time>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{new Date(group.lastMessageTime).toLocaleString()}</p>
+              </TooltipContent>
+            </Tooltip>
           )}
         </div>
         <div className="flex justify-between items-start mt-1">
@@ -47,9 +65,9 @@ function GroupCard({ group, isSelected, onClick }: { group: Group; isSelected: b
             {group.lastMessage}
           </p>
           {group.unreadCount > 0 && (
-            <div className="bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center flex-shrink-0">
+            <Badge variant="default" className="h-5 w-5 p-0 flex items-center justify-center rounded-full">
               {group.unreadCount > 9 ? '9+' : group.unreadCount}
-            </div>
+            </Badge>
           )}
         </div>
       </div>
@@ -81,6 +99,7 @@ export default function ConversationSidebar({
 }: ConversationSidebarProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [commandOpen, setCommandOpen] = useState(false);
 
   useEffect(() => {
     const handleViewportChange = () => {
@@ -94,6 +113,18 @@ export default function ConversationSidebar({
     return () => window.visualViewport?.removeEventListener('resize', handleViewportChange);
   }, []);
 
+  // Keyboard shortcut for search
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setCommandOpen((open) => !open);
+      }
+    };
+    document.addEventListener('keydown', down);
+    return () => document.removeEventListener('keydown', down);
+  }, []);
+
   const filteredGroups = groups.filter(group =>
     group.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -103,7 +134,10 @@ export default function ConversationSidebar({
       <header className="p-4 border-b space-y-4 flex-shrink-0 bg-background">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className={cn("w-2.5 h-2.5 rounded-full", connectionStatus.connected ? "bg-green-500" : "bg-red-500")}></div>
+            <Badge variant={connectionStatus.connected ? "default" : "destructive"} className="gap-1 px-2 py-0.5">
+              <div className={cn("w-2 h-2 rounded-full", connectionStatus.connected ? "bg-green-400" : "bg-red-400")}></div>
+              {connectionStatus.connected ? "Connected" : "Offline"}
+            </Badge>
             <h2 className="text-lg font-bold">Messages</h2>
           </div>
           <Button onClick={onCreateGroup} size="icon" variant="ghost">
@@ -114,10 +148,12 @@ export default function ConversationSidebar({
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
-            placeholder="Search"
+            placeholder="Search (⌘K)"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 rounded-full"
+            onClick={() => setCommandOpen(true)}
+            className="pl-9 rounded-full cursor-pointer"
+            readOnly
           />
         </div>
       </header>
@@ -148,6 +184,45 @@ export default function ConversationSidebar({
           </div>
         )}
       </div>
+
+      <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
+        <CommandInput placeholder="Type to search groups..." />
+        <CommandList>
+          <CommandEmpty>No groups found.</CommandEmpty>
+          <CommandGroup heading="Conversations">
+            {groups.map((group) => (
+              <CommandItem
+                key={group.id}
+                onSelect={() => {
+                  onGroupSelect(group);
+                  setCommandOpen(false);
+                }}
+              >
+                <Avatar className="h-8 w-8 mr-2">
+                  <AvatarFallback className="text-xs">
+                    {getInitials(group.name)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">{group.name}</span>
+                    {group.unreadCount > 0 && (
+                      <Badge variant="default" className="ml-2">
+                        {group.unreadCount}
+                      </Badge>
+                    )}
+                  </div>
+                  {group.lastMessage && (
+                    <p className="text-sm text-muted-foreground truncate">
+                      {group.lastMessage}
+                    </p>
+                  )}
+                </div>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </CommandList>
+      </CommandDialog>
     </div>
   );
 }

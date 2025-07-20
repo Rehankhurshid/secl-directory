@@ -1,8 +1,17 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
 import { Group } from "./types";
 import { getInitials } from "./utils";
-import { ArrowLeft, MoreVertical } from "lucide-react";
+import { ArrowLeft, MoreVertical, Users, Info, Bell, BellOff, Archive, Trash2 } from "lucide-react";
 
 interface ChatHeaderProps {
   group: Group;
@@ -28,10 +37,39 @@ export default function ChatHeader({ group, onBack }: ChatHeaderProps) {
         </div>
       </div>
       <div className="ml-auto">
-        <Button variant="ghost" size="icon">
-          <MoreVertical className="h-5 w-5" />
-          <span className="sr-only">Group options</span>
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <MoreVertical className="h-5 w-5" />
+              <span className="sr-only">Group options</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel>Group Options</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <Info className="mr-2 h-4 w-4" />
+              Group Info
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Users className="mr-2 h-4 w-4" />
+              View Members
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Bell className="mr-2 h-4 w-4" />
+              Mute Notifications
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <Archive className="mr-2 h-4 w-4" />
+              Archive Group
+            </DropdownMenuItem>
+            <DropdownMenuItem className="text-destructive focus:text-destructive">
+              <Trash2 className="mr-2 h-4 w-4" />
+              Leave Group
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );

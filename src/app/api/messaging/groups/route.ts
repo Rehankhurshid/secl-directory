@@ -120,10 +120,8 @@ export async function POST(request: NextRequest) {
         .insert(groups)
         .values({
           name,
-          description,
+          ...(description && { description }),
           createdBy: session.employeeId,
-          createdAt: now,
-          updatedAt: now,
         })
         .returning();
 

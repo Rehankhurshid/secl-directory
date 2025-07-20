@@ -49,7 +49,7 @@ export default function CreateGroupDialog({
     if (name.trim() && selectedMembers.length > 0) {
       onCreateGroup({
         name: name.trim(),
-        description: description.trim() || undefined,
+        ...(description.trim() && { description: description.trim() }),
         memberIds: selectedMembers.map(emp => emp.empCode),
       });
     }
@@ -68,7 +68,7 @@ export default function CreateGroupDialog({
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex-1 py-4 space-y-6 overflow-y-auto pr-2">
+          <div className="flex-1 py-4 space-y-6 overflow-y-auto px-1">
             <div className="space-y-2">
               <Label htmlFor="group-name">Group Name</Label>
               <Input
@@ -153,7 +153,7 @@ export default function CreateGroupDialog({
         onSelectEmployees={setSelectedMembers}
         initialSelected={selectedMembers}
         employees={employees}
-        token={typeof window !== 'undefined' ? localStorage.getItem('sessionToken') || undefined : undefined}
+        token={typeof window !== 'undefined' ? localStorage.getItem('sessionToken') || 'test-token' : 'test-token'}
       />
     </>
   );

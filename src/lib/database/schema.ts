@@ -286,15 +286,15 @@ export const messages = pgTable('messages', {
 // Push subscriptions table (for PWA notifications)
 export const pushSubscriptions = pgTable('push_subscriptions', {
   id: serial('id').primaryKey(),
-  employeeId: varchar('employee_id', { length: 50 }).notNull(),
+  employee_id: varchar('employee_id', { length: 50 }).notNull(),
   endpoint: text('endpoint').notNull().unique(),
   p256dh: text('p256dh').notNull(),
   auth: text('auth').notNull(),
   platform: varchar('platform', { length: 20 }).default('web'),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  updated_at: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 }, (table) => ({
-  employeeIdIdx: index('push_subscriptions_employee_id_idx').on(table.employeeId),
+  employeeIdIdx: index('push_subscriptions_employee_id_idx').on(table.employee_id),
 }));
 
 // TypeScript types for messaging

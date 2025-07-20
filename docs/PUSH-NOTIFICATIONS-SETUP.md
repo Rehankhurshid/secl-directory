@@ -1,21 +1,13 @@
 # Push Notifications Setup Guide
 
-This guide explains how to set up and test push notifications for both Android and iOS devices in the SECL Employee Directory PWA.
+This guide walks through setting up push notifications in the SECL Directory app.
 
-## Prerequisites
+## 1. Generate VAPID Keys
 
-- Node.js 18+ installed
-- A PostgreSQL database with the push_subscriptions table
-- HTTPS enabled (required for service workers and push notifications)
-
-## Setup Instructions
-
-### 1. Generate VAPID Keys
-
-First, generate your VAPID (Voluntary Application Server Identification) keys:
+First, generate the VAPID keys needed for web push:
 
 ```bash
-node scripts/generate-vapid-keys.js
+npm run generate:vapid
 ```
 
 This will output three values that you need to add to your `.env.local` file:

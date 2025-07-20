@@ -46,9 +46,8 @@ const navigationItems = [
   },
   {
     title: "Messages",
-    href: "/messages",
+    href: "/messaging",
     icon: MessageSquare,
-    badge: "Soon",
   },
 ]
 
@@ -89,68 +88,7 @@ export function TopNavigation({ user }: TopNavigationProps) {
   }
 
   const handleTestNotification = async () => {
-    try {
-      // Check if notifications are supported
-      if (!('Notification' in window)) {
-        alert('Notifications are not supported in this browser')
-        return
-      }
-
-      console.log('Current notification permission:', Notification.permission)
-
-      // If permission is denied, show instructions
-      if (Notification.permission === 'denied') {
-        alert('Notifications are blocked. Please enable them in your browser settings:\n\n1. Click the lock/info icon in the address bar\n2. Find "Notifications"\n3. Change to "Allow"\n4. Refresh the page')
-        return
-      }
-
-      // Request permission if not already granted
-      if (Notification.permission !== 'granted') {
-        const permission = await Notification.requestPermission()
-        console.log('Permission request result:', permission)
-        
-        if (permission !== 'granted') {
-          alert('Notification permission was not granted. Please try again.')
-          return
-        }
-      }
-
-      // Wait for service worker to be ready
-      if ('serviceWorker' in navigator) {
-        console.log('Waiting for service worker...')
-        const registration = await navigator.serviceWorker.ready
-        console.log('Service worker ready, showing notification...')
-        
-        // Show notification through service worker
-        await registration.showNotification('SECL Employee Directory', {
-          body: 'This is a test notification from the PWA!',
-          icon: '/icon-192x192.png',
-          badge: '/icon-192x192.png',
-          tag: 'test-notification',
-          renotify: true,
-          requireInteraction: false,
-          silent: false,
-          vibrate: [200, 100, 200],
-          data: {
-            dateOfArrival: Date.now(),
-            primaryKey: 1
-          }
-        })
-        
-        console.log('Notification displayed successfully!')
-      } else {
-        // Fallback for browsers without service worker support
-        const notification = new Notification('SECL Employee Directory', {
-          body: 'This is a test notification!',
-          icon: '/icon-192x192.png',
-          tag: 'test-notification'
-        })
-        console.log('Fallback notification created:', notification)
-      }
-    } catch (error) {
-      console.error('Error showing notification:', error)
-      alert(`Error: ${error.message}\n\nPlease check the console for more details.`)
-    }
+    router.push('/test-notifications')
   }
 
   const isActive = (href: string) => {
@@ -187,11 +125,11 @@ export function TopNavigation({ user }: TopNavigationProps) {
             <span className={cn(!mobile && "hidden lg:inline")}>
               {item.title}
             </span>
-            {item.badge && (
+            {('badge' in item && item.badge) ? (
               <Badge variant="secondary" className="ml-auto h-5 px-1.5 text-xs">
-                {item.badge}
+                {String(item.badge)}
               </Badge>
-            )}
+            ) : null}
           </Button>
         )
       })}
@@ -313,6 +251,10 @@ export function TopNavigation({ user }: TopNavigationProps) {
                   <RefreshCw className={cn("mr-2 h-4 w-4", isRefreshing && "animate-spin")} />
                   Refresh Data
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push('/notifications')}>
+                  <Bell className="mr-2 h-4 w-4" />
+                  Manage Notifications
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleTestNotification}>
                   <Bell className="mr-2 h-4 w-4" />
                   Test Notification
@@ -408,7 +350,22 @@ export function TopNavigation({ user }: TopNavigationProps) {
                       variant="ghost"
                       size="sm"
                       className="w-full justify-start"
-                      onClick={handleTestNotification}
+                      onClick={() => {
+                        router.push('/notifications')
+                        setMobileMenuOpen(false)
+                      }}
+                    >
+                      <Bell className="mr-2 h-4 w-4" />
+                      Manage Notifications
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start"
+                      onClick={() => {
+                        handleTestNotification()
+                        setMobileMenuOpen(false)
+                      }}
                     >
                       <Bell className="mr-2 h-4 w-4" />
                       Test Notification

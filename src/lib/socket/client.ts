@@ -1,6 +1,5 @@
 'use client'
 
-import { io, Socket } from 'socket.io-client'
 import { create } from 'zustand'
 
 interface Message {
@@ -14,16 +13,19 @@ interface Message {
 }
 
 interface SocketStore {
-  socket: Socket | null
+  // Connection state
   connected: boolean
   authenticated: boolean
-  typingUsers: Map<number, Set<string>>
+  
+  // Placeholder methods - to be implemented
   connect: (token: string) => void
   disconnect: () => void
-  sendMessage: (groupId: number, content: string) => void
+  sendMessage: (groupId: number, content: string, tempId: string) => void
   startTyping: (groupId: number) => void
   stopTyping: (groupId: number) => void
   markMessagesRead: (groupId: number) => void
+  
+  // Event handlers
   onNewMessage: (callback: (message: Message) => void) => void
   onTypingStart: (callback: (data: { userId: string; groupId: number }) => void) => void
   onTypingStop: (callback: (data: { userId: string; groupId: number }) => void) => void
@@ -31,124 +33,56 @@ interface SocketStore {
 }
 
 export const useSocketStore = create<SocketStore>((set, get) => ({
-  socket: null,
   connected: false,
   authenticated: false,
-  typingUsers: new Map(),
 
   connect: (token: string) => {
-    const existingSocket = get().socket
-    if (existingSocket?.connected) return
-
-    const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3000', {
-      auth: { token },
-      transports: ['websocket', 'polling']
-    })
-
-    socket.on('connect', () => {
-      console.log('Socket connected')
-      set({ connected: true })
-      socket.emit('join-groups')
-    })
-
-    socket.on('disconnect', () => {
-      console.log('Socket disconnected')
-      set({ connected: false, authenticated: false })
-    })
-
-    socket.on('groups-joined', (groupIds: number[]) => {
-      console.log('Joined groups:', groupIds)
-      set({ authenticated: true })
-    })
-
-    socket.on('error', (error: { message: string }) => {
-      console.error('Socket error:', error.message)
-    })
-
-    set({ socket })
+    console.log('🔌 Socket connection placeholder - token:', token);
+    // TODO: Implement actual connection logic
   },
 
   disconnect: () => {
-    const socket = get().socket
-    if (socket) {
-      socket.disconnect()
-      set({ socket: null, connected: false, authenticated: false })
-    }
+    console.log('🔌 Socket disconnect placeholder');
+    // TODO: Implement actual disconnect logic
   },
 
-  sendMessage: (groupId: number, content: string) => {
-    const socket = get().socket
-    if (socket?.connected) {
-      socket.emit('send-message', { groupId, content })
-    }
+  sendMessage: (groupId: number, content: string, tempId: string) => {
+    console.log('📤 Send message placeholder:', { groupId, content, tempId });
+    // TODO: Implement actual message sending
   },
 
   startTyping: (groupId: number) => {
-    const socket = get().socket
-    if (socket?.connected) {
-      socket.emit('typing-start', { groupId })
-    }
+    console.log('⌨️ Start typing placeholder:', groupId);
+    // TODO: Implement typing indicator
   },
 
   stopTyping: (groupId: number) => {
-    const socket = get().socket
-    if (socket?.connected) {
-      socket.emit('typing-stop', { groupId })
-    }
+    console.log('⌨️ Stop typing placeholder:', groupId);
+    // TODO: Implement typing indicator
   },
 
   markMessagesRead: (groupId: number) => {
-    const socket = get().socket
-    if (socket?.connected) {
-      socket.emit('mark-messages-read', { groupId })
-    }
+    console.log('✓ Mark messages read placeholder:', groupId);
+    // TODO: Implement read receipts
   },
 
   onNewMessage: (callback: (message: Message) => void) => {
-    const socket = get().socket
-    if (socket) {
-      socket.on('new-message', callback)
-    }
+    console.log('📨 New message handler registered');
+    // TODO: Implement message listener
   },
 
   onTypingStart: (callback: (data: { userId: string; groupId: number }) => void) => {
-    const socket = get().socket
-    if (socket) {
-      socket.on('user-typing', (data) => {
-        const typingUsers = get().typingUsers
-        const groupTyping = typingUsers.get(data.groupId) || new Set()
-        groupTyping.add(data.userId)
-        typingUsers.set(data.groupId, groupTyping)
-        set({ typingUsers: new Map(typingUsers) })
-        callback(data)
-      })
-    }
+    console.log('⌨️ Typing start handler registered');
+    // TODO: Implement typing listener
   },
 
   onTypingStop: (callback: (data: { userId: string; groupId: number }) => void) => {
-    const socket = get().socket
-    if (socket) {
-      socket.on('user-stop-typing', (data) => {
-        const typingUsers = get().typingUsers
-        const groupTyping = typingUsers.get(data.groupId)
-        if (groupTyping) {
-          groupTyping.delete(data.userId)
-          if (groupTyping.size === 0) {
-            typingUsers.delete(data.groupId)
-          } else {
-            typingUsers.set(data.groupId, groupTyping)
-          }
-          set({ typingUsers: new Map(typingUsers) })
-        }
-        callback(data)
-      })
-    }
+    console.log('⌨️ Typing stop handler registered');
+    // TODO: Implement typing listener
   },
 
   onMessagesRead: (callback: (data: { groupId: number; readBy: string }) => void) => {
-    const socket = get().socket
-    if (socket) {
-      socket.on('messages-read', callback)
-    }
+    console.log('✓ Messages read handler registered');
+    // TODO: Implement read receipt listener
   }
 }))

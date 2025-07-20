@@ -25,9 +25,8 @@ const navigationItems = [
   },
   {
     title: "Messages",
-    href: "/messages",
+    href: "/messaging",
     icon: MessageSquare,
-    badge: "Soon",
   },
 ]
 
@@ -70,14 +69,14 @@ export function MobileBottomNav({ user }: MobileBottomNavProps) {
             >
               <Icon className="h-5 w-5" />
               <span className="text-xs font-medium">{item.title}</span>
-              {item.badge && (
+              {('badge' in item && item.badge) ? (
                 <Badge 
                   variant="secondary" 
                   className="absolute -top-1 -right-2 h-4 px-1 text-[10px]"
                 >
-                  {item.badge}
+                  {String(item.badge)}
                 </Badge>
-              )}
+              ) : null}
               {active && (
                 <span className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-primary rounded-full" />
               )}
