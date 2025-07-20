@@ -14,6 +14,10 @@ interface ChatViewProps {
   onSendMessage: (content: string) => void;
   isLoading: boolean;
   onBack: () => void;
+  connectionStatus?: { connected: boolean; authenticated: boolean };
+  typingUsers?: string[];
+  onStartTyping?: () => void;
+  onStopTyping?: () => void;
 }
 
 function ChatSkeleton() {
@@ -37,7 +41,18 @@ function ChatSkeleton() {
     );
 }
 
-export default function ChatView({ group, messages, currentUserId, onSendMessage, isLoading, onBack }: ChatViewProps) {
+export default function ChatView({ 
+  group, 
+  messages, 
+  currentUserId, 
+  onSendMessage, 
+  isLoading, 
+  onBack,
+  connectionStatus,
+  typingUsers = [],
+  onStartTyping,
+  onStopTyping
+}: ChatViewProps) {
   const chatMessagesRef = useRef<ChatMessagesRef>(null);
   const previousMessageCount = useRef(messages.length);
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);

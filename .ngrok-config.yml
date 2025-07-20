@@ -1,0 +1,17 @@
+version: "2"
+authtoken: 
+
+tunnels:
+  unified:
+    proto: http
+    addr: 3001
+    bind_tls: true
+    host_header: localhost:3001
+    inspect: true
+    
+  websocket:
+    proto: http
+    addr: 3002
+    bind_tls: true
+    host_header: localhost:3002
+    inspect: false

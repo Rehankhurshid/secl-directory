@@ -49,7 +49,7 @@ const ChatMessages = forwardRef<ChatMessagesRef, ChatMessagesProps>(
   ({ messages, currentUserId, groupId }, ref) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const typingUsers = useSocketStore(state => state.typingUsers);
+  // const typingUsers = useSocketStore(state => state.typingUsers); // Removed in socket store simplification
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -69,7 +69,7 @@ const ChatMessages = forwardRef<ChatMessagesRef, ChatMessagesProps>(
     scrollToBottom();
   }, [messages.length]);
 
-  const groupTypingUsers = typingUsers.get(groupId) || new Set();
+  const groupTypingUsers = new Set<string>(); // Placeholder - will be implemented in Phase 2
 
   return (
     <div 

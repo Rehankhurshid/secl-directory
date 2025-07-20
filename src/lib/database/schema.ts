@@ -267,20 +267,31 @@ export const groupMembers = pgTable('group_members', {
   employeeIdIdx: index('group_members_employee_id_idx').on(table.employeeId),
 }));
 
-// Messages table
+// Messages table (enhanced for Phase 2)
 export const messages = pgTable('messages', {
   id: serial('id').primaryKey(),
   groupId: integer('group_id').notNull().references(() => groups.id, { onDelete: 'cascade' }),
   senderId: varchar('sender_id', { length: 50 }).notNull(),
   content: text('content').notNull(),
   messageType: varchar('message_type', { length: 50 }).default('text'),
-  readBy: text('read_by').array().default([]),
+  status: varchar('status', { length: 20 }).default('sent'),
+  replyToId: integer('reply_to_id').references(() => messages.id, { onDelete: 'set null' }),
+  editedAt: timestamp('edited_at', { withTimezone: true }),
+  deletedAt: timestamp('deleted_at', { withTimezone: true }),
+  editCount: integer('edit_count').default(0),
+  hasAttachments: boolean('has_attachments').default(false),
+  metadata: text('metadata').default('{}'), // JSON string
+  readBy: text('read_by').array().default([]), // Legacy field for backward compatibility
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 }, (table) => ({
   groupIdIdx: index('messages_group_id_idx').on(table.groupId),
   createdAtIdx: index('messages_created_at_idx').on(table.createdAt),
   groupIdCreatedAtIdx: index('messages_group_id_created_at_idx').on(table.groupId, table.createdAt),
+  statusIdx: index('messages_status_idx').on(table.status),
+  replyToIdIdx: index('messages_reply_to_id_idx').on(table.replyToId),
+  editedAtIdx: index('messages_edited_at_idx').on(table.editedAt),
+  deletedAtIdx: index('messages_deleted_at_idx').on(table.deletedAt),
 }));
 
 // Push subscriptions table (for PWA notifications)

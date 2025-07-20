@@ -1,0 +1,1 @@
+ALTER TABLE "conversation_messages" ADD COLUMN "status" varchar(20) DEFAULT 'pending';

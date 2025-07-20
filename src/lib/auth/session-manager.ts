@@ -41,6 +41,10 @@ export class SessionManager {
       expires_at: data.expiresAt,
     }).returning();
 
+    if (!record) {
+      throw new Error('Failed to create OTP verification record');
+    }
+
     return {
       id: record.id,
       employeeId: record.employee_id,

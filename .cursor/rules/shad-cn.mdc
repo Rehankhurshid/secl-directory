@@ -1,6 +1,5 @@
 ---
-description: This needs to be applied for building UIs. If we don't find a usecase, then we can go with something custom but at every end
-alwaysApply: false
+alwaysApply: true
 ---
 
 Usage Rule

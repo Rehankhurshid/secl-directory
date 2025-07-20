@@ -5,8 +5,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
-// Mock hooks and API functions - replace with your actual implementations
+// Real WebSocket implementation
 import { useAuth } from '@/lib/hooks/use-auth';
+import { useWebSocket, useRealTimeMessages, useTypingIndicator } from '@/lib/hooks/use-websocket';
 
 import ConversationSidebar from './conversation-sidebar';
 import ChatView from './chat-view';
@@ -22,10 +23,16 @@ export default function MessagingLayout() {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [isMobileChatVisible, setIsMobileChatVisible] = useState(false);
 
-  // Connection status placeholder
-  const connectionStatus = { connected: false, authenticated: false };
+  // Real WebSocket connection
   const token = typeof window !== 'undefined' ? localStorage.getItem('sessionToken') || 'test-token' : 'test-token';
   const currentUserId = auth.employee?.empCode || '';
+
+  // WebSocket hooks for real-time functionality
+  const { status, isConnected } = useWebSocket(currentUserId);
+  const { messages: realtimeMessages, sendMessage: sendRealtimeMessage } = useRealTimeMessages(selectedGroupId?.toString() || '');
+  const { typingUsers, sendTypingIndicator } = useTypingIndicator(selectedGroupId?.toString() || '', currentUserId);
+
+  const connectionStatus = { connected: isConnected, authenticated: true };
 
   // Store current user ID for notifications
   useEffect(() => {
@@ -34,14 +41,16 @@ export default function MessagingLayout() {
     }
   }, [currentUserId]);
 
-  // TODO: Initialize real-time connection when implemented
+  // Log connection status changes
   useEffect(() => {
-    console.log('🔌 Real-time connection placeholder');
-  }, []);
+    console.log('🔌 WebSocket connection status:', status, 'Connected:', isConnected);
+  }, [status, isConnected]);
 
-  // TODO: Set up real-time message listener when implemented
+  // Log when group selection changes
   useEffect(() => {
-    console.log('📨 Real-time message listener placeholder');
+    if (selectedGroupId) {
+      console.log('📨 Joined conversation:', selectedGroupId);
+    }
   }, [selectedGroupId]);
 
   // --- DATA FETCHING ---
@@ -181,6 +190,14 @@ export default function MessagingLayout() {
     if (selectedGroupId) {
       // Send via API which will handle persistence and broadcast via WebSocket
       sendMessageMutation.mutate({ groupId: selectedGroupId, content });
+      
+      // Also send via WebSocket for real-time delivery
+      if (isConnected) {
+        console.log('📤 Sending message via WebSocket:', content);
+        sendRealtimeMessage(content, currentUserId);
+      } else {
+        console.warn('⚠️ WebSocket not connected, message sent via API only');
+      }
     }
   };
 
@@ -228,6 +245,10 @@ export default function MessagingLayout() {
                   onSendMessage={handleSendMessage}
                   isLoading={messagesLoading && !messages.length}
                   onBack={() => setIsMobileChatVisible(false)}
+                  connectionStatus={connectionStatus}
+                  typingUsers={Array.from(typingUsers)}
+                  onStartTyping={() => sendTypingIndicator(true)}
+                  onStopTyping={() => sendTypingIndicator(false)}
                 />
               </motion.div>
             ) : (

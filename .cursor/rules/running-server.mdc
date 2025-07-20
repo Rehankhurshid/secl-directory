@@ -1,0 +1,7 @@
+---
+alwaysApply: true
+---
+
+# Kill server before you rerun
+
+npm run kill

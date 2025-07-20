@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/lib/hooks/use-auth'
 import { useRouter } from 'next/navigation'
-import PushNotificationSettings from '@/components/push-notification-settings'
+// import PushNotificationSettings from '@/components/push-notification-settings' // Removed for now
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { User, Bell, Shield, Palette } from 'lucide-react'
@@ -76,7 +76,22 @@ export default function SettingsPage() {
 
         <TabsContent value="notifications">
           <div className="space-y-4">
-            <PushNotificationSettings />
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Bell className="h-5 w-5" />
+                  Push Notifications
+                </CardTitle>
+                <CardDescription>
+                  Configure push notification settings for messaging
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Push notification settings will be available in Phase 2 of the messaging platform.
+                </p>
+              </CardContent>
+            </Card>
             
             <Card>
               <CardHeader>

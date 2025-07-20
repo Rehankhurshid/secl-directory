@@ -1,8 +1,7 @@
 'use client';
 
 import MessagingLayout from '@/components/messaging/v0-rebuild/messaging-layout';
-import { NotificationProvider } from '@/contexts/notifications/NotificationContext';
-import { NotificationPermissionBanner } from '@/components/notifications/notification-permission-banner';
+// Removed notification imports - will be added back in Phase 2
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -36,13 +35,10 @@ function MessagingPageSkeleton() {
 
 export default function V0RebuildMessagingPage() {
   return (
-    <NotificationProvider vapidPublicKey={process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || ''}>
       <main className="h-[calc(100dvh-69px)] overflow-hidden relative">
         <Suspense fallback={<MessagingPageSkeleton />}>
           <MessagingLayout />
         </Suspense>
-        <NotificationPermissionBanner />
       </main>
-    </NotificationProvider>
   );
 }

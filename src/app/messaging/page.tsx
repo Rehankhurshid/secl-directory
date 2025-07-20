@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/lib/hooks/use-auth';
 import { useRouter } from 'next/navigation';
-import MessagingLayout from '@/components/messaging/v0-rebuild/messaging-layout';
+import ModernMessagingLayout from '@/components/messaging/modern/messaging-layout';
 
 export default function MessagingPage() {
   const router = useRouter();
@@ -25,7 +25,7 @@ export default function MessagingPage() {
 
   return (
     <div className="h-[calc(100vh-64px-4rem)] md:h-[calc(100vh-57px)] flex flex-col overflow-hidden" style={{ overscrollBehavior: 'none' }}>
-      <MessagingLayout />
+      <ModernMessagingLayout />
     </div>
   );
 }

@@ -12,27 +12,31 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'SECL Directory',
-  description: 'Employee Directory and Messaging System for SECL',
+  title: 'SECL Messaging',
+  description: 'Secure employee communication and messaging platform',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'SECL Directory',
+    title: 'SECL Chat',
   },
   formatDetection: {
     telephone: false,
   },
   openGraph: {
     type: 'website',
-    siteName: 'SECL Directory',
-    title: 'SECL Employee Directory',
-    description: 'Employee Directory and Messaging System for SECL',
+    siteName: 'SECL Messaging',
+    title: 'SECL Messaging',
+    description: 'Secure employee communication and messaging platform',
   },
   twitter: {
     card: 'summary',
-    title: 'SECL Directory',
-    description: 'Employee Directory and Messaging System for SECL',
+    title: 'SECL Messaging',
+    description: 'Secure employee communication and messaging platform',
+  },
+  icons: {
+    icon: '/icon-192x192.png',
+    apple: '/apple-touch-icon.png',
   },
 };
 

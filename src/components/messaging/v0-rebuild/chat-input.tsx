@@ -4,22 +4,26 @@ import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Paperclip, Send } from 'lucide-react';
-// Mock hook - replace with your actual implementation
-import { useSocketStore } from '@/lib/socket/client';
 
 interface ChatInputProps {
   onSendMessage: (content: string) => void;
   groupId: number;
+  connectionStatus?: { connected: boolean; authenticated: boolean };
+  onStartTyping?: () => void;
+  onStopTyping?: () => void;
 }
 
-export default function ChatInput({ onSendMessage, groupId }: ChatInputProps) {
+export default function ChatInput({ 
+  onSendMessage, 
+  groupId, 
+  connectionStatus,
+  onStartTyping,
+  onStopTyping 
+}: ChatInputProps) {
   const [text, setText] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout>();
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const startTyping = useSocketStore(state => state.startTyping);
-  const stopTyping = useSocketStore(state => state.stopTyping);
 
   // Ensure input stays visible when keyboard opens
   useEffect(() => {
@@ -42,12 +46,36 @@ export default function ChatInput({ onSendMessage, groupId }: ChatInputProps) {
     };
   }, []);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setText(e.target.value);
+    
+    // Handle typing indicators
+    if (e.target.value.trim() && connectionStatus?.connected) {
+      onStartTyping?.();
+      
+      // Clear existing timeout
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+      
+      // Set timeout to stop typing
+      typingTimeoutRef.current = setTimeout(() => {
+        onStopTyping?.();
+      }, 2000);
+    } else if (!e.target.value.trim()) {
+      onStopTyping?.();
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    }
+  };
+
   const handleSend = () => {
     const content = text.trim();
     if (content) {
       onSendMessage(content);
       setText('');
-      stopTyping(groupId);
+      onStopTyping?.();
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     }
   };
@@ -69,20 +97,11 @@ export default function ChatInput({ onSendMessage, groupId }: ChatInputProps) {
       textarea.style.height = `${Math.min(scrollHeight, maxHeight)}px`;
     }
 
-    // Typing indicator logic
-    if (text.trim()) {
-        startTyping(groupId);
-        if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
-        typingTimeoutRef.current = setTimeout(() => stopTyping(groupId), 2000);
-    } else {
-        stopTyping(groupId);
-    }
-
     return () => {
         if(typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     }
 
-  }, [text, groupId, startTyping, stopTyping]);
+  }, [text]);
 
 
   return (
@@ -95,18 +114,19 @@ export default function ChatInput({ onSendMessage, groupId }: ChatInputProps) {
         <Textarea
           ref={textareaRef}
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          placeholder="Type a message..."
+          placeholder={connectionStatus?.connected ? "Type a message..." : "Connecting..."}
           rows={1}
           className="flex-1 resize-none bg-muted border-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 rounded-2xl max-h-32 pr-12"
+          disabled={!connectionStatus?.connected}
         />
         <Button 
             size="icon" 
             className="rounded-full flex-shrink-0"
             onClick={handleSend}
-            disabled={!text.trim()}
-            aria-label="Send message"
+            disabled={!text.trim() || !connectionStatus?.connected}
+            aria-label={!connectionStatus?.connected ? "Connecting..." : "Send message"}
         >
           <Send className="h-5 w-5" />
         </Button>

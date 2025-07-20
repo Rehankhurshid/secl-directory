@@ -1,0 +1,730 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+
+Excellent point! You're absolutely right. Let me revise the PWA implementation to align with Next.js App Router's official PWA guidance. Here's the updated approach:
+
+# Updated PWA Implementation for Next.js App Router
+
+## Revised Phase 3: Offline Support & PWA (Week 5-6)
+
+### Updated PWA Setup Following Next.js Guidelines
+
+#### 1. **Web App Manifest**
+
+```typescript
+// src/app/manifest.ts
+import { MetadataRoute } from "next";
+
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    name: "SECL Messaging",
+    short_name: "SECL Chat",
+    description: "Secure employee communication and messaging platform",
+    start_url: "/",
+    display: "standalone",
+    background_color: "#ffffff",
+    theme_color: "#000000",
+    orientation: "portrait",
+    scope: "/",
+    icons: [
+      {
+        src: "/icon-72x72.png",
+        sizes: "72x72",
+        type: "image/png",
+        purpose: "maskable",
+      },
+      {
+        src: "/icon-96x96.png",
+        sizes: "96x96",
+        type: "image/png",
+        purpose: "maskable",
+      },
+      {
+        src: "/icon-128x128.png",
+        sizes: "128x128",
+        type: "image/png",
+        purpose: "maskable",
+      },
+      {
+        src: "/icon-144x144.png",
+        sizes: "144x144",
+        type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: "/icon-152x152.png",
+        sizes: "152x152",
+        type: "image/png",
+        purpose: "maskable",
+      },
+      {
+        src: "/icon-192x192.png",
+        sizes: "192x192",
+        type: "image/png",
+        purpose: "maskable",
+      },
+      {
+        src: "/icon-384x384.png",
+        sizes: "384x384",
+        type: "image/png",
+        purpose: "maskable",
+      },
+      {
+        src: "/icon-512x512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable",
+      },
+    ],
+    shortcuts: [
+      {
+        name: "New Message",
+        short_name: "Message",
+        description: "Start a new conversation",
+        url: "/messages/new",
+        icons: [{ src: "/icon-96x96.png", sizes: "96x96" }],
+      },
+      {
+        name: "Employee Directory",
+        short_name: "Directory",
+        description: "Browse employee directory",
+        url: "/directory",
+        icons: [{ src: "/icon-96x96.png", sizes: "96x96" }],
+      },
+    ],
+    related_applications: [],
+    prefer_related_applications: false,
+    categories: ["business", "productivity"],
+    iarc_rating_id: "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+    screenshots: [
+      {
+        src: "/screenshots/desktop-chat.png",
+        sizes: "1920x1080",
+        type: "image/png",
+        form_factor: "wide",
+      },
+      {
+        src: "/screenshots/mobile-chat.png",
+        sizes: "750x1334",
+        type: "image/png",
+        form_factor: "narrow",
+      },
+    ],
+  };
+}
+```
+
+#### 2. **Updated Service Worker Strategy**
+
+```typescript
+// src/app/sw.ts (TypeScript Service Worker)
+/// <reference lib="webworker" />
+
+import { clientsClaim } from "workbox-core";
+import { ExpirationPlugin } from "workbox-expiration";
+import {
+  NetworkFirst,
+  CacheFirst,
+  StaleWhileRevalidate,
+} from "workbox-strategies";
+import { registerRoute, NavigationRoute, Route } from "workbox-routing";
+import { CacheableResponsePlugin } from "workbox-cacheable-response";
+import { precacheAndRoute, cleanupOutdatedCaches } from "workbox-precaching";
+
+declare const self: ServiceWorkerGlobalScope;
+
+// Self-activate and claim clients
+self.skipWaiting();
+clientsClaim();
+
+// Precache static assets
+precacheAndRoute(self.__WB_MANIFEST);
+cleanupOutdatedCaches();
+
+// Cache strategies for Next.js App Router
+const navigationHandler = new NetworkFirst({
+  cacheName: "navigations",
+  plugins: [
+    new CacheableResponsePlugin({
+      statuses: [0, 200],
+    }),
+    new ExpirationPlugin({
+      maxAgeSeconds: 24 * 60 * 60, // 24 hours
+      maxEntries: 50,
+    }),
+  ],
+});
+
+// Handle app navigations
+registerRoute(
+  new NavigationRoute(navigationHandler, {
+    allowlist: [/^\/$/],
+    denylist: [/\/api\//],
+  })
+);
+
+// API Routes - Network First with offline fallback
+registerRoute(
+  /^\/api\/(messages|conversations)/,
+  new NetworkFirst({
+    cacheName: "api-cache",
+    networkTimeoutSeconds: 10,
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      new ExpirationPlugin({
+        maxEntries: 100,
+        maxAgeSeconds: 60 * 60, // 1 hour
+      }),
+    ],
+  }),
+  "GET"
+);
+
+// Static assets - Cache First
+registerRoute(
+  /\.(?:js|css|woff2?)$/,
+  new CacheFirst({
+    cacheName: "static-assets",
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      new ExpirationPlugin({
+        maxEntries: 100,
+        maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+      }),
+    ],
+  })
+);
+
+// Images - Cache First with expiration
+registerRoute(
+  /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
+  new CacheFirst({
+    cacheName: "images",
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      new ExpirationPlugin({
+        maxEntries: 100,
+        maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
+      }),
+    ],
+  })
+);
+
+// Next.js Image Optimization API
+registerRoute(
+  /^\/_next\/image\?url=/,
+  new CacheFirst({
+    cacheName: "next-images",
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      new ExpirationPlugin({
+        maxEntries: 100,
+        maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+      }),
+    ],
+  })
+);
+
+// Background sync for offline messages
+self.addEventListener("sync", (event: any) => {
+  if (event.tag === "sync-messages") {
+    event.waitUntil(syncOfflineMessages());
+  }
+});
+
+// Push notifications
+self.addEventListener("push", (event: PushEvent) => {
+  const data = event.data?.json() || {};
+
+  event.waitUntil(
+    self.registration.showNotification(data.title || "New Message", {
+      body: data.body,
+      icon: "/icon-192x192.png",
+      badge: "/badge-72x72.png",
+      tag: data.tag,
+      data: data.data,
+      requireInteraction: true,
+      actions: [
+        { action: "reply", title: "Reply", icon: "/icons/reply.png" },
+        {
+          action: "mark-read",
+          title: "Mark as Read",
+          icon: "/icons/check.png",
+        },
+      ],
+      vibrate: [200, 100, 200],
+    })
+  );
+});
+
+// Handle notification clicks
+self.addEventListener("notificationclick", (event: any) => {
+  event.notification.close();
+
+  if (event.action === "reply") {
+    event.waitUntil(
+      clients.openWindow(
+        `/messages/${event.notification.data.conversationId}?reply=true`
+      )
+    );
+  } else if (event.action === "mark-read") {
+    event.waitUntil(markMessageAsRead(event.notification.data.messageId));
+  } else {
+    event.waitUntil(
+      clients.openWindow(`/messages/${event.notification.data.conversationId}`)
+    );
+  }
+});
+
+// Offline message sync
+async function syncOfflineMessages() {
+  const cache = await caches.open("offline-messages");
+  const requests = await cache.keys();
+
+  for (const request of requests) {
+    try {
+      const response = await fetch(request);
+      if (response.ok) {
+        await cache.delete(request);
+      }
+    } catch (error) {
+      console.error("Failed to sync message:", error);
+    }
+  }
+}
+
+// Install and update events
+self.addEventListener("install", (event: ExtendableEvent) => {
+  event.waitUntil(
+    caches.open("offline-pages").then((cache) => {
+      return cache.addAll(["/offline", "/messages", "/directory"]);
+    })
+  );
+});
+```
+
+#### 3. **Service Worker Registration with Next.js**
+
+```typescript
+// src/app/components/ServiceWorkerRegistration.tsx
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+export function ServiceWorkerRegistration() {
+  const router = useRouter();
+
+  useEffect(() => {
+    if ("serviceWorker" in navigator && "PushManager" in window) {
+      window.addEventListener("load", async () => {
+        try {
+          // Register service worker
+          const registration = await navigator.serviceWorker.register(
+            "/sw.js",
+            {
+              scope: "/",
+              updateViaCache: "none",
+            }
+          );
+
+          console.log("SW registered:", registration);
+
+          // Check for updates every hour
+          setInterval(
+            () => {
+              registration.update();
+            },
+            60 * 60 * 1000
+          );
+
+          // Handle updates
+          registration.addEventListener("updatefound", () => {
+            const newWorker = registration.installing;
+            if (newWorker) {
+              newWorker.addEventListener("statechange", () => {
+                if (newWorker.state === "activated") {
+                  // New service worker activated, refresh for updates
+                  if (confirm("New version available! Refresh to update?")) {
+                    window.location.reload();
+                  }
+                }
+              });
+            }
+          });
+
+          // Request notification permission
+          if (Notification.permission === "default") {
+            await Notification.requestPermission();
+          }
+
+          // Subscribe to push notifications
+          if (Notification.permission === "granted") {
+            await subscribeToPushNotifications(registration);
+          }
+        } catch (error) {
+          console.error("SW registration failed:", error);
+        }
+      });
+    }
+
+    // Handle offline/online events
+    window.addEventListener("online", () => {
+      console.log("Back online");
+      // Trigger sync
+      if ("sync" in ServiceWorkerRegistration.prototype) {
+        navigator.serviceWorker.ready.then((registration: any) => {
+          registration.sync.register("sync-messages");
+        });
+      }
+    });
+
+    window.addEventListener("offline", () => {
+      console.log("Gone offline");
+    });
+  }, []);
+
+  return null;
+}
+
+async function subscribeToPushNotifications(
+  registration: ServiceWorkerRegistration
+) {
+  try {
+    const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(
+        process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
+      ),
+    });
+
+    // Send subscription to server
+    await fetch("/api/notifications/subscribe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(subscription),
+    });
+  } catch (error) {
+    console.error("Failed to subscribe to push notifications:", error);
+  }
+}
+
+function urlBase64ToUint8Array(base64String: string) {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding)
+    .replace(/\-/g, "+")
+    .replace(/_/g, "/");
+
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+```
+
+#### 4. **Root Layout Integration**
+
+```typescript
+// src/app/layout.tsx
+import { ServiceWorkerRegistration } from '@/components/ServiceWorkerRegistration';
+import { Metadata, Viewport } from 'next';
+
+export const metadata: Metadata = {
+  title: 'SECL Messaging',
+  description: 'Secure employee communication platform',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'SECL Chat',
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  openGraph: {
+    type: 'website',
+    siteName: 'SECL Messaging',
+    title: 'SECL Messaging',
+    description: 'Secure employee communication platform',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'SECL Messaging',
+    description: 'Secure employee communication platform',
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#000000',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <head>
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+      </head>
+      <body>
+        <ServiceWorkerRegistration />
+        {children}
+      </body>
+    </html>
+  );
+}
+```
+
+#### 5. **Offline Page**
+
+```typescript
+// src/app/offline/page.tsx
+import { WifiOff } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+
+export default function OfflinePage() {
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center p-4">
+      <WifiOff className="h-16 w-16 text-muted-foreground mb-4" />
+      <h1 className="text-2xl font-bold mb-2">You're offline</h1>
+      <p className="text-muted-foreground text-center mb-6 max-w-md">
+        We couldn't load this page. Check your internet connection and try again.
+      </p>
+      <Button onClick={() => window.location.reload()}>
+        Try Again
+      </Button>
+    </div>
+  );
+}
+```
+
+#### 6. **Install Prompt Hook**
+
+```typescript
+// src/hooks/useInstallPrompt.ts
+import { useEffect, useState } from 'react';
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
+
+export function useInstallPrompt() {
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [isInstalled, setIsInstalled] = useState(false);
+
+  useEffect(() => {
+    // Check if already installed
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      setIsInstalled(true);
+      return;
+    }
+
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setInstallPrompt(e as BeforeInstallPromptEvent);
+    };
+
+    const handleAppInstalled = () => {
+      setIsInstalled(true);
+      setInstallPrompt(null);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
+  }, []);
+
+  const promptInstall = async () => {
+    if (!installPrompt) return false;
+
+    installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+
+    if (outcome === 'accepted') {
+      setInstallPrompt(null);
+      return true;
+    }
+
+    return false;
+  };
+
+  return {
+    isInstallable: !!installPrompt,
+    isInstalled,
+    promptInstall
+  };
+}
+
+// Usage in component
+export function InstallBanner() {
+  const { isInstallable, promptInstall } = useInstallPrompt();
+
+  if (!isInstallable) return null;
+
+  return (
+    <div className="fixed bottom-4 left-4 right-4 bg-primary text-primary-foreground p-4 rounded-lg shadow-lg md:left-auto md:max-w-md">
+      <h3 className="font-semibold mb-1">Install SECL Messaging</h3>
+      <p className="text-sm mb-3">
+        Install our app for a better experience with offline support and notifications.
+      </p>
+      <div className="flex gap-2">
+        <Button
+          onClick={promptInstall}
+          variant="secondary"
+          size="sm"
+        >
+          Install
+        </Button>
+        <Button
+          onClick={() => setIsInstallable(false)}
+          variant="ghost"
+          size="sm"
+        >
+          Not now
+        </Button>
+      </div>
+    </div>
+  );
+}
+```
+
+#### 7. **Next.js Configuration Update**
+
+```javascript
+// next.config.js
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  swcMinify: true,
+
+  // Service Worker and PWA headers
+  async headers() {
+    return [
+      {
+        source: "/sw.js",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "no-cache, no-store, must-revalidate",
+          },
+          {
+            key: "Content-Type",
+            value: "application/javascript; charset=utf-8",
+          },
+        ],
+      },
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+          {
+            key: "X-Frame-Options",
+            value: "DENY",
+          },
+          {
+            key: "X-XSS-Protection",
+            value: "1; mode=block",
+          },
+        ],
+      },
+    ];
+  },
+
+  // Handle service worker in development
+  webpack: (config, { isServer, dev }) => {
+    if (!isServer && !dev) {
+      config.resolve.alias["@serwist/window"] =
+        "@serwist/window/build/esm/index.js";
+    }
+    return config;
+  },
+};
+
+module.exports = nextConfig;
+```
+
+### Key Improvements Following Next.js Guidelines:
+
+1. **Native Manifest Support**: Using Next.js's `manifest.ts` instead of static JSON
+2. **Viewport Configuration**: Using Next.js's viewport export
+3. **Metadata API**: Proper metadata configuration for PWA
+4. **Client Component**: Service worker registration as client component
+5. **App Router Compatible**: All implementations work with App Router
+6. **TypeScript Service Worker**: Type-safe service worker implementation
+7. **Workbox Integration**: Modern caching strategies
+
+### Build Script Updates:
+
+```json
+{
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build && npm run build:sw",
+    "build:sw": "webpack --config webpack.sw.config.js",
+    "start": "next start",
+    "lint": "next lint"
+  }
+}
+```
+
+### Webpack Config for Service Worker:
+
+```javascript
+// webpack.sw.config.js
+const path = require("path");
+
+module.exports = {
+  mode: "production",
+  entry: "./src/app/sw.ts",
+  output: {
+    path: path.resolve(__dirname, "public"),
+    filename: "sw.js",
+  },
+  resolve: {
+    extensions: [".ts", ".js"],
+  },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        use: "ts-loader",
+        exclude: /node_modules/,
+      },
+    ],
+  },
+};
+```
+
+This approach fully aligns with Next.js App Router's PWA recommendations and provides a more integrated, type-safe solution that leverages Next.js's built-in features.
