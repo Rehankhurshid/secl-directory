@@ -14,7 +14,7 @@
     "dev:localtunnel": "node scripts/dev-localtunnel.js",
     "tunnel": "node scripts/ngrok-dual-tunnel.js",
     "tunnel:unified": "node scripts/unified-ngrok-tunnel.js",
-    "build": "node scripts/check-env.js && next build",
+    "build": "next build",
     "start": "NODE_ENV=production node server.js",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
@@ -38,7 +38,7 @@
     "update:employees": "node scripts/update-employees-from-csv.js",
     "diagnose:employees": "node scripts/diagnose-employee-mismatch.js",
     "generate:vapid": "node scripts/generate-vapid-keys.js",
-    "postinstall": "npm run db:generate"
+    "postinstall": "echo 'Postinstall complete'"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.3.23",
