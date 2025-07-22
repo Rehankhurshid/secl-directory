@@ -310,7 +310,7 @@ setInterval(
 ); // Run every 5 minutes
 
 // Start the server
-const PORT = process.env.WEBSOCKET_PORT || 3002;
+const PORT = process.env.PORT || process.env.WEBSOCKET_PORT || 3002;
 server.listen(PORT, "0.0.0.0", () => {
   console.log("✨ WebSocket server ready for real-time messaging!");
   console.log(`🎯 WebSocket server listening on http://0.0.0.0:${PORT}`);
