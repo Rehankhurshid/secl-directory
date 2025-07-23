@@ -130,167 +130,167 @@ export default function PWADebugPage() {
 
   return (
     <AppLayout>
-      <div className="container mx-auto p-6 space-y-6">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">🔧 PWA Debug Dashboard</h1>
-          <p className="text-muted-foreground">Test and debug PWA features including notifications</p>
-        </div>
+    <div className="container mx-auto p-6 space-y-6">
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold mb-2">🔧 PWA Debug Dashboard</h1>
+        <p className="text-muted-foreground">Test and debug PWA features including notifications</p>
+      </div>
 
-        {/* PWA Status Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center">
-                <Smartphone className="w-4 h-4 mr-2" />
-                PWA Status
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span>Installed</span>
-                  {getStatusBadge(isInstalled, "Yes", "No")}
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span>Online</span>
-                  {getStatusBadge(isOnline, "Yes", "Offline")}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center">
-                <Bell className="w-4 h-4 mr-2" />
-                Notifications
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span>Supported</span>
-                  {getStatusBadge(isSupported, "Yes", "No")}
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span>Permission</span>
-                  {getPermissionBadge(permission)}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center">
-                <Download className="w-4 h-4 mr-2" />
-                Service Worker
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span>Supported</span>
-                  {getStatusBadge('serviceWorker' in navigator, "Yes", "No")}
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span>Active</span>
-                  {getStatusBadge(!!navigator.serviceWorker?.controller, "Yes", "No")}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Notification Testing */}
+      {/* PWA Status Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Bell className="w-5 h-5 mr-2" />
-              Notification Testing
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium flex items-center">
+              <Smartphone className="w-4 h-4 mr-2" />
+              PWA Status
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="flex flex-wrap gap-3">
-                <Button 
-                  onClick={handleRequestPermission} 
-                  disabled={isLoading || permission === 'granted'}
-                  variant={permission === 'granted' ? 'outline' : 'default'}
-                >
-                  {isLoading ? 'Requesting...' : 'Request Permission'}
-                </Button>
-
-                <Button 
-                  onClick={handleTestNotification}
-                  disabled={testLoading || permission !== 'granted'}
-                  variant="outline"
-                >
-                  <Bell className="w-4 h-4 mr-2" />
-                  {testLoading ? 'Sending...' : 'Test Notification'}
-                </Button>
-
-                <Button 
-                  onClick={handleSelfPushTest}
-                  disabled={permission !== 'granted'}
-                  variant="outline"
-                >
-                  <Bell className="w-4 h-4 mr-2" />
-                  Self Push Test
-                </Button>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span>Installed</span>
+                {getStatusBadge(isInstalled, "Yes", "No")}
               </div>
-
-              {permission === 'denied' && (
-                <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm text-red-700">
-                    ⚠️ <strong>Notifications are blocked.</strong> To enable them:
-                    <br />
-                    • Click the 🔒 icon in your browser's address bar
-                    <br />
-                    • Select "Allow" for notifications
-                    <br />
-                    • Refresh the page
-                  </p>
-                </div>
-              )}
-
-              {permission === 'default' && (
-                <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                  <p className="text-sm text-yellow-700">
-                    💡 <strong>Notification permission not set.</strong> Click "Request Permission" to enable notifications.
-                  </p>
-                </div>
-              )}
-
-              {permission === 'granted' && (
-                <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                  <p className="text-sm text-green-700">
-                    ✅ <strong>Notifications are enabled!</strong> You can now test notifications using the buttons above.
-                  </p>
-                </div>
-              )}
+              <div className="flex items-center justify-between text-sm">
+                <span>Online</span>
+                {getStatusBadge(isOnline, "Yes", "Offline")}
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Debug Information */}
         <Card>
-          <CardHeader>
-            <CardTitle>Debug Information</CardTitle>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium flex items-center">
+              <Bell className="w-4 h-4 mr-2" />
+              Notifications
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2 text-sm font-mono">
-              <div><strong>User Agent:</strong> {navigator.userAgent}</div>
-              <div><strong>Platform:</strong> {navigator.platform}</div>
-              <div><strong>Notification Support:</strong> {isSupported ? 'Yes' : 'No'}</div>
-              <div><strong>Service Worker Support:</strong> {'serviceWorker' in navigator ? 'Yes' : 'No'}</div>
-              <div><strong>Current Permission:</strong> {permission}</div>
-              <div><strong>Display Mode:</strong> {isInstalled ? 'Standalone' : 'Browser'}</div>
-              <div><strong>Connection:</strong> {isOnline ? 'Online' : 'Offline'}</div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span>Supported</span>
+                {getStatusBadge(isSupported, "Yes", "No")}
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span>Permission</span>
+                {getPermissionBadge(permission)}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium flex items-center">
+              <Download className="w-4 h-4 mr-2" />
+              Service Worker
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span>Supported</span>
+                {getStatusBadge('serviceWorker' in navigator, "Yes", "No")}
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span>Active</span>
+                {getStatusBadge(!!navigator.serviceWorker?.controller, "Yes", "No")}
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Notification Testing */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Bell className="w-5 h-5 mr-2" />
+            Notification Testing
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="flex flex-wrap gap-3">
+              <Button 
+                onClick={handleRequestPermission} 
+                disabled={isLoading || permission === 'granted'}
+                variant={permission === 'granted' ? 'outline' : 'default'}
+              >
+                {isLoading ? 'Requesting...' : 'Request Permission'}
+              </Button>
+
+              <Button 
+                onClick={handleTestNotification}
+                disabled={testLoading || permission !== 'granted'}
+                variant="outline"
+              >
+                <Bell className="w-4 h-4 mr-2" />
+                {testLoading ? 'Sending...' : 'Test Notification'}
+              </Button>
+
+              <Button 
+                onClick={handleSelfPushTest}
+                disabled={permission !== 'granted'}
+                variant="outline"
+              >
+                <Bell className="w-4 h-4 mr-2" />
+                Self Push Test
+              </Button>
+            </div>
+
+            {permission === 'denied' && (
+              <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-sm text-red-700">
+                  ⚠️ <strong>Notifications are blocked.</strong> To enable them:
+                  <br />
+                  • Click the 🔒 icon in your browser's address bar
+                  <br />
+                  • Select "Allow" for notifications
+                  <br />
+                  • Refresh the page
+                </p>
+              </div>
+            )}
+
+            {permission === 'default' && (
+              <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p className="text-sm text-yellow-700">
+                  💡 <strong>Notification permission not set.</strong> Click "Request Permission" to enable notifications.
+                </p>
+              </div>
+            )}
+
+            {permission === 'granted' && (
+              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                <p className="text-sm text-green-700">
+                  ✅ <strong>Notifications are enabled!</strong> You can now test notifications using the buttons above.
+                </p>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Debug Information */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Debug Information</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2 text-sm font-mono">
+            <div><strong>User Agent:</strong> {navigator.userAgent}</div>
+            <div><strong>Platform:</strong> {navigator.platform}</div>
+            <div><strong>Notification Support:</strong> {isSupported ? 'Yes' : 'No'}</div>
+            <div><strong>Service Worker Support:</strong> {'serviceWorker' in navigator ? 'Yes' : 'No'}</div>
+            <div><strong>Current Permission:</strong> {permission}</div>
+            <div><strong>Display Mode:</strong> {isInstalled ? 'Standalone' : 'Browser'}</div>
+            <div><strong>Connection:</strong> {isOnline ? 'Online' : 'Offline'}</div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
     </AppLayout>
   );
 } 

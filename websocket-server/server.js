@@ -1,244 +1,323 @@
 const WebSocket = require("ws");
 const http = require("http");
+const url = require("url");
 
-// Production configuration
-const PORT = process.env.PORT || process.env.WEBSOCKET_PORT || 3002;
-const ALLOWED_ORIGINS =
-  process.env.NODE_ENV === "production"
-    ? [
-        "https://secl-directory.vercel.app",
-        "https://secl.co.in",
-        "https://www.secl.co.in",
-        "https://coal-india-app.vercel.app",
-        "https://coal-india-463ij2f4p-rehankhurshids-projects.vercel.app",
-        "https://coal-india-fdxd0ryoz-rehankhurshids-projects.vercel.app",
-        "https://coal-india-lev8hex0r-rehankhurshids-projects.vercel.app",
-        // Add pattern to allow all Vercel preview deployments
-        "https://coal-india-",
-      ]
-    : ["http://localhost:3000"];
-
-// Create HTTP server for health checks
+// Create HTTP server
 const server = http.createServer((req, res) => {
-  // Enable CORS for health checks
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  // Prevent duplicate response handling
+  if (res.headersSent) return;
 
+  // Add CORS headers for browser compatibility
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  // Handle preflight requests
+  if (req.method === "OPTIONS") {
+    res.writeHead(200);
+    res.end();
+    return;
+  }
+
+  // Handle health check
   if (req.url === "/health") {
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(
-      JSON.stringify({
-        status: "healthy",
-        connections: wss.clients.size,
-        uptime: process.uptime(),
-        timestamp: new Date().toISOString(),
-      })
+      JSON.stringify({ status: "ok", timestamp: new Date().toISOString() })
     );
-  } else {
-    res.writeHead(404);
-    res.end("Not found");
+    return;
   }
+
+  // Default response for other requests
+  res.writeHead(404, { "Content-Type": "text/plain" });
+  res.end("WebSocket Server");
 });
 
-// Create WebSocket server
 const wss = new WebSocket.Server({
   server,
   verifyClient: (info) => {
-    const origin = info.origin || info.req.headers.origin;
-
-    // Allow if no origin (e.g., mobile apps)
-    if (!origin) return true;
-
-    // In production, check against allowed origins
-    if (process.env.NODE_ENV === "production") {
-      // Allow any Vercel deployment of coal-india app
-      if (origin.includes("coal-india") && origin.includes("vercel.app")) {
-        return true;
-      }
-      
-      // Check against explicit allowed origins
-      const isAllowed = ALLOWED_ORIGINS.some((allowed) =>
-        origin.startsWith(allowed)
-      );
-
-      if (!isAllowed) {
-        console.log(`Rejected connection from origin: ${origin}`);
-      }
-
-      return isAllowed;
-    }
-    
-    // In development, allow all origins
+    // Basic verification - could add authentication here
     return true;
   },
 });
 
-// Store connected clients with metadata
+console.log("🚀 WebSocket server starting on port 3002");
+
+// Store connected clients
 const clients = new Map();
 
-wss.on("connection", (ws, req) => {
-  const clientId = generateClientId();
-  const clientInfo = {
-    id: clientId,
-    ws: ws,
-    userId: null,
-    groupIds: [],
-    connectedAt: new Date(),
-  };
+// Message throttling to reduce spam
+const messageThrottle = new Map(); // userId -> { lastMessage: timestamp, count: number }
+const THROTTLE_WINDOW = 1000; // 1 second
+const MAX_MESSAGES_PER_WINDOW = 10;
 
-  clients.set(clientId, clientInfo);
-  console.log(`Client connected: ${clientId}`);
+// Typing indicator throttling - optimized for better UX
+const typingThrottle = new Map(); // userId-conversationId -> { timeout, lastSent }
+const TYPING_DEBOUNCE = 300; // Reduced to 300ms for better responsiveness
 
-  // Send connection confirmation
-  ws.send(
-    JSON.stringify({
-      type: "connection",
-      clientId: clientId,
-      message: "Connected to SECL WebSocket server",
-    })
-  );
+wss.on("connection", (ws, request) => {
+  const queryParams = url.parse(request.url, true).query;
+  const userId = queryParams.userId || "anonymous";
 
-  ws.on("message", (message) => {
+  console.log(`🔗 User ${userId} connected`);
+
+  // Store client with user ID and connection metadata
+  clients.set(userId, {
+    ws,
+    userId,
+    lastSeen: new Date(),
+    lastPing: new Date(),
+    connectionTime: new Date(),
+  });
+
+  // Send initial presence data (only to new user, reduce broadcast)
+  const onlineUsers = Array.from(clients.keys()).filter((id) => id !== userId);
+  if (onlineUsers.length > 0) {
     try {
-      const data = JSON.parse(message);
-      handleMessage(clientId, data);
-    } catch (error) {
-      console.error("Invalid message format:", error);
       ws.send(
         JSON.stringify({
-          type: "error",
-          message: "Invalid message format",
+          type: "presence_list",
+          payload: { onlineUsers },
+          timestamp: new Date(),
         })
+      );
+    } catch (error) {
+      console.error(
+        `❌ Failed to send presence list to ${userId}:`,
+        error.message
+      );
+    }
+  }
+
+  ws.on("message", (data) => {
+    try {
+      const message = JSON.parse(data.toString());
+
+      // Handle ping/pong for heartbeat (don't log to reduce noise)
+      if (message.type === "ping") {
+        const client = clients.get(userId);
+        if (client) {
+          client.lastPing = new Date();
+          try {
+            ws.send(
+              JSON.stringify({
+                type: "pong",
+                timestamp: new Date().toISOString(),
+              })
+            );
+          } catch (error) {
+            console.error(
+              `❌ Failed to send pong to ${userId}:`,
+              error.message
+            );
+          }
+        }
+        return;
+      }
+
+      // Enhanced message throttling
+      const now = Date.now();
+      const userThrottle = messageThrottle.get(userId) || {
+        lastMessage: 0,
+        count: 0,
+      };
+
+      if (now - userThrottle.lastMessage > THROTTLE_WINDOW) {
+        // Reset count for new window
+        userThrottle.count = 1;
+        userThrottle.lastMessage = now;
+      } else {
+        userThrottle.count++;
+      }
+
+      messageThrottle.set(userId, userThrottle);
+
+      if (userThrottle.count > MAX_MESSAGES_PER_WINDOW) {
+        console.log(`🚫 Rate limit exceeded for ${userId}, dropping message`);
+        return;
+      }
+
+      // Enhanced typing indicator handling with debouncing
+      if (message.type === "typing") {
+        const conversationId = message.payload?.conversationId;
+        const isTyping = message.payload?.isTyping;
+        const throttleKey = `${userId}-${conversationId}`;
+
+        if (isTyping) {
+          console.log(`⌨️ ${userId} started typing in ${conversationId}`);
+
+          const existingTimeout = typingThrottle.get(throttleKey)?.timeout;
+          if (existingTimeout) {
+            clearTimeout(existingTimeout);
+          }
+
+          // Set auto-stop timeout (in case client doesn't send stop event)
+          const autoStopTimeout = setTimeout(() => {
+            console.log(
+              `⌨️ ${userId} auto-stopped typing in ${conversationId}`
+            );
+            broadcastMessage(
+              {
+                ...message,
+                payload: { ...message.payload, isTyping: false },
+              },
+              userId
+            );
+          }, 3000); // Auto-stop after 3 seconds
+
+          typingThrottle.set(throttleKey, {
+            timeout: autoStopTimeout,
+            lastSent: now,
+          });
+        } else {
+          console.log(`⌨️ ${userId} stopped typing in ${conversationId}`);
+
+          const existingTimeout = typingThrottle.get(throttleKey)?.timeout;
+          if (existingTimeout) {
+            clearTimeout(existingTimeout);
+            typingThrottle.delete(throttleKey);
+          }
+        }
+
+        // Broadcast typing status immediately
+        broadcastMessage(message, userId);
+        return;
+      }
+
+      // Log other message types for debugging
+      console.log(`📨 Message from ${userId}:`, message);
+
+      // Broadcast regular messages to relevant clients
+      if (message.type === "message") {
+        console.log(
+          `💬 Broadcasting message to conversation ${message.payload?.conversationId}`
+        );
+        broadcastMessage(message, userId);
+      } else {
+        // Handle other message types
+        broadcastMessage(message, userId);
+      }
+    } catch (error) {
+      console.error(
+        `❌ Error processing message from ${userId}:`,
+        error.message
       );
     }
   });
 
   ws.on("close", () => {
-    console.log(`Client disconnected: ${clientId}`);
-    clients.delete(clientId);
+    console.log(`🔌 User ${userId} disconnected`);
+    clients.delete(userId);
+
+    // Clean up typing indicators for this user
+    for (const [key, value] of typingThrottle.entries()) {
+      if (key.startsWith(`${userId}-`)) {
+        clearTimeout(value.timeout);
+        typingThrottle.delete(key);
+      }
+    }
+
+    // Broadcast updated presence to remaining clients
+    broadcastPresence();
   });
 
   ws.on("error", (error) => {
-    console.error(`WebSocket error for client ${clientId}:`, error);
+    console.error(`❌ WebSocket error for ${userId}:`, error.message);
+    clients.delete(userId);
   });
-
-  // Ping to keep connection alive
-  const pingInterval = setInterval(() => {
-    if (ws.readyState === WebSocket.OPEN) {
-      ws.ping();
-    } else {
-      clearInterval(pingInterval);
-    }
-  }, 30000);
 });
 
-function handleMessage(clientId, data) {
-  const client = clients.get(clientId);
-  if (!client) return;
+// Enhanced broadcast function with better error handling
+function broadcastMessage(message, senderId) {
+  const conversationId = message.payload?.conversationId;
+  let sentCount = 0;
 
-  switch (data.type) {
-    case "auth":
-      // Store user info
-      client.userId = data.userId;
-      client.groupIds = data.groupIds || [];
-      console.log(`Client ${clientId} authenticated as user ${data.userId}`);
-      break;
+  clients.forEach((client, userId) => {
+    // Don't send back to sender for most message types
+    if (userId === senderId && message.type === "message") {
+      return;
+    }
 
-    case "join":
-      // Join a group
-      if (data.groupId && !client.groupIds.includes(data.groupId)) {
-        client.groupIds.push(data.groupId);
-        console.log(`Client ${clientId} joined group ${data.groupId}`);
+    // For conversation messages, could add filtering logic here
+    // For now, send to all connected clients
+
+    if (client.ws.readyState === WebSocket.OPEN) {
+      try {
+        client.ws.send(JSON.stringify(message));
+        sentCount++;
+      } catch (error) {
+        console.error(`❌ Failed to send message to ${userId}:`, error.message);
+        // Remove broken connection
+        clients.delete(userId);
       }
-      break;
+    }
+  });
 
-    case "leave":
-      // Leave a group
-      client.groupIds = client.groupIds.filter((id) => id !== data.groupId);
-      console.log(`Client ${clientId} left group ${data.groupId}`);
-      break;
-
-    case "message":
-      // Broadcast message to group members
-      broadcastToGroup(
-        data.groupId,
-        {
-          type: "message",
-          groupId: data.groupId,
-          message: data.message,
-          userId: client.userId,
-          timestamp: new Date().toISOString(),
-        },
-        clientId
-      );
-      break;
-
-    case "typing":
-      // Broadcast typing indicator
-      broadcastToGroup(
-        data.groupId,
-        {
-          type: "typing",
-          groupId: data.groupId,
-          userId: client.userId,
-          isTyping: data.isTyping,
-        },
-        clientId
-      );
-      break;
-
-    case "ping":
-      // Respond to ping
-      client.ws.send(JSON.stringify({ type: "pong" }));
-      break;
-
-    default:
-      console.log(`Unknown message type: ${data.type}`);
+  // Only log if actually sent to reduce noise
+  if (sentCount > 0 && message.type !== "typing") {
+    console.log(`📡 Broadcasted ${message.type} to ${sentCount} clients`);
   }
 }
 
-function broadcastToGroup(groupId, message, excludeClientId = null) {
-  let count = 0;
+// Broadcast presence updates to all clients
+function broadcastPresence() {
+  const onlineUsers = Array.from(clients.keys());
+  const presenceMessage = {
+    type: "presence",
+    payload: { onlineUsers },
+    timestamp: new Date(),
+  };
 
-  clients.forEach((client, clientId) => {
-    if (
-      client.groupIds.includes(groupId) &&
-      clientId !== excludeClientId &&
-      client.ws.readyState === WebSocket.OPEN
-    ) {
-      client.ws.send(JSON.stringify(message));
-      count++;
+  clients.forEach((client, userId) => {
+    if (client.ws.readyState === WebSocket.OPEN) {
+      try {
+        client.ws.send(JSON.stringify(presenceMessage));
+      } catch (error) {
+        console.error(
+          `❌ Failed to send presence to ${userId}:`,
+          error.message
+        );
+        clients.delete(userId);
+      }
     }
   });
 
-  console.log(`Broadcasted to ${count} clients in group ${groupId}`);
+  // Only log if there are multiple clients
+  if (clients.size > 1) {
+    console.log(`📡 Broadcasted presence to ${clients.size} clients`);
+  }
 }
 
-function generateClientId() {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2);
-}
+// Cleanup inactive connections every 5 minutes to save resources
+setInterval(
+  () => {
+    const now = new Date();
+    const staleThreshold = 5 * 60 * 1000; // 5 minutes
 
-// Start server
-server.listen(PORT, "0.0.0.0", () => {
-  console.log(`WebSocket server running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
-  console.log(`Allowed origins: ${ALLOWED_ORIGINS.join(", ")}`);
-});
-
-// Graceful shutdown
-process.on("SIGTERM", () => {
-  console.log("SIGTERM received, closing server...");
-
-  // Close all connections
-  clients.forEach((client) => {
-    client.ws.close(1000, "Server shutting down");
-  });
-
-  // Close servers
-  wss.close(() => {
-    server.close(() => {
-      console.log("Server closed");
-      process.exit(0);
+    clients.forEach((client, userId) => {
+      if (now - client.lastPing > staleThreshold) {
+        console.log(`🧹 Cleaning up stale connection for ${userId}`);
+        try {
+          client.ws.close();
+        } catch (error) {
+          // Connection might already be closed
+        }
+        clients.delete(userId);
+      }
     });
-  });
+  },
+  5 * 60 * 1000
+); // Run every 5 minutes
+
+// Start the server
+const PORT = process.env.PORT || process.env.WEBSOCKET_PORT || 3002;
+server.listen(PORT, "0.0.0.0", () => {
+  console.log("✨ WebSocket server ready for real-time messaging!");
+  console.log(`🎯 WebSocket server listening on http://0.0.0.0:${PORT}`);
+  console.log(`💡 Health check: http://localhost:${PORT}/health`);
+  console.log(`🔌 WebSocket endpoint: ws://localhost:${PORT}`);
+  console.log("🔧 To use on mobile devices:");
+  console.log("1. Connect mobile to same WiFi network");
+  console.log("2. Open http://localhost:3000 on mobile browser");
+  console.log("3. WebSocket will automatically connect");
 });

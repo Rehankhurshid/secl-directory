@@ -34,16 +34,16 @@ export function EmployeeDirectoryClient({
 }: EmployeeDirectoryClientProps) {
   return (
     <AppLayout>
-      <FilterProvider>
-        <div className="container mx-auto px-4 py-6">
-          <FilteredContent 
-            initialEmployees={initialEmployees}
-            stats={stats}
-            filterOptions={filterOptions}
-            enhancedFilterOptions={enhancedFilterOptions} // Pass enhanced options
-          />
-        </div>
-      </FilterProvider>
+    <FilterProvider>
+      <div className="container mx-auto px-4 py-6">
+        <FilteredContent 
+          initialEmployees={initialEmployees}
+          stats={stats}
+          filterOptions={filterOptions}
+          enhancedFilterOptions={enhancedFilterOptions} // Pass enhanced options
+        />
+      </div>
+    </FilterProvider>
     </AppLayout>
   );
 }

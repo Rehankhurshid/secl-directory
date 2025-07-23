@@ -4,9 +4,9 @@ import { AppLayout } from '@/components/layout/app-layout';
 export default function WebSocketDebugPage() {
   return (
     <AppLayout>
-      <div className="container mx-auto">
-        <MobileDebug />
-      </div>
+    <div className="container mx-auto">
+      <MobileDebug />
+    </div>
     </AppLayout>
   );
 } 

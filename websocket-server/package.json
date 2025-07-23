@@ -1,20 +1,16 @@
 {
   "name": "secl-websocket-server",
   "version": "1.0.0",
-  "description": "WebSocket server for SECL messaging",
+  "description": "WebSocket server for SECL messaging system",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "node server.js"
   },
+  "keywords": ["websocket", "secl", "messaging"],
+  "author": "SECL Team",
+  "license": "MIT",
   "dependencies": {
-    "ws": "^8.16.0",
-    "cors": "^2.8.5"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.0"
-  },
-  "engines": {
-    "node": ">=18.0.0"
+    "ws": "^8.18.0"
   }
 }
